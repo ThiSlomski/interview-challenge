@@ -74,6 +74,9 @@ primeira classe**.
 Esta é a parte onde mais queremos ver seu domínio de **segurança**. O cadastro
 da Parte 1 cria usuários; aqui eles **autenticam** e acessam áreas protegidas.
 
+**Núcleo obrigatório (o que esperamos pronto):** login + sessão + proteção de
+rotas + logout.
+
 5. **Login** com e-mail + senha, validando a senha contra o **hash** armazenado
    (nunca comparação em texto puro).
 6. **Sessão autenticada** — sua escolha (cookie de sessão `httpOnly`+`Secure`,
@@ -90,8 +93,13 @@ da Parte 1 cria usuários; aqui eles **autenticam** e acessam áreas protegidas.
    - **Rate limiting / brute-force** no endpoint de login e mensagens de erro
      que **não vazam** se o e-mail existe (evitar *user enumeration*).
    - Expiração/renovação de sessão.
-   - **(Plus)** controle de acesso por papel (ex.: `admin` vs. `user`) e/ou
-     verificação de e-mail / reset de senha.
+
+**Diferenciais (plus — NÃO obrigatórios):** considerados um algo a mais, mas não
+espere entregá-los em 2 dias à custa do núcleo acima:
+
+- Controle de acesso por **papel/role** (ex.: `admin` vs. `user`).
+- **Verificação de e-mail**.
+- **Reset de senha**.
 
 > Você pode usar uma biblioteca de autenticação — e deve justificar a escolha.
 > O que avaliamos é o **entendimento** das decisões de segurança, não reinventar
