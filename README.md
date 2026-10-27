@@ -64,34 +64,68 @@ primeira classe**.
 2. **API RESTful** (em `app/api`) com, no mínimo:
    - Criar um registro (`POST`)
    - Listar/consultar registros (`GET`) — **sem jamais expor a senha ou o hash**
+     e **protegido por autenticação** (ver Parte 2)
 3. **Validação** no servidor **e** no cliente, seguindo boas práticas.
 4. **Schema versionado / migrations** (ex.: Prisma, Drizzle, Knex ou SQL puro) —
    subir o banco do zero deve ser **reproduzível** a partir do README.
 
-### Parte 2 — Frontend (obrigatório)
+### Parte 2 — Autenticação & Autorização (obrigatório — núcleo de segurança)
 
-5. Tela de formulário com boa **experiência de uso**: feedback de erros, estados
-   de carregamento, acessibilidade básica.
-6. Tela de **sucesso** contendo:
-   - Confirmação do cadastro;
-   - **Resumo** dos dados submetidos (**sem** exibir a senha);
-   - A **previsão do tempo do dia seguinte** para a cidade informada, consumindo
-     uma **API RESTful gratuita** (ex.: Open-Meteo) **a partir do client**.
-     Não pode ser um *embed* — esperamos ao menos uma chamada REST feita no
-     cliente.
+Esta é a parte onde mais queremos ver seu domínio de **segurança**. O cadastro
+da Parte 1 cria usuários; aqui eles **autenticam** e acessam áreas protegidas.
 
-### Parte 3 — Segurança / DevSecOps (obrigatório — é o foco da vaga)
+5. **Login** com e-mail + senha, validando a senha contra o **hash** armazenado
+   (nunca comparação em texto puro).
+6. **Sessão autenticada** — sua escolha (cookie de sessão `httpOnly`+`Secure`,
+   JWT, ou lib como Auth.js/Lucia) — **justifique no `ARCHITECTURE.md`**.
+7. **Rotas/endpoints protegidos**: a consulta de registros (o `GET` da Parte 1)
+   e ao menos uma **página protegida** no frontend só devem funcionar com sessão
+   válida; sem sessão → `401`/redirect para login.
+8. **Logout** que invalida a sessão de forma efetiva.
+9. Tratar, **e documentar**, os riscos clássicos de auth. No mínimo, decisões
+   conscientes sobre:
+   - Armazenamento seguro do token/sessão (por que cookie `httpOnly` vs.
+     `localStorage`, etc.).
+   - **CSRF** (se usar cookies) e **CORS**.
+   - **Rate limiting / brute-force** no endpoint de login e mensagens de erro
+     que **não vazam** se o e-mail existe (evitar *user enumeration*).
+   - Expiração/renovação de sessão.
+   - **(Plus)** controle de acesso por papel (ex.: `admin` vs. `user`) e/ou
+     verificação de e-mail / reset de senha.
+
+> Você pode usar uma biblioteca de autenticação — e deve justificar a escolha.
+> O que avaliamos é o **entendimento** das decisões de segurança, não reinventar
+> cripto.
+
+### Parte 3 — Frontend (obrigatório)
+
+10. Tela de formulário com boa **experiência de uso**: feedback de erros,
+    estados de carregamento, acessibilidade básica.
+11. Fluxo de **login/logout** e uma **área protegida** (ex.: a listagem de
+    registros) acessível só após autenticar.
+12. Tela de **sucesso** do cadastro contendo:
+    - Confirmação do cadastro;
+    - **Resumo** dos dados submetidos (**sem** exibir a senha);
+    - A **previsão do tempo do dia seguinte** para a cidade informada, consumindo
+      uma **API RESTful gratuita** (ex.: Open-Meteo) **a partir do client**.
+      Não pode ser um *embed* — esperamos ao menos uma chamada REST feita no
+      cliente.
+
+### Parte 4 — Segurança / DevSecOps (obrigatório — é o foco da vaga)
 
 Implemente **e documente** o que fizer. Não precisa estar tudo completo:
 **priorize, entregue o que funciona e explique o resto**. Esperamos decisões
 conscientes sobre, no mínimo:
 
 - **Hashing de senha** (ex.: bcrypt/argon2) e política de senha.
+- **Autenticação** (Parte 2): as decisões de sessão/token, CSRF, rate limiting
+  no login e prevenção de *user enumeration*.
 - **Validação e sanitização** de entrada; proteção contra **injeção**
   (SQL/NoSQL) e **XSS**.
 - **Gestão de segredos**: `.env` nunca commitado; `.env.example` versionado
   (já incluímos um ponto de partida).
-- **Rate limiting** e/ou proteção básica de abuso no endpoint de cadastro.
+- **Rate limiting** e/ou proteção básica de abuso nos endpoints de cadastro
+  **e de login** (brute-force).
 - **Headers de segurança** (CSP, HSTS, X-Content-Type-Options, etc.).
 - **Dependências**: `npm audit` limpo (ou findings justificados); versões
   pinadas. **Atenção:** o esqueleto já vem com dependências que possuem
@@ -107,17 +141,18 @@ conscientes sobre, no mínimo:
 - **(Plus)** Containerização (`Dockerfile` + `docker compose` para app + banco).
 - **(Plus)** IaC (Terraform/CloudFormation) para o que faria sentido provisionar.
 
-### Parte 4 — Documentação (obrigatório)
+### Parte 5 — Documentação (obrigatório)
 
-7. **`docs/ARCHITECTURE.md`** — a arquitetura escolhida e **o porquê**: banco de
-   dados, camadas, fluxo de dados, decisões de segurança e trade-offs. ADRs
-   curtos (Architecture Decision Records) são muito bem-vindos — há um template.
-8. **`docs/AI_PROMPTS.md`** — o **log dos prompts de AI** que você usou: o
-   prompt, a ferramenta, e um resumo do que você **aceitou, ajustou ou
-   rejeitou** e por quê. Queremos ver seu uso **crítico** da AI.
-9. Atualize este **README** (ou um `SOLUTION.md`) com instruções claras para
-   rodar tudo localmente (app + banco + CI) e as variáveis de ambiente
-   necessárias.
+13. **`docs/ARCHITECTURE.md`** — a arquitetura escolhida e **o porquê**: banco de
+    dados, camadas, fluxo de dados, **modelo de autenticação/autorização** e
+    trade-offs. ADRs curtos (Architecture Decision Records) são muito bem-vindos
+    — há um template.
+14. **`docs/AI_PROMPTS.md`** — o **log dos prompts de AI** que você usou: o
+    prompt, a ferramenta, e um resumo do que você **aceitou, ajustou ou
+    rejeitou** e por quê. Queremos ver seu uso **crítico** da AI.
+15. Atualize este **README** (ou um `SOLUTION.md`) com instruções claras para
+    rodar tudo localmente (app + banco + CI) e as variáveis de ambiente
+    necessárias.
 
 ---
 
@@ -135,7 +170,8 @@ conscientes sobre, no mínimo:
 
 | Área | O que olhamos |
 | --- | --- |
-| **Segurança / DevSecOps** | As decisões da Parte 3 e a justificativa delas |
+| **Segurança / DevSecOps** | As decisões da Parte 4 e a justificativa delas |
+| **Autenticação & autorização** | Login/sessão, proteção de rotas, CSRF, brute-force, *user enumeration* (Parte 2) |
 | **Arquitetura & código** | Organização, clareza, testes, manutenibilidade |
 | **Banco de dados** | Modelagem, migrations, consultas seguras |
 | **Automação** | CI funcional e reprodutibilidade (rodar do zero) |

@@ -33,6 +33,9 @@ previsão do tempo._
 _Para cada item, diga o que fez e por quê — e o que deixaria para depois._
 
 - **Senha:** _algoritmo de hash, custo, política._
+- **Autenticação/autorização:** _estratégia de sessão (cookie httpOnly, JWT,
+  lib), proteção de rotas, CSRF/CORS, rate limiting no login, prevenção de user
+  enumeration, expiração/renovação; (plus) papéis/roles._
 - **Validação/sanitização:** _client e server; proteção contra injeção e XSS._
 - **Segredos:** _como são carregados; o que está em `.env.example`._
 - **Rate limiting / anti-abuso:** _estratégia._
