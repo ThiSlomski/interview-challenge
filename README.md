@@ -1,14 +1,14 @@
 # Imobilead — Desafio Técnico: Engenheiro(a) de Software (DevSecOps)
 
 > **Nível:** Pleno ou Sênior · **Stack base:** Next.js (App Router) + TypeScript
-> **Prazo:** 2 dias · **Uso de AI:** permitido e incentivado (com registro — ver abaixo)
+> **Prazo:** 3 dias · **Uso de AI:** permitido e incentivado (com registro — ver abaixo)
 
 Bem-vindo(a)! Este desafio avalia você como **engenheiro(a) de software** com
 forte atuação em **DevOps e Segurança (DevSecOps)**. Mais do que "fazer
 funcionar", queremos ver **como você pensa**: arquitetura, segurança, automação,
 qualidade e as decisões (trade-offs) por trás de cada escolha.
 
-Você tem **2 dias** e pode — deve — usar ferramentas de AI. O que nos interessa
+Você tem **3 dias** e pode — deve — usar ferramentas de AI. O que nos interessa
 não é *se* você usou AI, e sim **como** você a usou: com critério, revisão e
 responsabilidade (ver [Uso de AI](#uso-de-ai-importante)).
 
@@ -107,7 +107,7 @@ rotas + **autorização por papel (role)** + logout.
       esconder a listagem — a checagem de papel precisa estar na API).
 
 **Diferenciais (plus — NÃO obrigatórios):** considerados um algo a mais, mas não
-espere entregá-los em 2 dias à custa do núcleo acima:
+espere entregá-los em 3 dias à custa do núcleo acima:
 
 - **Verificação de e-mail**.
 - **Reset de senha**.
@@ -212,7 +212,7 @@ conscientes sobre, no mínimo:
 | **Uso responsável de AI** | Critério, revisão e transparência |
 
 Trade-offs bem explicados valem **mais** do que features pela metade sem
-explicação. Em 2 dias, priorizar é parte da avaliação.
+explicação. Em 3 dias, priorizar é parte da avaliação.
 
 ---
 
