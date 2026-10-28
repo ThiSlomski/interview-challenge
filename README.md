@@ -25,7 +25,7 @@ engenharia — exatamente o que este desafio exercita.
 
 ## O que já vem no repositório
 
-Um esqueleto **Next.js 14 (App Router)** com TypeScript:
+Um esqueleto **Next.js 16.4.3 (App Router)** com TypeScript:
 
 - `app/` — páginas e layout
 - `app/api/` — rotas de API internas (seu backend)
@@ -38,10 +38,61 @@ mudanças no documento de arquitetura (`docs/ARCHITECTURE.md`).
 ### Rodando o esqueleto
 
 ```bash
-npm install
+npm ci
 npm run dev
 # abra http://localhost:3000
 ```
+
+### Estado das dependências e do lint (28/10/2026)
+
+Ambiente local validado: Node.js **22.13.1** e npm **10.9.2**.
+As dependências diretas estão fixadas em versões exatas; o lockfile registra
+a árvore reproduzível usada por `npm ci`.
+
+| Dependência direta | Versão |
+| --- | --- |
+| next / eslint-config-next | 16.4.3 / 16.4.3 |
+| react / react-dom | 18.2.0 / 18.2.0 |
+| axios | 1.20.0 |
+| eslint | 9.39.5 |
+| typescript | 5.3.3 |
+| @types/node | 20.11.20 |
+| @types/react / @types/react-dom | 18.2.58 / 18.2.19 |
+
+O Next.js 16 removeu `next lint`, e `eslint-config-next@16.4.3` exige
+ESLint >=9. A migração usa `eslint .` e flat config em `eslint.config.mjs`,
+preservando `core-web-vitals`, sem desativar regras. Os diretórios `.next`,
+`out` e `build`, `next-env.d.ts` e arquivos `*.tsbuildinfo` gerados são ignorados.
+Referência: [configuração oficial de ESLint do Next.js](https://nextjs.org/docs/app/api-reference/config/eslint).
+
+O `tsconfig.json` preserva os ajustes feitos pelo Next.js 16: `jsx: react-jsx`
+para o runtime automático de JSX, `target: ES2017` como alvo sugerido pelo
+framework e `.next/dev/types/**/*.ts` para incluir os tipos de desenvolvimento.
+Após mantê-los, lint, typecheck e build passaram; o segundo build desta
+estabilização não alterou arquivos versionados.
+
+O ESLint 9.39.5 é a versão estável mais recente da série 9 consultada no npm,
+compatível com os peers instalados e o Node local. O registro já a marca como
+sem suporte; a série 9 foi mantida por restrição desta etapa. React 18.2.0 foi
+preservado: o Next 16 ainda o aceita, mas emite aviso de depreciação.
+
+Verificações locais desta etapa:
+
+```bash
+npm ci
+npm ls --depth=0
+npm ls eslint --depth=1
+npm run lint
+npm run typecheck
+npm run build
+npm audit
+```
+
+Os resultados e limitações estão registrados em
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). O desafio funcional permanece
+como trabalho a desenvolver; `npm test` ainda é um placeholder. O CI existente
+usa Node 20 e audit em modo report-only; execução local não comprova CI remoto.
+A avaliação automatizada pelo Codex não substitui a revisão humana, ainda pendente.
 
 ---
 
@@ -259,7 +310,7 @@ Boa sorte — e nos surpreenda! 🚀
 - `services` — serviços externos/internos (cliente HTTP)
 
 ```bash
-npm install
+npm ci
 npm run dev     # http://localhost:3000
 npm run build
 npm run lint
