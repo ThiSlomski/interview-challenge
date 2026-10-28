@@ -33,6 +33,12 @@ jobs:
       - name: Build
         run: npm run build
 
+      # Tests are a REQUIRED part of the challenge (README, Parte 5). The
+      # starter `test` script is a placeholder — replace it with a real runner
+      # (Vitest/Jest/Playwright) and keep this step green.
+      - name: Test
+        run: npm test
+
       # Security gate (starter, REPORT-ONLY). The base project ships with known
       # advisories in its transitive dependencies. Part of this DevSecOps
       # challenge is to assess them and decide what to do: upgrade, replace,

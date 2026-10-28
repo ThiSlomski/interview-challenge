@@ -34,8 +34,10 @@ _Para cada item, diga o que fez e por quê — e o que deixaria para depois._
 
 - **Senha:** _algoritmo de hash, custo, política._
 - **Autenticação/autorização:** _estratégia de sessão (cookie httpOnly, JWT,
-  lib), proteção de rotas, CSRF/CORS, rate limiting no login, prevenção de user
-  enumeration, expiração/renovação; (plus) papéis/roles._
+  lib), proteção de rotas, **autorização por papel** (user vê só o próprio
+  registro; admin lista tudo — checagem no servidor), como um usuário vira
+  admin, CSRF/CORS, rate limiting no login, prevenção de user enumeration,
+  expiração/renovação._
 - **Validação/sanitização:** _client e server; proteção contra injeção e XSS._
 - **Segredos:** _como são carregados; o que está em `.env.example`._
 - **Rate limiting / anti-abuso:** _estratégia._
@@ -43,6 +45,12 @@ _Para cada item, diga o que fez e por quê — e o que deixaria para depois._
 - **Dependências:** _resultado do `npm audit`; findings aceitos e por quê._
 - **CI de segurança:** _qual passo (SAST/SCA/secret scan) e o que ele cobre._
 - **(Plus) Containers / IaC:** _o que provisionaria e por quê._
+
+## Testes
+
+- **Runner e por quê:** _Vitest/Jest/Playwright/outro._
+- **O que cobri:** _validação, regras de autorização (user vs. admin), API._
+- **Como rodar:** _comando(s); e onde isso roda no CI._
 
 ## Decisões e trade-offs (ADRs)
 

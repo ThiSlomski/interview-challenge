@@ -63,8 +63,10 @@ primeira classe**.
    - **Mensagem**
 2. **API RESTful** (em `app/api`) com, no mínimo:
    - Criar um registro (`POST`)
-   - Listar/consultar registros (`GET`) — **sem jamais expor a senha ou o hash**
-     e **protegido por autenticação** (ver Parte 2)
+   - Consultar registros (`GET`) — **sem jamais expor a senha ou o hash**,
+     **protegido por autenticação** e respeitando a **autorização por papel**
+     (ver Parte 2): usuário comum vê só o próprio registro; listagem completa só
+     para `admin`.
 3. **Validação** no servidor **e** no cliente, seguindo boas práticas.
 4. **Schema versionado / migrations** (ex.: Prisma, Drizzle, Knex ou SQL puro) —
    subir o banco do zero deve ser **reproduzível** a partir do README.
@@ -75,31 +77,41 @@ Esta é a parte onde mais queremos ver seu domínio de **segurança**. O cadastr
 da Parte 1 cria usuários; aqui eles **autenticam** e acessam áreas protegidas.
 
 **Núcleo obrigatório (o que esperamos pronto):** login + sessão + proteção de
-rotas + logout.
+rotas + **autorização por papel (role)** + logout.
 
 5. **Login** com e-mail + senha, validando a senha contra o **hash** armazenado
    (nunca comparação em texto puro).
 6. **Sessão autenticada** — sua escolha (cookie de sessão `httpOnly`+`Secure`,
    JWT, ou lib como Auth.js/Lucia) — **justifique no `ARCHITECTURE.md`**.
-7. **Rotas/endpoints protegidos**: a consulta de registros (o `GET` da Parte 1)
-   e ao menos uma **página protegida** no frontend só devem funcionar com sessão
-   válida; sem sessão → `401`/redirect para login.
-8. **Logout** que invalida a sessão de forma efetiva.
-9. Tratar, **e documentar**, os riscos clássicos de auth. No mínimo, decisões
-   conscientes sobre:
-   - Armazenamento seguro do token/sessão (por que cookie `httpOnly` vs.
-     `localStorage`, etc.).
-   - **CSRF** (se usar cookies) e **CORS**.
-   - **Rate limiting / brute-force** no endpoint de login e mensagens de erro
-     que **não vazam** se o e-mail existe (evitar *user enumeration*).
-   - Expiração/renovação de sessão.
+7. **Rotas/endpoints protegidos**: endpoints sensíveis e ao menos uma **página
+   protegida** no frontend só devem funcionar com sessão válida; sem sessão →
+   `401`/redirect para login.
+8. **Autorização por papel (role)** — há dois papéis, `user` e `admin`, e a
+   visibilidade dos registros depende do papel:
+   - um **usuário comum** só pode ver/consultar **o próprio registro**;
+   - a **listagem completa** (o `GET` da Parte 1) fica disponível **apenas para
+     `admin`**.
+   Uma requisição autenticada mas sem permissão deve retornar **`403`** (não
+   `404`/`401`). Decida e **documente** como um usuário vira `admin` (seed,
+   flag no banco, etc.).
+9. **Logout** que invalida a sessão de forma efetiva.
+10. Tratar, **e documentar**, os riscos clássicos de auth. No mínimo, decisões
+    conscientes sobre:
+    - Armazenamento seguro do token/sessão (por que cookie `httpOnly` vs.
+      `localStorage`, etc.).
+    - **CSRF** (se usar cookies) e **CORS**.
+    - **Rate limiting / brute-force** no endpoint de login e mensagens de erro
+      que **não vazam** se o e-mail existe (evitar *user enumeration*).
+    - Expiração/renovação de sessão.
+    - **Controle de acesso no servidor** (nunca confie só no frontend para
+      esconder a listagem — a checagem de papel precisa estar na API).
 
 **Diferenciais (plus — NÃO obrigatórios):** considerados um algo a mais, mas não
 espere entregá-los em 2 dias à custa do núcleo acima:
 
-- Controle de acesso por **papel/role** (ex.: `admin` vs. `user`).
 - **Verificação de e-mail**.
 - **Reset de senha**.
+- Papéis adicionais ou permissões mais granulares além de `user`/`admin`.
 
 > Você pode usar uma biblioteca de autenticação — e deve justificar a escolha.
 > O que avaliamos é o **entendimento** das decisões de segurança, não reinventar
@@ -107,11 +119,11 @@ espere entregá-los em 2 dias à custa do núcleo acima:
 
 ### Parte 3 — Frontend (obrigatório)
 
-10. Tela de formulário com boa **experiência de uso**: feedback de erros,
+11. Tela de formulário com boa **experiência de uso**: feedback de erros,
     estados de carregamento, acessibilidade básica.
-11. Fluxo de **login/logout** e uma **área protegida** (ex.: a listagem de
-    registros) acessível só após autenticar.
-12. Tela de **sucesso** do cadastro contendo:
+12. Fluxo de **login/logout** e uma **área protegida** que respeita o papel: um
+    `user` vê apenas o próprio registro; um `admin` vê a listagem completa.
+13. Tela de **sucesso** do cadastro contendo:
     - Confirmação do cadastro;
     - **Resumo** dos dados submetidos (**sem** exibir a senha);
     - A **previsão do tempo do dia seguinte** para a cidade informada, consumindo
@@ -149,17 +161,29 @@ conscientes sobre, no mínimo:
 - **(Plus)** Containerização (`Dockerfile` + `docker compose` para app + banco).
 - **(Plus)** IaC (Terraform/CloudFormation) para o que faria sentido provisionar.
 
-### Parte 5 — Documentação (obrigatório)
+### Parte 5 — Testes (obrigatório)
 
-13. **`docs/ARCHITECTURE.md`** — a arquitetura escolhida e **o porquê**: banco de
+14. **Testes automatizados** cobrindo o que mais importa — não buscamos 100% de
+    cobertura, e sim testes que demonstrem critério. No mínimo:
+    - **Unitários** da validação e das regras de **autorização** (ex.: `user`
+      não acessa registro de outro; só `admin` lista tudo).
+    - Ao menos um teste da **API** (ex.: login válido/ inválido, acesso negado
+      com `401`/`403`).
+15. **Como rodar os testes** documentado no README e executado no **CI** (um
+    passo `test` no workflow). Use o runner que preferir (Vitest, Jest,
+    Playwright, etc.) e justifique brevemente a escolha.
+
+### Parte 6 — Documentação (obrigatório)
+
+16. **`docs/ARCHITECTURE.md`** — a arquitetura escolhida e **o porquê**: banco de
     dados, camadas, fluxo de dados, **modelo de autenticação/autorização** e
     trade-offs. ADRs curtos (Architecture Decision Records) são muito bem-vindos
     — há um template.
-14. **`docs/AI_PROMPTS.md`** — o **log dos prompts de AI** que você usou: o
+17. **`docs/AI_PROMPTS.md`** — o **log dos prompts de AI** que você usou: o
     prompt, a ferramenta, e um resumo do que você **aceitou, ajustou ou
     rejeitou** e por quê. Queremos ver seu uso **crítico** da AI.
-15. Atualize este **README** (ou um `SOLUTION.md`) com instruções claras para
-    rodar tudo localmente (app + banco + CI) e as variáveis de ambiente
+18. Atualize este **README** (ou um `SOLUTION.md`) com instruções claras para
+    rodar tudo localmente (app + banco + testes + CI) e as variáveis de ambiente
     necessárias.
 
 ---
@@ -179,10 +203,11 @@ conscientes sobre, no mínimo:
 | Área | O que olhamos |
 | --- | --- |
 | **Segurança / DevSecOps** | As decisões da Parte 4 e a justificativa delas |
-| **Autenticação & autorização** | Login/sessão, proteção de rotas, CSRF, brute-force, *user enumeration* (Parte 2) |
-| **Arquitetura & código** | Organização, clareza, testes, manutenibilidade |
+| **Autenticação & autorização** | Login/sessão, proteção de rotas, **autorização por papel** (user vê só o seu; admin lista tudo), CSRF, brute-force, *user enumeration* (Parte 2) |
+| **Testes** | Testes das regras de autorização/validação e da API; rodando no CI (Parte 5) |
+| **Arquitetura & código** | Organização, clareza, manutenibilidade |
 | **Banco de dados** | Modelagem, migrations, consultas seguras |
-| **Automação** | CI funcional e reprodutibilidade (rodar do zero) |
+| **Automação** | CI funcional (lint, typecheck, build, testes, segurança) e reprodutibilidade |
 | **Documentação** | `ARCHITECTURE.md`, ADRs, `AI_PROMPTS.md`, README |
 | **Uso responsável de AI** | Critério, revisão e transparência |
 
@@ -193,13 +218,33 @@ explicação. Em 2 dias, priorizar é parte da avaliação.
 
 ## Como entregar
 
-1. Faça **fork** da branch `main` **antes** de começar.
-2. Desenvolva no seu fork (commits pequenos e descritivos ajudam a avaliação).
-3. Garanta que o **CI está verde** e que o README permite **rodar do zero**.
-4. **Responda ao nosso e-mail** com:
-   - o **link do fork**,
-   - a **branch** do desafio,
-   - **permissão de leitura** para o nosso time.
+Para que um candidato **não veja o trabalho de outro**, não trabalhe em um fork
+deste repositório (forks ficam públicos e vinculados ao original). Em vez disso,
+**clone** este repositório e publique o seu desafio em um **repositório público
+novo e independente**, na sua conta:
+
+```bash
+# 1. Clone o desafio base (não faça fork)
+git clone https://github.com/imobilead-app/interview-challenge.git
+cd interview-challenge
+
+# 2. Aponte o remoto para um repositório PÚBLICO novo criado na SUA conta
+git remote remove origin
+git remote add origin https://github.com/<SEU_USUARIO>/<SEU_REPO>.git
+
+# 3. Desenvolva, faça commits pequenos e descritivos, e dê push
+git push -u origin main
+```
+
+Depois:
+
+1. Garanta que o **CI está verde** e que o README permite **rodar do zero**.
+2. **Responda ao nosso e-mail** com:
+   - o **link do seu repositório público**,
+   - a **branch** onde está a entrega (se não for `main`).
+
+> O repositório deve ser **público** para facilitar o review. Se preferir
+> mantê-lo privado, avise no e-mail que daremos acesso de leitura ao time.
 
 Boa sorte — e nos surpreenda! 🚀
 
