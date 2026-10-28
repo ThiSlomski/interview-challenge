@@ -1,0 +1,49 @@
+# Starter CI for the DevSecOps challenge.
+#
+# This is intentionally minimal: lint, typecheck, build and a dependency audit.
+# As part of the challenge you are expected to EXTEND it with at least one
+# dedicated security step (SAST/SCA/secret scan — e.g. CodeQL, gitleaks, trivy)
+# and, if you add a database/containers, the steps needed to validate them.
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      # Tests are a REQUIRED part of the challenge (README, Parte 5). The
+      # starter `test` script is a placeholder — replace it with a real runner
+      # (Vitest/Jest/Playwright) and keep this step green.
+      - name: Test
+        run: npm test
+
+      # Security gate (starter, REPORT-ONLY). The base project ships with known
+      # advisories in its transitive dependencies. Part of this DevSecOps
+      # challenge is to assess them and decide what to do: upgrade, replace,
+      # accept with justification, or make this gate blocking (remove
+      # `|| true`) and add dedicated steps (CodeQL / gitleaks / trivy) as
+      # separate jobs. Document your decision in docs/ARCHITECTURE.md.
+      - name: Dependency audit (report-only)
+        run: npm audit --audit-level=high || true

@@ -6,11 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"Substitua por seu runner de testes (Vitest/Jest/Playwright). Ver README Parte 5.\" && exit 0"
   },
   "dependencies": {
     "axios": "^1.6.7",
-    "next": "14.1.0",
+    "next": "^14.2.35",
     "react": "^18",
     "react-dom": "^18"
   },
