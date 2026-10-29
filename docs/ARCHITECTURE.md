@@ -470,3 +470,45 @@ separadamente; HTTP real nesta rodada é servidor de desenvolvimento local. Limp
 remove processo, junction e diretório próprios, banco e papéis próprios; catálogo
 confirma zero recursos da execução e metadados/ACLs protegidos iguais. Não lemos
 linhas pessoais ou executamos INSERT/DELETE/GRANT no banco principal.
+
+## AUTH-001 — login, sessão e logout, 29/10/2026
+
+[Contrato](harness/evidence/authentication-plan.md) e
+[evidência](harness/evidence/authentication.md). Rotas consistentes sob
+`/api/auth/{login,session,logout}`; README não define caminhos. Configuração e
+protocolo completo em [SOLUTION](../SOLUTION.md#auth-001--autenticação-api-29102026).
+Separação: handler servidor controla HTTP/origem/abuso; session.mjs contém cookie,
+entropia/digest e autenticação central; provider DB e checker existentes preservados.
+Normalização de e-mail extraída da validação de cadastro; login não depende do
+formulário/confirmar senha e preserva a senha byte a byte.
+
+Token opaco 32 bytes CSPRNG/base64url, SHA-256 persistido, HttpOnly e no-store;
+não há JSON/localStorage com token. Cookie de sessão sem persistência cliente
+por Max-Age; expiração absoluta servidor de 3600s, sem refresh. Novo token por
+login preserva outros dispositivos e sessões anteriores. Logout UPDATE persistido
+antes de apagar cookie; falha retorna 503 sem declarar sucesso. Configuração exige
+TTL literal 3600 e APP_ORIGIN exata, HTTPS em produção. __Host prefix/Secure em
+produção e nome distinto em HTTP local evitam flexibilizar produção para QA.
+SQL parametrizado projeta apenas id/hash internamente no login e id/expiração/
+revogação na consulta. Nenhuma promoção/role/listagem é implementada.
+
+Defesa CSRF usa Origin exata obrigatória para POST; ausente/null é recusado.
+Sec-Fetch-Site aceita ausência/same-origin/none; Mode ausência/cors/same-origin;
+Dest ausência/empty. SameSite=Lax é defesa adicional. Sem CORS arbitrário.
+Hash dummy Argon2id no caminho ausente tem custo equivalente ao hash do cadastro;
+erros credenciais uniformes. Não se afirma tempo constante da requisição.
+
+Abuso: 30/min global, 5/min por digest e-mail, Map <=1024 entradas, janela fixa
+60s, concorrência <=2, leitura <=4096 bytes/5s. Sem IP/Forwarded arbitrários.
+Quota global compartilhada por processo pode causar recusa a outros usuários;
+reinícios/múltiplas instâncias não coordenam estado. Produção requer proteção no
+ingresso e controle distribuído com limites/monitoramento apropriados. Sem bloqueio
+permanente. Logout não lê corpo e compartilha limite de concorrência com sessão/login.
+
+Fontes oficiais consultadas em 29/10/2026: [Next cookies](https://nextjs.org/docs/app/api-reference/functions/cookies),
+[Next autenticação](https://nextjs.org/docs/app/guides/authentication),
+[OWASP autenticação](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html),
+[OWASP CSRF](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html),
+[OWASP sessões](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html).
+Aplicação das fontes: verificação servidor, erro genérico/trabalho hash equivalente,
+origem confiável e atributos/vida de sessão. Não representam certificação.

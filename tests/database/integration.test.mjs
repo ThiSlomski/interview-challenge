@@ -6,6 +6,7 @@ import { loadLocalEnvironment, localConnection, requireAuthenticationConfirmatio
 import { provisionSql, runtimeGrantsSql, roleIdentifier } from '../../scripts/database/provision.mjs';
 import { migrate } from '../../scripts/database/migrate.mjs';
 import { verifyRuntimePrivileges } from '../../server/db/config.mjs';
+import { authenticationHttpTests } from '../auth/http-postgres.mjs';
 import { registrationHttpTests } from '../registration/http-postgres.mjs';
 
 // Explicitly separate from npm test. No mocks and no fallback to imobilead.
@@ -47,6 +48,7 @@ test('PostgreSQL migrations, constraints, sessions and runtime permissions', asy
     await dbAdmin.query(runtimeGrantsSql(appRole));
     app = new pg.Client({ ...base, database, user: appRole, password }); await app.connect();
     const runtime = roleIdentifier(appRole);
+    await authenticationHttpTests(t, { ...base, database, user: appRole, password }, dbAdmin);
     await registrationHttpTests(t, { ...base, database, user: appRole, password }, dbAdmin);
     await t.test('expected effective contract accepts column INSERT without whole-table INSERT', async () => {
       await verifyRuntimePrivileges(app);

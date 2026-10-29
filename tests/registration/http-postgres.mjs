@@ -11,7 +11,7 @@ import { emailLengthCases } from './email-length-fixtures.mjs';
 
 // Actual Next route, copied unchanged. Only the database provider is adapted in
 // an isolated temp fixture, since production deliberately refuses test DB/roles.
-export async function registrationHttpTests(t, config, admin, scenario = 'standard') {
+export async function registrationHttpTests(t, config, admin, scenario = 'standard', runScenario) {
   assert.equal(config.host,'127.0.0.1'); assert.equal(config.port,5432);
   assert.match(config.database,/^imobilead_test_[a-f0-9]{12}$/);
   assert.match(config.user,/^imobilead_app_[a-f0-9]{12}$/);
@@ -37,7 +37,7 @@ export function database() { return pool ??= (async () => {
     const origin = `http://127.0.0.1:${port}`;
     // No inherited DATABASE_URL/admin/migration credentials or .env.local copy.
     const env = Object.fromEntries(Object.entries(process.env).filter(([key])=>/^(PATH|SYSTEMROOT|WINDIR|TEMP|TMP|COMSPEC|PATHEXT|USERPROFILE|APPDATA|LOCALAPPDATA)$/i.test(key)));
-    Object.assign(env,{ NODE_ENV:'development', NEXT_TELEMETRY_DISABLED:'1', APP_ORIGIN:origin, REGISTRATION_TEST_PG:JSON.stringify(config) });
+    Object.assign(env,{ NODE_ENV:'development', NEXT_TELEMETRY_DISABLED:'1', APP_ORIGIN:origin, SESSION_TTL_SECONDS:'3600', REGISTRATION_TEST_PG:JSON.stringify(config) });
     child=spawn(process.execPath,[resolve('node_modules/next/dist/bin/next'),'dev',directory,'--webpack','--hostname','127.0.0.1','--port',String(port)],{cwd:directory,env,windowsHide:true,stdio:['ignore','pipe','pipe']});
     exited=once(child,'exit');
     // Framework output may contain diagnostics; never forward raw output.
@@ -50,6 +50,7 @@ export function database() { return pool ??= (async () => {
       await new Promise(resolve=>setTimeout(resolve,250));
     }
     assert.equal(ready,true,'HTTP_FIXTURE_READY');
+    if (scenario === 'authentication') { await runScenario(origin); return; }
     const valid={name:'Fixture',email:' Http@Example.test ',password:'Abc12345',passwordConfirmation:'Abc12345',address:"Fixture '); DROP TABLE users; --",city:'Test City',state:'Region',country:'Test Country',postalCode:'A1 Test',message:'<script>fixture</script>'};
     let count=0;
     const post=(body=valid,headers={})=>{ count++; return fetch(origin+'/api/users',{method:'POST',headers:{'content-type':'application/json',origin,...headers},body:typeof body==='string'?body:JSON.stringify(body),signal:AbortSignal.timeout(15000)}); };

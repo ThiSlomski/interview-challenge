@@ -1,11 +1,57 @@
-# Executar a solução local
+﻿# Executar a solução local
 
-29/10/2026 · REG-001. Cadastro por `POST /api/users` implementado; schema,
-migrations, papéis e conexão de servidor preservados. Login,
-cookies, autorização, logout, telas de cadastro e clima ainda não foram implementados. Confira a
-[evidência atual](docs/harness/evidence/database.md) para distinguir execução real,
-testes offline e pendências. Revisão humana permanece pendente.
+## AUTH-001 — autenticação API, 29/10/2026
 
+Estado atual: cadastro, login, sessão persistida e logout implementados. Autorização
+por papel, listagem, página protegida, telas e clima pendentes. Esta seção prevalece
+sobre descrições históricas de autenticação futura abaixo.
+
+Configure APP_ORIGIN exata sem barra/caminho e SESSION_TTL_SECONDS=3600, obrigatórias
+para auth também no desenvolvimento. Produção exige HTTPS; configuração inválida
+retorna 503 AUTH_UNAVAILABLE. Cadastro mantém contrato REG-001.
+
+| Endpoint | Contrato |
+| --- | --- |
+| POST /api/auth/login | JSON email/password; 200 user.id e cookie; 401 INVALID_CREDENTIALS uniforme |
+| GET /api/auth/session | Cookie; 200 user.id/expiresAt ou 401 UNAUTHENTICATED |
+| POST /api/auth/logout | Sem corpo obrigatório; revogação persistida e 200 ok:true, repetível |
+
+POST exige Origin igual APP_ORIGIN, ausente/null recusados. Sec-Fetch-Site aceita
+somente ausência/same-origin/none, Mode ausência/cors/same-origin, Dest ausência/empty.
+Não há CORS amplo. Clientes de API devem enviar Origin explicitamente. Banco
+indisponível retorna 503 AUTH_FAILED sem emitir/remover cookie de sucesso. Login:
+400 entrada/JSON, 403 origem, 408 prazo, 413 corpo, 415 mídia e 429 limite.
+Respostas usam no-store. Senha nunca é transformada; e-mail usa normalização de
+cadastro sem acoplar validação completa do formulário.
+
+Cookie de sessão imobilead_session em HTTP local e __Host-imobilead_session em
+produção HTTPS: HttpOnly, SameSite=Lax, Path=/, sem Domain e Secure em produção.
+Sem Max-Age na emissão; restauração de navegador não prolonga validade servidor.
+Token CSPRNG32 bytes/base64url, somente digest SHA-256 persistido, nunca JSON ou
+localStorage. Expiração absoluta3600s sem renovação, novo token por login;
+sessões anteriores/outros dispositivos preservados. Logout revoga apenas token
+apresentado antes de apagar cookie com mesmos atributos e Max-Age=0.
+
+Função central authenticateSession em server/auth/session.mjs recebe provider,
+Cookie, configuração e relógio; retorna sessão mínima/null e propaga falha DB para
+chamador falhar fechado. Em página servidor pode passar
+`(await cookies()).toString()`. Não confia em userId/role do cliente; páginas e
+controle por papel não foram implementados nesta etapa.
+
+Limites por processo:30 tentativas/min global,5/min digest de e-mail,Map<=1024,
+janela fixa60s,concorrência2,corpo4096bytes/5s. Ignora IP/Forwarded arbitrários.
+Sucessos/falhas contam, sem bloqueio permanente. Quota pode ser esgotada por
+terceiros e não coordena múltiplas instâncias/restarts. Produção requer controle
+compartilhado e limites no ingresso, proxy confiável e monitoramento sanitizado.
+Conta ausente verifica hash dummy Argon2id custo m19456/t2/p1 equivalente ao cadastro;
+não se promete tempo constante de requisição inteira.
+
+`npm run test:auth:server`: 11 casos controlados, relógio e DB de fixture.
+`npm test`: inclui launcher auth além de cadastro/configuração.
+`npm run test:db:integration`: nove cenários auth HTTP Next dev/PostgreSQL reais
+no runner descartável já documentado abaixo. Não comprova navegador/TLS/__Host
+produção. [Plano](docs/harness/evidence/authentication-plan.md),
+[evidência](docs/harness/evidence/authentication.md) e revisão humana pendente.
 ## Pré-requisitos e instalação
 
 - Node.js 22.13.1 e npm 10.9.2, usados na validação local.

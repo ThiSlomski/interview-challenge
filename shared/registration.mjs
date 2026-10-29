@@ -5,6 +5,12 @@ export const registrationFields = Object.freeze([
 ]);
 const optionalFields = registrationFields.slice(4);
 
+// The database contract trims ASCII spaces and folds ASCII email to lowercase.
+// Shared by signup and login; passwords must never pass through this function.
+export function normalizeEmail(value) {
+  return typeof value === 'string' ? value.replace(/^ +| +$/g, '').toLowerCase() : '';
+}
+
 export function validateRegistration(input) {
   const errors = {};
   if (!input || typeof input !== 'object' || Array.isArray(input)) {
@@ -14,7 +20,7 @@ export function validateRegistration(input) {
   if (typeof input.name !== 'string' || [...input.name].length > 150 || input.name.includes('\0')) errors.name = 'INVALID_NAME';
   // DB-001 explicitly defines ASCII casefold; international email needs a new contract.
   const originalEmail = typeof input.email === 'string' ? input.email.replace(/^ +| +$/g, '') : '';
-  const email = originalEmail.toLowerCase();
+  const email = normalizeEmail(input.email);
   const [local, domain, extra] = email.split('@');
   // Supported syntax: ASCII dot-atom and dotted DNS hostname, not quoted locals,
   // comments, IP literals or SMTPUTF8. Format does not prove mailbox ownership.

@@ -1,5 +1,22 @@
-# Checkpoint para retomada
+﻿# Checkpoint para retomada
 
+## AUTH-001 — estado vigente, 29/10/2026
+
+Base real main/1c96acb; DB-001 e REG-001 versionados. CI-base aprovado conforme
+usuário; nenhum CI remoto do diff. Alteração prévia de AI_PROMPTS preservada.
+Pedido atual autorizou login/sessão/logout e supera restrições históricas abaixo.
+Implementados POST /api/auth/login, GET /api/auth/session, POST /api/auth/logout,
+função central servidor, cookie/digest, TTL absoluto3600 sem renovação e CSRF/abuso.
+[Plano](../evidence/authentication-plan.md) e [evidência](../evidence/authentication.md)
+registram falha intermediária HTTP, correção P2 e revisão independente sem achados
+pendentes; revisão humana pendente. QA: npm test28 pass (launchers cadastro8/auth11),
+auth explícito11/11, integração final Next+PG33/33 sem skips, limpeza0 recursos e
+metadados/ACLs protegidos iguais. Build/audit/doctor/validate/verify --product e
+lint/typecheck/diff --check passaram, Harness parcial/readiness not-assessed.
+Navegador/HTTPS produção não exercitados. Limites locais exigem controles produção.
+Sem mudança de schema/grants principais/Harness/CI/dependências, DML principal,
+remotos ou commit/push/publicação. Roles/listagem403/página protegida/telas/clima
+pendentes. Não iniciar etapa nova nem repetir mutações por memória.
 ## REG-001-E1 — estado vigente, 29/10/2026
 
 Comece por Git e project-state; a árvore já tinha os 23 arquivos REG-001 pendentes

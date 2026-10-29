@@ -1,3 +1,18 @@
+﻿## AUTH-001 — atualização vigente, 29/10/2026
+
+Prevalece sobre a matriz histórica abaixo. Base main/1c96acb; CI-base aprovado
+conforme usuário, nenhum CI remoto deste diff. [Evidência](harness/evidence/authentication.md).
+
+| IDs | Estado atual | Lacuna |
+| --- | --- | --- |
+| 5,6,9 | Login, sessão opaca/digest e logout implementados e verificados | Navegador/HTTPS produção não exercitados |
+| 7 | Consulta mínima protegida e função central servidor | Página protegida e demais APIs pendentes |
+| 8,10.g | Nenhuma autorização por papel | user/admin/listagem/403 pendentes |
+| 10.a-f,SEC-2,SEC-5 | Cookie, origem/CSRF,CORS,abuso,erro uniforme,TTL absoluto fixo | Controles distribuídos/ingresso produção pendentes |
+| 14.c | Nove cenários auth HTTP Next+PG reais | Casos de autorização pendentes |
+| 14.a,15.a | Onze casos auth controlados e comandos documentados | Unitários de autorização pendentes |
+| 15.b,CI-3 | npm test inclui auth sem alterar workflow | CI remoto do diff e integração CI não executados |
+| 11-13 | Telas, área protegida e clima ausentes | Fora AUTH-001 |
 # Matriz de requisitos do desafio
 
 Data: 28/10/2026. Origem: [README canônico](../README.md), inspecionado
