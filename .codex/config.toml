@@ -1,0 +1,4 @@
+# Sem modelo, permissões, credenciais ou confiança: herdar a sessão.
+[agents]
+enabled = true
+max_concurrent_threads_per_session = 2

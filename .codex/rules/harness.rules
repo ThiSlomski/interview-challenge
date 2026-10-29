@@ -1,0 +1,6 @@
+# Prefixos diretos; não constituem barreira universal.
+prefix_rule(pattern = ["git", "push"], decision = "forbidden", justification = "Publicacao fora desta etapa; entregar diff local.", match = ["git push origin main"], not_match = ["git status"])
+prefix_rule(pattern = ["git", "reset", "--hard"], decision = "forbidden", justification = "Preservar alteracoes; resolver por edicoes pontuais.", match = ["git reset --hard HEAD"])
+prefix_rule(pattern = ["git", "clean"], decision = "forbidden", justification = "Limpeza destrutiva fora desta etapa; inspecionar arquivos.", match = ["git clean -fdx"])
+prefix_rule(pattern = ["npm", "publish"], decision = "forbidden", justification = "Publicacao fora desta etapa; entregar localmente.", match = ["npm publish"])
+prefix_rule(pattern = ["vercel", "deploy"], decision = "forbidden", justification = "Deploy fora desta etapa; entregar localmente.", match = ["vercel deploy --prod"])

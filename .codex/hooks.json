@@ -1,0 +1,22 @@
+{
+  "description": "Harness advisory diagnostics; review/trust explicitly in Codex before use.",
+  "hooks": {
+    "SessionStart": [{
+      "matcher": "startup|resume",
+      "hooks": [{
+        "type": "command",
+        "command": "node scripts/harness/hook.mjs",
+        "commandWindows": "powershell.exe -NoProfile -Command \"$taskRoot = git rev-parse --show-toplevel; if ($LASTEXITCODE -ne 0) { exit 1 }; node (Join-Path $taskRoot 'scripts/harness/hook.mjs')\"",
+        "timeout": 10
+      }]
+    }],
+    "Stop": [{
+      "hooks": [{
+        "type": "command",
+        "command": "node scripts/harness/hook.mjs",
+        "commandWindows": "powershell.exe -NoProfile -Command \"$taskRoot = git rev-parse --show-toplevel; if ($LASTEXITCODE -ne 0) { exit 1 }; node (Join-Path $taskRoot 'scripts/harness/hook.mjs')\"",
+        "timeout": 10
+      }]
+    }]
+  }
+}

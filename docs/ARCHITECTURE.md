@@ -159,3 +159,24 @@ _Para cada item, diga o que fez e por quê — e o que deixaria para depois._
 ## O que eu faria com mais tempo
 
 _Liste o que priorizaria a seguir — mostra visão e senso de priorização._
+
+## ADR-H001 — Harness local antes do desenvolvimento funcional (28/10/2026)
+
+- Contexto: o esqueleto foi estabilizado nos registros acima; o pedido atual
+  solicita oito componentes de desenvolvimento assistido, antes do produto.
+- Decisão: AGENTS conciso; configuração .codex com concorrência 2; quatro
+  especialistas standalone; seis skills .agents/skills; scripts Node sem pacotes;
+  workflows manuais guiados, memória explícita e hooks opcionais de orientação.
+  [Guia operacional](HARNESS.md), [fontes oficiais e formatos](harness/sources.md).
+- Alternativas: só criar pastas não demonstraria operação; framework adicional
+  ou Agents API ampliaria escopo/custo; hooks globais e trust automático foram
+  excluídos pelo pedido. Scripts explícitos mantêm operação sem depender de hooks.
+- Consequências: checks positivos/negativos e retomada reproduzíveis; manutenção
+  pequena proporcional ao prazo de três dias; documentação não vira pipeline.
+- Limites: papéis executados por leitura explícita, seleção nativa não demonstrada;
+  revisão de leitura é orientação, sem isolamento por agente; rules cobrem prefixos
+  diretos e não formas indiretas; handler testado não comprova disparo real.
+  Estado detalhado por componente em [capabilities](harness/capabilities.md).
+- Validação: [evidência real H-001](harness/evidence/demo.md); preservação do produto,
+  dependências, lockfile e CI conferida contra hashes iniciais. Banco/auth/runner
+  continuam sem decisão. Revisão humana pendente; sem commit ou publicação.
