@@ -1,6 +1,16 @@
 # Arquitetura da solução
 
-## Estado real desta etapa — migração do lint (28/10/2026)
+## Estado atual — DB-001 (29/10/2026)
+
+A etapa de banco está autorizada pelo [pedido atual](prompts/2026-10-29-database.md).
+PostgreSQL, modelo inicial, migrations e provisionamento estão implementados em
+arquivos; a execução real e suas limitações constam da
+[evidência DB-001](harness/evidence/database.md). Cadastro, API de usuários,
+login/cookies, autorização e logout ainda não foram implementados. As seções
+anteriores de estabilização/Harness e os templates abaixo são históricos; as
+decisões DB-001 ao final deste documento são as escolhas atuais de persistência.
+
+## Histórico — migração do lint (28/10/2026)
 
 Esta etapa altera apenas ferramentas, versões e documentação. As seções de
 arquitetura funcional abaixo continuam como template, não como implementação
@@ -180,3 +190,181 @@ _Liste o que priorizaria a seguir — mostra visão e senso de priorização._
 - Validação: [evidência real H-001](harness/evidence/demo.md); preservação do produto,
   dependências, lockfile e CI conferida contra hashes iniciais. Banco/auth/runner
   continuam sem decisão. Revisão humana pendente; sem commit ou publicação.
+
+## ADR-DB001 — PostgreSQL, SQL explícito e migrations (29/10/2026)
+
+- Contexto: PostgreSQL 18 foi definido pelo usuário, que criou `imobilead` no
+  DBeaver. Recuperação de acesso é contexto local, não requisito de instalação
+  para o avaliador. A conexão na extensão VS Code foi informada pelo usuário;
+  conexão da aplicação precisa de evidência própria.
+- Decisão: driver `pg@8.23.1` no servidor e `node-pg-migrate@9.0.0` em
+  desenvolvimento, com SQL explícito em `database/migrations/`. A ferramenta
+  fornece histórico, ordenação, transação e lock de migrations; não há runner
+  próprio de migrations. `server-only@0.0.1` marca a fronteira de servidor e
+  `@types/pg@8.23.1` fornece tipos. Novas dependências diretas exatas; versões
+  estabilizadas anteriormente foram preservadas.
+- Alternativa: Prisma daria cliente gerado e schema declarativo, mas acrescentaria
+  geração/DSL sem ganho necessário para duas tabelas e constraints explícitas
+  nesta etapa. SQL requer manutenção manual dos tipos e consultas parametrizadas.
+- Comandos oficiais consultados: [API node-pg-migrate](https://salsita.github.io/node-pg-migrate/api),
+  [CLI node-pg-migrate](https://salsita.github.io/node-pg-migrate/cli),
+  [conexões SSL no node-postgres](https://node-postgres.com/features/ssl).
+  `node-pg-migrate@9.0.0` requer Node >=20.11; ambiente local Node 22.13.1.
+- Consequências: scripts são limitados ao destino autorizado
+  `127.0.0.1:5432/imobilead`, sem opções de URL que sobreponham host. Conexão é
+  construída apenas no servidor, de forma lazy, e recusa papel administrativo
+  no runtime. Essa restrição local precisará de decisão explícita para produção.
+  Credenciais ficam em variáveis/`.env.local` ignorado; nenhum segredo é exibido.
+- Migrations são forward-only. Não existe reset/down destrutivo do banco local.
+  Preflight verifica identidade efetiva e inventaria objetos; objetos do projeto
+  sem histórico impedem avançar. A execução real ainda depende das credenciais
+  locais e da inspeção do estado existente, conforme a evidência.
+
+## ADR-DB002 — modelo inicial e fronteira de dados (29/10/2026)
+
+Schema de aplicação `imobilead`; histórico em `imobilead_meta`, sem acesso pelo
+papel runtime. Uma migration inicial cria as tabelas abaixo.
+
+| Tabela/campo | Tipo e nulabilidade | Regra/decisão |
+| --- | --- | --- |
+| users.id | uuid, PK, não nulo | gerado por `gen_random_uuid()` |
+| users.name | varchar(150), não nulo | máximo 150; mínimo não inventado, string vazia aceita nesta camada |
+| users.email | text COLLATE C, não nulo, UNIQUE | valor canônico `lower(btrim(email))`, CHECK de formato básico |
+| users.password_hash | text, não nulo | CHECK não vazio; tamanho não deriva do limite 8–35 da senha |
+| users.address/city/state/country/postal_code/message | text, nulos permitidos | README não fixa obrigatoriedade/limites; sem restrições brasileiras de CEP/estado |
+| users.role | text, não nulo | CHECK `user/admin`, DEFAULT `user` |
+| users.created_at/updated_at | timestamptz, não nulos | DEFAULT now(); CHECK updated_at >= created_at |
+| sessions.token_hash | bytea, PK, não nulo | CHECK 32 bytes; digest SHA-256, nunca token bruto |
+| sessions.user_id | uuid, não nulo | FK users.id ON DELETE CASCADE; índice para vínculo/exclusão |
+| sessions.created_at/expires_at | timestamptz, não nulos | criação DEFAULT now(); expiração > criação |
+| sessions.revoked_at | timestamptz, nulo permitido | quando presente, >= criação |
+
+O banco rejeita e-mail não canônico, e o índice UNIQUE protege a unicidade também
+em inserções concorrentes. O Backend futuro deve aplicar a mesma política de
+normalização antes do INSERT; o CHECK de formato é uma defesa básica, não validação
+completa de endereço nem prova de posse. Esta decisão cobre o casefold ASCII;
+normalização/casefold internacional requer decisão e testes antes de ampliação.
+
+Não há coluna de senha em texto puro nem confirmação. O banco não consegue
+comprovar que um texto não vazio é hash seguro: hashing Argon2id e parâmetros
+serão implementados/testados com Backend na etapa de autenticação. A política de
+senha original 8–35 alfanumérica pertence às validações futuras, não à coluna hash.
+
+`updated_at` deverá ser atualizado explicitamente pelo Backend; não há trigger.
+PKs e UNIQUE já fornecem seus índices, sem duplicação. Não há índice de expiração
+porque não foi criada tarefa de limpeza nesta etapa; reavaliá-lo junto dessa tarefa.
+
+`server/db/index.ts` oferece uma projeção explícita dos campos de cadastro,
+identificador e datas; exclui `password_hash`, papel e todo material de sessão.
+Não existe API de consulta ainda: respostas futuras precisam usar allowlist e
+checar autorização no servidor. A existência dessa constante não comprova ausência
+de vazamento em endpoints futuros.
+
+## ADR-DB003 — sessão e administrador: contrato com Backend (29/10/2026)
+
+Backend revisou o contrato antes da tabela. Estratégia acordada: token opaco
+aleatório de 32 bytes gerado no servidor, persistindo apenas seu SHA-256 de 32
+bytes. Expiração absoluta de uma hora, sem renovação inicialmente; revogação por
+`revoked_at`. Consulta futura aceita somente sessão não revogada, não expirada e
+vinculada a usuário existente. A tabela permite expiração positiva; a política de
+uma hora deverá ser aplicada e testada na emissão futura.
+
+Cookie futuro: HttpOnly, Secure, SameSite=Lax, Path=/. CSRF/verificação de origem,
+CORS, rate limiting e prevenção de enumeração serão decididos e exercitados com
+login/logout. Nenhum cookie, endpoint ou fluxo de autenticação foi implementado
+nesta rodada. A alternativa JWT acrescentaria gestão de revogação ao requisito de
+logout; sessão opaca permite invalidação central imediata, ao custo de consulta
+ao banco por sessão e da futura limpeza de registros expirados.
+
+Administrador futuro: promoção administrativa explícita de usuário já existente
+por UUID, após conferência local. Não há seed, conta, senha padrão ou usuário real
+criado automaticamente; o comando de promoção fica pendente para a próxima etapa.
+Cadastro público deve rejeitar papel recebido e inserir `user`; grants por coluna
+já excluem `role` do INSERT e não concedem UPDATE ao runtime como defesa adicional.
+
+## ADR-DB004 — papéis e permissões locais (29/10/2026)
+
+Credenciais separadas: administração em `ADMIN_DATABASE_URL`, migrations em
+`MIGRATION_DATABASE_URL` (`imobilead_migrate`) e execução em `DATABASE_URL`
+(`imobilead_app`). Provisionamento cria somente papéis e schemas do desafio;
+recusa colisões em vez de assumir papéis/objetos existentes. Senhas são definidas
+localmente pelo prompt protegido `psql \password`, nunca fixadas no código.
+
+Ambos papéis de projeto são LOGIN/NOSUPERUSER/NOCREATEDB/NOCREATEROLE,
+NOREPLICATION/NOBYPASSRLS/NOINHERIT. Migrations detém os schemas; runtime recebe
+USAGE somente no schema da aplicação, SELECT users e INSERT em colunas
+explícitas que excluem `role`, além de DML sessions. UPDATE/DELETE users não
+foram concedidos porque o README exige cadastro/consulta, sem edição/exclusão. Nenhum grant para
+histórico ou CREATE de estrutura é dado à aplicação. Checagem runtime recusa
+atributos privilegiados, memberships e CREATE em schemas da aplicação/público,
+sem revogar permissões globais ou alterar outros bancos. PUBLIC CONNECT/TEMP
+padrões do PostgreSQL não foram alterados; não se afirma isolamento absoluto do
+papel entre bancos. Negação de DDL aqui diz respeito a objetos permanentes nos
+schemas verificados, não a tabelas temporárias.
+
+Não há default grant amplo para tabelas futuras. Cada migration que criar objetos
+novos deve incluir/revisar grants mínimos explícitos, e manter objetos internos em
+schema sem acesso runtime. `db:grant` concede somente o contrato das duas tabelas
+atuais e pode ser repetido; mudanças de modelo exigem atualizá-lo. Papéis globais
+criados têm nomes exclusivos do desafio; nenhum papel alheio é modificado.
+
+## Testes e limites DB-001
+
+Node test runner foi escolhido para testes de configuração/guardrails sem outro
+framework; `npm test` declara arquivo explícito, compatível com o adaptador atual
+do harness. Testes PostgreSQL reais ficam separados em `test:db:integration` e
+não são substituídos por mocks. O runner prepara banco e papéis com sufixo aleatório
+identificado pela execução e limpa somente esses recursos; nunca usa reset/drop/
+truncate em `imobilead`. Execução exige autorização explícita de destino descartável
+compatível com a restrição atual e credencial administrativa local.
+
+Casos preparados: primeira e segunda migration, e-mail canônico/único concorrente,
+nome/papel, integridade temporal/FK e revogação de sessões, DML autorizado e DDL/
+escalada/persistência de migrations negados ao runtime. Resultados executados e
+lacunas estão na [evidência](harness/evidence/database.md). Testes offline não
+comprovam migrations ou permissões reais; cadastro/auth/API permanecem pendentes.
+CI não foi modificado nesta rodada; integração PostgreSQL no CI fica para etapa
+posterior. `npm audit` após adições retornou código 0, zero vulnerabilidades,
+sem resolver os avisos históricos de suporte de ESLint 9 e React 18.
+
+## ADR-DB005 — verificar o contrato efetivo de privilégios (29/10/2026)
+
+Origem: revisão estática do diff DB-001 compartilhado nesta conversa. A checagem
+administrativa anterior não detectava grants extras em tabelas/colunas; não foi
+demonstrado grant indevido em imobilead. Reprodução descartável confirmou que
+UPDATE(role) adicional era efetivo e a checagem antiga ainda aprovava. Testes
+anteriores permanecem válidos no escopo original, sem esse cenário adicional.
+
+Decisão: manter verifyRuntimePrivileges somente de leitura e limitada às três
+tabelas atuais. Exigir flags administrativas/memberships/CREATE explicitamente
+false, USAGE no schema da aplicação explicitamente true e contrato de ACLs
+explicitamente verdadeiro. OIDs de pg_catalog permitem verificar o histórico
+sem conceder USAGE no schema interno. Ausência/NULL/resposta incompleta/erro
+nunca aprovam. Usar as funções oficiais
+[de privilégios efetivos](https://www.postgresql.org/docs/18/functions-info.html),
+que consideram grants de tabela, coluna e PUBLIC.
+
+- Users: SELECT em suas 13 colunas e INSERT nas 12 autorizadas, excluindo role;
+  sem UPDATE em qualquer coluna, DELETE/TRUNCATE ou poderes fora do contrato.
+  INSERT por coluna não exige INSERT na tabela inteira.
+- Sessions: SELECT/INSERT/UPDATE efetivos nas cinco colunas e DELETE; sem extras
+  como TRUNCATE, REFERENCES, TRIGGER, MAINTAIN ou delegação de privilégios.
+- Histórico: sem USAGE/CREATE em imobilead_meta nem privilégios de tabela/coluna
+  em pgmigrations, mesmo direitos latentes sem acesso ao schema.
+
+Alternativa de comparar somente ACLs diretas seria insuficiente para privilégios
+efetivos herdados de tabela/PUBLIC. Reparação automática com GRANT/REVOKE foi
+excluída: divergência deve ser diagnosticada e tratada em tarefa autorizada.
+Não há auditor genérico; mudança de schema/contrato requer atualizar a checagem.
+
+Regressões reais isolam grants/revogações no descartável e restauram o contrato
+em finally. A restauração de INSERT da tabela precisa repor os grants por coluna,
+pois [REVOKE de tabela também revoga os correspondentes de coluna](https://www.postgresql.org/docs/18/sql-revoke.html).
+Uma falha intermediária do teste expôs esse comportamento e foi corrigida sem
+alterar grants do banco existente. Revisão independente acrescentou USAGE como
+acesso necessário; correção e regressão real incluídas.
+
+Limites: contrato fixo de ACLs atuais, sem auditoria de RLS, funções privilegiadas,
+objetos futuros, TOCTOU ou autorização da API. A checagem é um diagnóstico no
+momento de execução, não uma garantia permanente contra mudanças posteriores.
+Resultados reais, revisão e limpeza em [DB-001-P1](harness/evidence/database.md#db-001-p1--contrato-de-detecção-de-divergência-de-privilégios-29102026).

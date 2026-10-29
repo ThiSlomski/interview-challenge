@@ -1,5 +1,125 @@
 # Checkpoint para retomada
 
+## DB-001-P1 — divergências de privilégios detectadas, 29/10/2026
+
+Origem: revisão estática do diff compartilhado. Reprodução PostgreSQL descartável
+confirmou checker antigo aceitando UPDATE(role) adicional; não foi demonstrado
+grant indevido em imobilead. Checker ampliado para ACLs efetivas fixas users/
+sessions/history, inclusive tabela/coluna/PUBLIC, USAGE necessário e falha fechada
+por ausência/NULL/erro. Somente diagnostica; nenhum reparo automático.
+
+Final: 16 testes offline e 16 aprovações Node de integração real (15 subtestes+
+principal), lint/typecheck/build passaram. db:check leitura em imobilead com
+imobilead_app passou; nenhum grant/migration/provisionamento repetido nesse banco.
+Falha intermediária de restauração INSERT do teste foi diagnosticada antes de
+correção; revisão independente apontou USAGE, corrigido e confirmado em seguimento.
+Cleanup confirmado após execuções: zero bancos/papéis descartáveis remanescentes,
+metadados/ACLs protegidos de imobilead inalterados. Preservar histórico anterior.
+[Evidência, comandos e limites](../evidence/database.md#db-001-p1--contrato-de-detecção-de-divergência-de-privilégios-29102026).
+Não implica auth/API prontas ou segurança exaustiva. Revisão humana pendente;
+nenhuma próxima funcionalidade iniciada, sem commit/push.
+
+## DB-001-I1 — integração PostgreSQL real aprovada, 29/10/2026
+
+Usuário autorizou banco/papéis exclusivos descartáveis em 127.0.0.1:5432.
+Após revisão das proteções e preflight READ ONLY, o agente executou uma vez
+`npm run test:db:integration`: código 0, 1 teste aprovado, zero falhas/skips.
+Asserções de migrations inicial/repetida, e-mail concorrente, nome/papel,
+sessões/FK/tempos e permissões previstas pelo runner passaram em PostgreSQL real.
+Esta execução do agente é distinta da sequência manual informada em M1 abaixo.
+
+Limpeza do próprio runner concluída: catálogo antes/depois sem bancos/papéis
+descartáveis remanescentes; nenhuma limpeza adicional por prefixo. Metadados
+de schemas/relações/ACLs e atributos dos papéis fixos de imobilead permaneceram
+iguais; SQL mutável do runner limitado ao banco/papéis exclusivos. Sem leitura
+de valores pessoais ou modificação de imobilead, remotos, implementação ou commits.
+
+A integração deixa de estar pendente para os casos executados, sem afirmar
+validação exaustiva de constraints/permissões ou auth/API/UI. Próxima tarefa
+funcional depende de autorização específica; não repetir ações por memória.
+[Comando, revisão, resultados e limpeza](../evidence/database.md#db-001-i1--integração-local-autorizada-29102026).
+Revisão humana pendente; registros abaixo são históricos.
+
+## DB-001-M1 — atualização manual informada, 29/10/2026
+
+O usuário informou execução manual bem-sucedida, nesta ordem: db:inspect;
+db:migrate (applied:1); db:migrate (applied:0); db:grant; db:check, confirmando
+127.0.0.1:5432/imobilead com imobilead_app. Atribuição exclusiva ao relato do
+usuário, sem repetição ou confirmação independente pelo agente nesta rodada.
+Migrations/grants/conexão runtime passam a constar como execução manual informada,
+superando as pendências correspondentes de D2 abaixo, mantido como histórico.
+
+Integração em banco descartável continua pendente. Essa sequência não comprova
+constraints, concorrência, sessões e permissões integralmente testadas, nem
+funcionalidades concluídas. Não repetir comandos pela memória; a próxima tarefa
+depende de autorização específica. Sem implementação ou commits nesta rodada.
+[Evidência e limites](../evidence/database.md#db-001-m1--execução-manual-informada-pelo-usuário-29102026).
+
+## DB-001-D2 — correção e provisionamento confirmados, 29/10/2026
+
+`host(inet_server_addr()) AS address` e igualdade com `expected.host` aplicados;
+banco/porta/usuário preservados. 12 testes controlados, lint/typecheck/diff passaram.
+Preflight PostgreSQL READ ONLY aprovou identidade administrativa integral no
+destino exclusivo. `npm run db:provision` executado uma vez, código 0; catálogo
+posterior confirmou papéis imobilead_migrate/imobilead_app e schemas
+imobilead/imobilead_meta, ownership e direitos de schema esperados, sem tabelas.
+Não repetir provisionamento. Nenhuma senha foi definida/redefinida e `.env.local`
+não foi alterado; não foram executadas migrations ou testes descartáveis.
+Próximo passo depende de autorização específica: senhas locais dos novos papéis
+e posterior migrations/grants/check da aplicação. Não iniciá-lo pela memória.
+[Resultados e limites](../evidence/database.md#db-001-d2--contrato-da-correção-autorizada-29102026).
+Autorrevisão desta correção; revisão humana pendente. Registros abaixo históricos.
+
+Atualização DB-001-D1, 29/10/2026: usuário relatou falha de identidade em
+`db:provision`. Diagnóstico somente de leitura confirmou divergência apenas em
+`address`: cast inet para text inclui máscara; correção para `host(...)` e
+igualdade exata com host está proposta, ainda não aplicada. Não repetir o
+provisionamento antes da correção autorizada. `.env.local` agora existe; conexão
+administrativa no destino exigido foi verificada sem expor valores. Catálogo
+atual sem papéis/schemas/relações previstos pelo provisionamento. A conexão da
+aplicação continua sem comprovação. Ver [diagnóstico e QA](../evidence/database.md#db-001-d1--diagnóstico-de-identidade-29102026).
+Doctor/validate/verify --product e diff --check passaram nesta rodada, escopo
+parcial. Nenhuma alteração de objetos ou permissões e nenhuma correção funcional.
+
+## DB-001 — checkpoint atual, 29/10/2026
+
+Base real reconciliada: main, HEAD 2ee16c787dd77b23da02353d1667ab7568258941,
+árvore limpa no início; alterações desta etapa ainda sem commit. O pedido atual
+supera a restrição temporária de “somente Harness” dos checkpoints abaixo.
+
+Leia [estado](project-state.md), [evidência DB-001](../evidence/database.md) e
+[SOLUTION](../../../SOLUTION.md), depois confira Git. Implementados em arquivos:
+pg/node-pg-migrate, migration users/sessions, papéis separados/grants por coluna,
+configuração servidor, CLI sanitizada e testes. Backend acordou sessões antes da
+tabela e fez revisão independente delimitada; detalhes/correções na evidência.
+Revisão humana permanece pendente.
+
+Usar exclusivamente 127.0.0.1:5432/imobilead. Não acessar conexões remotas/Sillage
+nem extrair credenciais salvas no VS Code. O usuário criou imobilead no DBeaver e
+informou conexão na extensão; isso não comprova a aplicação. Inspeção delimitada
+do arquivo HBA do serviço encontrou zero trust/includes, sem mudar autenticação;
+a leitura não prova configuração carregada no processo. Não recriar trust.
+
+Próxima ação: credenciais locais em `.env.local` ignorado, preservando existente,
+sem ler/exibir valores ou pedi-los no chat. Usuário informou que preencheria nesta
+etapa; só confirmar presença/disponibilidade e usar os comandos sanitizados.
+Provisionamento ADMIN -> senhas de papéis por psql \password -> MIGRATION/DATABASE
+URLs -> db:inspect -> db:migrate duas vezes -> db:grant -> db:check. Conferir
+identidade e inventário efetivos antes de mutação. Em colisão, parar e relatar,
+sem reset/drop/truncate do banco existente. Não repetir operações pela memória.
+
+Testes offline 4/4, lint/typecheck/build/audit e harness passaram conforme evidência;
+migrations/permissões reais ainda não comprovadas. Integração preparada usa banco
+separado descartável e exige autorização de destino compatível; não executá-la sob
+a restrição exclusiva atual. Cluster efêmero foi cancelado antes de implementação.
+
+Próxima etapa funcional recomendada após fechar essa lacuna: cadastro/auth com
+allowlist de entrada/saída, hashing Argon2id definido/testado, sessões e controle
+user/admin no servidor. Não iniciar telas/endpoints/login/logout/clima pela
+sugestão deste checkpoint. Sem CI, commit/push/publicação/deploy nesta etapa.
+
+## Checkpoints históricos do Harness
+
 ## H-002 — estado atual, 28/10/2026
 
 Origem: Prompt 6; correções dos cinco achados. Revisão humana pendente.

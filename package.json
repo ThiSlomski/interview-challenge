@@ -8,20 +8,30 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "echo \"Substitua por seu runner de testes (Vitest/Jest/Playwright). Ver README Parte 5.\" && exit 0"
+    "test": "node --test tests/database/config.test.mjs",
+    "test:db:integration": "node --test tests/database/integration.test.mjs",
+    "db:inspect": "node scripts/database/cli.mjs inspect",
+    "db:provision": "node scripts/database/cli.mjs provision",
+    "db:migrate": "node scripts/database/cli.mjs migrate",
+    "db:grant": "node scripts/database/cli.mjs grant",
+    "db:check": "node scripts/database/cli.mjs check-app"
   },
   "dependencies": {
     "axios": "1.20.0",
     "next": "16.4.3",
+    "pg": "8.23.1",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "server-only": "0.0.1"
   },
   "devDependencies": {
     "@types/node": "20.11.20",
+    "@types/pg": "8.23.1",
     "@types/react": "18.2.58",
     "@types/react-dom": "18.2.19",
     "eslint": "9.39.5",
     "eslint-config-next": "16.4.3",
+    "node-pg-migrate": "9.0.0",
     "typescript": "5.3.3"
   }
 }

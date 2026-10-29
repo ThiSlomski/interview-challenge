@@ -19,3 +19,13 @@ mutação, e erros posteriores devem ser exatamente os esperados. Código 0 não
 substitui relatório de casos reais; nome de arquivo TODO e echo antes de runner
 não tornam um comando placeholder. Falha Git não é árvore limpa; ausência de
 habilitação/camada efetiva não é disponibilidade operacional.
+
+DB-001, 29/10/2026 · origem: implementação/revisão Banco/Backend; evidência
+[banco](../evidence/database.md): conexão em DBeaver/VS Code, conexão do driver e
+migrations são verificações distintas. Testes offline do runner podem passar sem
+PostgreSQL e nunca comprovam constraints/grants. Não extrair credenciais salvas;
+confirmar destino efetivo e inventariar antes de modificar banco existente.
+Grants por coluna e revisão dos defaults evitam conceder edição/exclusão/promoção
+sem requisito; ausência de revogação global não permite prometer isolamento entre
+bancos. Atualização do usuário sobre destino exclusivo cancelou o plano de cluster
+efêmero antes de sua execução; não retomá-lo automaticamente em outra sessão.
