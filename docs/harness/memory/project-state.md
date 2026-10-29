@@ -1,5 +1,53 @@
 # Estado do projeto
 
+## REG-001-E1 — correção de comprimento de e-mail, 29/10/2026
+
+Atualização vigente sobre REG-001 abaixo. Os dois exemplos do pedido foram
+reproduzidos antes da edição: domínio com label de 64 e local de 65 retornavam
+ok:true; achado novo, não coberto pela revisão anterior. Agora exige local <=64,
+label <=63 e endereço normalizado <=254 bytes, mantendo ASCII/normalização/sintaxe
+e INVALID_EMAIL. ASCII implica igualdade de caracteres e bytes; fonte RFC 5321
+§4.5.3.1 e RFC 1035 §2.3.4. Sem DNS/envio/prova de posse ou mudança no banco.
+23 arquivos pendentes anteriores foram preservados em snapshot; diff E1 compara
+essa base e exclui REG-001 anterior. Resultados atuais e limpeza na
+[evidência E1](../evidence/registration.md#reg-001-e1--comprimento-de-e-mail-29102026).
+Tarefa delimitada sem delegação adicional, autorrevisão sequencial e revisão
+humana pendente. Sem commit/push/publicação. Próxima etapa será login/sessão,
+não iniciada; autorização/GET/logout/telas/clima permanecem pendentes.
+QA E1: npm test 27 aprovações (inclui launcher dos 8 testes servidor), servidor
+8/8 explícito, integração HTTP/PG 24 aprovações/zero skips, limpeza confirmada e
+metadados/ACLs protegidos iguais. Lint/typecheck/build/doctor/validate/verify --product
+e diff --check aprovados; Harness parcial. Audit/CI remoto/HTTP produção/revisão
+independente adicional não executados. Diff exclusivo E1 no caminho da evidência.
+
+## REG-001 — cadastro API implementado, 29/10/2026
+
+Base main/835537da073c26c89ea546be73e41d1a41085472, árvore limpa no início.
+Fase atual autorizada: cadastro pela API. POST /api/users, validação compartilhada
+browser-safe, Argon2id, SQL parametrizado/default user, conflito UNIQUE, projeção id,
+origem/JSON/corpo/prazo/quota/concorrência implementados, sem sessão automática.
+Nenhum schema/grant/runtime principal/Harness/CI alterado. APP_ORIGIN adicionada
+ao exemplo; obrigatória em produção. @node-rs/argon2@2.2.2 pinado/lock atualizado.
+
+24 aprovações no npm test, incluindo launcher de oito testes servidor, sem skips;
+22 aprovações em cada uma de três execuções PostgreSQL+Next HTTP locais reais.
+Limpeza confirmada por catálogo, zero recursos próprios, metadados/ACLs protegidos
+iguais; nenhum SQL mutável em imobilead. Build/audit e doctor/validate/verify --product
+passaram, assim como diff --check; Harness parcial, sem avaliação de prontidão. Ver fechamento
+Harness/diff e falhas intermediárias na [evidência REG-001](../evidence/registration.md).
+Revisão Backend independente com dois P2 de e-mail corrigidos/regredidos;
+seguimento sem achados pendentes. Revisão humana pendente.
+
+CI aprovado para 835537d conforme usuário, sem confirmação remota pelo agente;
+integração local não é cobertura do CI. HTTP real em Next dev/fixture de provider
+descartável; não flexibiliza nem comprova conexão HTTP no banco principal.
+Limitador local global não coordena instâncias, quota compartilhada pode ser
+esgotada; 409 permite inferência de cadastro. Detalhes na arquitetura REG-001.
+
+Sem commit/push/publicação/clima/banco remoto. Próxima etapa sugerida, mediante
+autorização: login/sessão, depois consulta autorizada/logout; UI/clima pendentes.
+Atualizações anteriores abaixo são históricas e não bloqueiam esta autorização.
+
 ## Atualização DB-001-P1 — privilégios efetivos, 29/10/2026
 
 Checker antigo reproduzido aceitando UPDATE(role) adicional somente no

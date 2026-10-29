@@ -17,7 +17,36 @@ estáticas, sem teste de navegador, migrations ou CI remoto. Os caminhos nas
 colunas indicam o estado atual, não a arquitetura futura. Testes do Harness não
 satisfazem os testes funcionais exigidos pelo desafio.
 
-## Atualização DB-001 — 29/10/2026
+## Atualização REG-001 — 29/10/2026
+
+Correção vigente REG-001-E1: requisito 1.b de e-mail válido agora inclui os
+limites oficiais local 64/label 63/endereço normalizado 254 bytes em ASCII.
+Omissão reproduzida nesta rodada e não coberta pela revisão anterior. Regressões
+controladas e HTTP/PG reais: fronteiras aceitas, excessos 400 sem INSERT.
+Ver [evidência E1](harness/evidence/registration.md#reg-001-e1--comprimento-de-e-mail-29102026).
+
+Este checkpoint prevalece sobre as descrições históricas DB-001/Harness da matriz.
+[Evidência atual](harness/evidence/registration.md): cadastro por POST implementado
+e verificado em HTTP/PG reais descartáveis. Revisão independente concluída, humana
+pendente. CI do commit-base 835537d aprovado conforme usuário; novo diff sem CI remoto.
+
+| IDs | Estado atual REG-001 | Lacuna |
+| --- | --- | --- |
+| 1 / 1.a–1.j | Validação servidor e persistência de todos os campos; nome/e-mail/senha/confirmação obrigatórios; demais opcionais conforme DB-001; hash seguro e confirmação não persistida | Formulário/cliente ausentes; item full-stack parcial |
+| 2 POST / 3.b | POST /api/users validado por HTTP real, erros mínimos, concorrência UNIQUE e entrada não confiável | Consulta GET e autorização ausentes |
+| 3.a | Validador puro browser-safe pronto para reutilização | Nenhuma tela consumidora implementada |
+| 14.a | Dez casos de validação (incluindo três de comprimento E1) mais oito controlados de servidor/hash | Regras de autorização pendentes |
+| 14.b | Seis subtestes de HTTP real com PostgreSQL, além dos casos controlados | Auth 401/403 por papel depende de próxima etapa |
+| 15 | npm test executa casos offline e servidor no workflow existente; integração local separada | Sem execução de CI do novo diff, PostgreSQL no CI pendente |
+| SEC-1 / SEC-2 | Argon2id com salt, política, allowlist, SQL parametrizado, origem/corpo e erros sanitizados | XSS do cliente futuro e auth dependem da próxima etapa |
+| SEC-5 | Cadastro com quota/concorrência/prazo testados; limitações documentadas | Login e limitador distribuído ausentes |
+| 16–18 | Arquitetura, prompt integral, execução, evidência e memória atualizadas | Revisão humana pendente |
+
+Itens de login/sessão/cookies/GET autorizado/logout/telas/clima seguem pendentes.
+As tabelas abaixo preservam o histórico DB-001; não representam pendência atual
+de POST/hash/validação servidor nem invalidam integração real já executada.
+
+## Histórico DB-001 — 29/10/2026
 
 O pedido atual autoriza a etapa de banco. A matriz abaixo incorpora o schema,
 migrations e contratos preparados em DB-001; os registros F/B/D/X continuam

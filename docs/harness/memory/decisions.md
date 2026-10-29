@@ -1,5 +1,13 @@
 # Índice de decisões
 
+## REG-001 — 29/10/2026
+
+POST /api/users, Argon2id (@node-rs/argon2 2.2.2), validação compartilhada sem banco,
+SQL parametrizado/default user, origem fixa e quotas locais. Decisões, formatos
+suportados e trade-offs na [arquitetura](../../ARCHITECTURE.md#reg-001--cadastro-pela-api-29102026).
+Resultados e revisão em [evidência](../evidence/registration.md). Sem sessão ou
+alteração de privilégios; revisão humana pendente. Índices anteriores históricos.
+
 28/10/2026 · origem Prompt 5 · status registrado · evidência
 [arquitetura](../../ARCHITECTURE.md).
 

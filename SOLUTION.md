@@ -1,8 +1,8 @@
 # Executar a solução local
 
-29/10/2026 · DB-001. O esqueleto Next.js e o harness estão disponíveis. Schema,
-migrations, papéis e conexão de servidor foram preparados; cadastro, login,
-cookies, autorização, logout e clima ainda não foram implementados. Confira a
+29/10/2026 · REG-001. Cadastro por `POST /api/users` implementado; schema,
+migrations, papéis e conexão de servidor preservados. Login,
+cookies, autorização, logout, telas de cadastro e clima ainda não foram implementados. Confira a
 [evidência atual](docs/harness/evidence/database.md) para distinguir execução real,
 testes offline e pendências. Revisão humana permanece pendente.
 
@@ -162,9 +162,11 @@ node scripts/harness/harness.mjs verify --product
 git diff --check
 ```
 
-`npm test` usa o runner nativo de Node, com arquivo explícito de testes offline de
-configuração de destino/papel, identificadores e diagnóstico sanitizado. Não é
-placeholder e não testa migrations, constraints ou permissões reais. O adaptador
+`npm test` usa o runner nativo de Node, com arquivos explícitos de testes offline de
+configuração, validação e um launcher para os oito testes de servidor (condição
+`react-server`, sem banco). O launcher exige resumo completo, sem skips e status
+de sucesso do processo filho. Também é possível rodar `npm run test:registration:server`.
+Estes casos não testam migrations, constraints ou permissões reais. O adaptador
 existente do harness reconhece os eventos estruturados desses casos; seu relatório
 continua parcial, sem declarar prontidão do produto. Não foi afrouxado para o runner.
 
@@ -186,6 +188,14 @@ registrados. O runner não usa mocks nem cai no banco existente como fallback.
 Quando autorizado, o runner verifica instalação do zero, segunda migration sem
 pendências, e-mail canônico/único concorrente, nome/papel, sessões/FK/expiração/
 revogação, DML necessário e negação de DDL permanente/escalada/acesso ao histórico.
+REG-001 também inicia Next por HTTP local em cópia temporária, com a rota e
+módulos de cadastro inalterados e provider de banco exclusivo da fixture.
+Este provider aceita somente o banco/papel descartáveis da execução, com os
+mesmos grants e checker de privilégios; o runtime principal não é flexibilizado.
+Testa criação, campos, hash, papel, ausência de sessão, duplicidade concorrente,
+falha de banco sanitizada, origem, corpo e abuso. Saída do Next é consumida e
+limitada, sem publicar logs brutos. Banco/papéis e diretório/processo são limpos;
+o catálogo confirma ausência dos recursos próprios e metadados protegidos intactos.
 A limpeza automática se limita ao banco e papéis criados e identificados pela
 própria execução. O banco `imobilead` não é apagado, truncado ou recriado.
 Se o teste falhar antes da limpeza, confirme os recursos identificados pela
@@ -205,10 +215,40 @@ a chamar os testes offline pelo script atualizado; integração PostgreSQL isola
 no CI fica pendente. A aprovação anterior de CI/build foi informada pelo usuário
 para o checkpoint do Harness V1; esta etapa não dispara nem comprova CI remoto.
 
-Conclua as verificações reais de conexão, inventário, migrations e permissões
-respeitando o destino autorizado. Depois, mediante próxima etapa, implemente
-cadastro e autenticação usando o contrato de sessão já acordado. Não foram
-iniciados nesta rodada endpoints, telas, cookies, login/logout ou clima.
+Próxima etapa sugerida, mediante autorização: login e sessão usando o contrato
+já acordado, depois autorização/consulta e logout. REG-001 não implementa telas,
+cookies, login/logout ou clima. A integração real segue separada do CI; `npm test`
+do workflow existente passa a executar também os casos controlados do cadastro.
+
+## Contrato de cadastro REG-001
+
+Defina `APP_ORIGIN` em `.env.local` como origem pública exata (sem caminho/barra
+final), por exemplo `http://localhost:3000`. É obrigatória em produção; em `next dev`
+o padrão é esse localhost. Configuração ausente/inválida retorna 503.
+
+Envie JSON para `POST /api/users` com `name`, `email`, `password`,
+`passwordConfirmation`; opcionais string ou null: `address`, `city`, `state`,
+`country`, `postalCode`, `message`. Nome string até 150 pontos de código, inclusive
+vazio conforme DB-001. Senha ASCII alfanumérica 8–35, sem exigir mistura de classes;
+confirmação idêntica. E-mail ASCII, formato com domínio pontuado, remoção
+de espaços ASCII nas pontas e lowercase conforme banco. Internacionalização e
+prova de posse não implementadas. REG-001-E1 exige parte local de até 64 bytes,
+cada segmento do domínio de até 63 bytes e endereço normalizado de até 254 bytes;
+após a checagem ASCII, caracteres e bytes coincidem. Os limites seguem
+[RFC 5321 §4.5.3.1](https://www.rfc-editor.org/rfc/rfc5321#section-4.5.3.1) e
+[RFC 1035 §2.3.4](https://www.rfc-editor.org/rfc/rfc1035#section-2.3.4).
+A versão inicial REG-001 omitia esses limites; reprodução e correção estão na
+[evidência E1](docs/harness/evidence/registration.md#reg-001-e1--comprimento-de-e-mail-29102026).
+Textos com NUL são recusados por incompatibilidade
+com PostgreSQL. Não há formato brasileiro ou limite individual adicional.
+
+Retorna `201 {"user":{"id":"UUID"}}`, sem sessão, cookie ou dados pessoais.
+Erros: 400 entrada/JSON inválido, 403 origem recusada, 408 prazo do corpo,
+409 conflito, 413 corpo maior que 16 KiB, 415 mídia/codificação não suportada,
+429 abuso/concorrência, 500 falha interna sanitizada, 503 configuração de origem.
+Métodos não implementados seguem 405 do Next. Erros de campo contêm apenas códigos.
+Nunca reenvie o corpo em logs. Ver decisões e limitações de abuso/CORS/CSRF em
+[arquitetura REG-001](docs/ARCHITECTURE.md#reg-001--cadastro-pela-api-29102026).
 
 Para retomada, leia [handoff](docs/harness/memory/handoff.md), confira Git e use os
 [comandos do harness](docs/harness/commands.md). Decisões e critérios estão em

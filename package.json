@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "node --test tests/database/config.test.mjs",
+    "test": "node --test tests/database/config.test.mjs tests/registration/validation.test.mjs tests/registration/server-runner.test.mjs",
+    "test:registration:server": "node --conditions=react-server --test tests/registration/server.test.mjs",
     "test:db:integration": "node --test tests/database/integration.test.mjs",
     "db:inspect": "node scripts/database/cli.mjs inspect",
     "db:provision": "node scripts/database/cli.mjs provision",
@@ -17,6 +18,7 @@
     "db:check": "node scripts/database/cli.mjs check-app"
   },
   "dependencies": {
+    "@node-rs/argon2": "2.2.2",
     "axios": "1.20.0",
     "next": "16.4.3",
     "pg": "8.23.1",

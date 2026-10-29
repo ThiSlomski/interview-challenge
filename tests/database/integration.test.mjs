@@ -6,6 +6,7 @@ import { loadLocalEnvironment, localConnection, requireAuthenticationConfirmatio
 import { provisionSql, runtimeGrantsSql, roleIdentifier } from '../../scripts/database/provision.mjs';
 import { migrate } from '../../scripts/database/migrate.mjs';
 import { verifyRuntimePrivileges } from '../../server/db/config.mjs';
+import { registrationHttpTests } from '../registration/http-postgres.mjs';
 
 // Explicitly separate from npm test. No mocks and no fallback to imobilead.
 // Requires explicit authorization of its disposable local destination.
@@ -14,7 +15,16 @@ test('PostgreSQL migrations, constraints, sessions and runtime permissions', asy
   const database = `imobilead_test_${tag}`;
   const migrationRole = `imobilead_migrate_${tag}`, appRole = `imobilead_app_${tag}`;
   const password = randomBytes(32).toString('hex');
-  let created = false, rolesCreated = false, app, dbAdmin, admin, failure;
+  let created = false, rolesCreated = false, app, dbAdmin, admin, failure, protectedBefore;
+  const protectedMetadata = async () => (await admin.query(`SELECT jsonb_build_object(
+    'relations', (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.oid) FROM
+      (SELECT c.oid,c.relname,c.relowner,c.relacl FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
+       WHERE n.nspname IN ('imobilead','imobilead_meta')) x),
+    'schemas', (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.oid) FROM
+      (SELECT oid,nspname,nspowner,nspacl FROM pg_namespace WHERE nspname IN ('imobilead','imobilead_meta')) x),
+    'roles', (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.oid) FROM
+      (SELECT oid,rolname,rolsuper,rolcreatedb,rolcreaterole,rolreplication,rolbypassrls FROM pg_roles
+       WHERE rolname IN ('imobilead_app','imobilead_migrate')) x)) AS snapshot`)).rows[0].snapshot;
   try {
     loadLocalEnvironment();
     requireAuthenticationConfirmation();
@@ -22,6 +32,7 @@ test('PostgreSQL migrations, constraints, sessions and runtime permissions', asy
     const base = localConnection(process.env.TEST_ADMIN_DATABASE_URL);
     admin = new pg.Client(base);
     await admin.connect();
+    protectedBefore = await protectedMetadata();
     await admin.query(`CREATE DATABASE "${database}"`); created = true;
     dbAdmin = new pg.Client({ ...base, database }); await dbAdmin.connect();
     await dbAdmin.query('BEGIN');
@@ -36,6 +47,7 @@ test('PostgreSQL migrations, constraints, sessions and runtime permissions', asy
     await dbAdmin.query(runtimeGrantsSql(appRole));
     app = new pg.Client({ ...base, database, user: appRole, password }); await app.connect();
     const runtime = roleIdentifier(appRole);
+    await registrationHttpTests(t, { ...base, database, user: appRole, password }, dbAdmin);
     await t.test('expected effective contract accepts column INSERT without whole-table INSERT', async () => {
       await verifyRuntimePrivileges(app);
       const { rows: [rights] } = await app.query(`SELECT
@@ -155,7 +167,15 @@ test('PostgreSQL migrations, constraints, sessions and runtime permissions', asy
       await attempt(() => admin.query(`DROP ROLE ${roleIdentifier(appRole)}`));
       await attempt(() => admin.query(`DROP ROLE ${roleIdentifier(migrationRole)}`));
     }
-    if (admin) await attempt(() => admin.end());
+    if (admin) {
+      await attempt(async () => {
+        const remaining = await admin.query('SELECT datname AS name FROM pg_database WHERE datname=$1 UNION ALL SELECT rolname AS name FROM pg_roles WHERE rolname=ANY($2)',[database,[appRole,migrationRole]]);
+        if(remaining.rowCount!==0) throw new Error('DATABASE_TEST_CLEANUP_FAILED');
+        assert.deepEqual(await protectedMetadata(),protectedBefore);
+        console.log(JSON.stringify({cleanup:'confirmed', protectedMetadata:'unchanged',remainingResources:0}));
+      });
+      await attempt(() => admin.end());
+    }
     if (cleanupFailures.length) {
       // Only execution-generated resource names and sanitized codes are emitted.
       console.error(JSON.stringify({ cleanup: 'incomplete', database: created ? database : null,

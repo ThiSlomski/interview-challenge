@@ -1,5 +1,24 @@
 # Checkpoint para retomada
 
+## REG-001-E1 — estado vigente, 29/10/2026
+
+Comece por Git e project-state; a árvore já tinha os 23 arquivos REG-001 pendentes
+no início da correção E1. Snapshot temporário preservado, sem index/commit. E1
+corrige omissão de comprimento reproduzida nesta rodada: local <=64, cada label
+<=63, endereço normalizado <=254 bytes, após ASCII, mesmo erro de campo. Sintaxe
+e normalização preservadas; achado não coberto pela revisão independente anterior.
+[Contrato](../evidence/registration-plan.md#reg-001-e1--correção-de-comprimento-29102026)
+e [evidência atual](../evidence/registration.md#reg-001-e1--comprimento-de-e-mail-29102026)
+registram reprodução, fontes oficiais, testes, limpeza e fechamento. Instância HTTP
+separada verifica os seis casos de comprimento sem esgotar quota do cenário padrão;
+controle de abuso e caso 429 preservados. Banco principal, grants/migrations,
+dependências, Harness e CI inalterados nesta correção. Próxima etapa login/sessão
+não iniciada; sem commit/push/publicação. Revisão humana pendente.
+Fechamento E1: 27 aprovações npm test, oito servidor explícitos, 24 na integração
+real sem skips; limpeza/catalogação confirmadas. Lint/typecheck/build e Harness
+incluindo verify --product passaram; diff --check aprovado. Não iniciar a próxima
+etapa só por este checkpoint nem repetir efeitos mutáveis pela memória.
+
 ## DB-001-P1 — divergências de privilégios detectadas, 29/10/2026
 
 Origem: revisão estática do diff compartilhado. Reprodução PostgreSQL descartável
@@ -159,3 +178,23 @@ sem reset/clean nem repetição automática de ações com efeitos externos.
 Próximo passo recomendado: revisão humana do Harness; depois contrato funcional
 dos requisitos 1,4,5–10 e 14–15 mediante autorização. Nenhuma publicação, mudança
 de confiança ou implementação funcional foi autorizada pelo checkpoint.
+# REG-001 — retomada, 29/10/2026
+
+Comece por Git e estado atual. Base desta rodada main/835537d, árvore limpa no
+início; implementação e documentos desta rodada sem commit. CI do commit-base
+aprovado conforme relato do usuário, sem novo CI remoto. Cadastro POST /api/users
+concluído no escopo autorizado: validação/hash/SQL/user/erros/origem/corpo/abuso,
+sem sessão. Runtime continua exclusivamente imobilead_app no destino original.
+
+Leia [evidência REG-001](../evidence/registration.md),
+[plano](../evidence/registration-plan.md), [SOLUTION](../../../SOLUTION.md) e
+arquitetura REG-001 conforme necessário. Testes controlados, HTTP Next dev com
+provider de fixture e PostgreSQL real distinguidos; limpeza confirmada e banco
+principal preservado. Dois P2 de e-mail da revisão independente corrigidos e
+seguimento concluído. Revisão humana pendente; consulte fechamento para Harness.
+
+Não repetir migrations/provisionamento/grants/testes mutáveis pela memória.
+Quota é global por processo, 409 revela conflito e não há verificação de e-mail;
+APP_ORIGIN precisa configuração exata em produção. Próximo escopo depende de
+autorização: login/sessão e depois autorização/GET/logout. Telas e clima ausentes.
+Sem Git mutável/publicação/remotos nesta rodada. Checkpoints abaixo históricos.

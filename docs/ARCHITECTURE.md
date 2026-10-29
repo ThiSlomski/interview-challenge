@@ -1,12 +1,13 @@
 # Arquitetura da solução
 
-## Estado atual — DB-001 (29/10/2026)
+## Estado atual — REG-001 (29/10/2026)
 
 A etapa de banco está autorizada pelo [pedido atual](prompts/2026-10-29-database.md).
-PostgreSQL, modelo inicial, migrations e provisionamento estão implementados em
-arquivos; a execução real e suas limitações constam da
-[evidência DB-001](harness/evidence/database.md). Cadastro, API de usuários,
-login/cookies, autorização e logout ainda não foram implementados. As seções
+PostgreSQL, modelo inicial, migrations e provisionamento estão implementados;
+a execução real e suas limitações constam da
+[evidência DB-001](harness/evidence/database.md). Cadastro por POST implementado
+em REG-001, com contrato ao final. Consulta GET, login/cookies, autorização e
+logout continuam pendentes. As seções
 anteriores de estabilização/Harness e os templates abaixo são históricos; as
 decisões DB-001 ao final deste documento são as escolhas atuais de persistência.
 
@@ -368,3 +369,104 @@ Limites: contrato fixo de ACLs atuais, sem auditoria de RLS, funções privilegi
 objetos futuros, TOCTOU ou autorização da API. A checagem é um diagnóstico no
 momento de execução, não uma garantia permanente contra mudanças posteriores.
 Resultados reais, revisão e limpeza em [DB-001-P1](harness/evidence/database.md#db-001-p1--contrato-de-detecção-de-divergência-de-privilégios-29102026).
+
+## REG-001 — cadastro pela API (29/10/2026)
+
+Origem: [pedido integral](prompts/2026-10-29-registration.md). Plano/contrato em
+[REG-001](harness/evidence/registration-plan.md), resultados separados em
+[evidência](harness/evidence/registration.md). Revisão humana pendente.
+
+Fluxo: POST /api/users → handler somente de servidor → validação pura compartilhada
+→ Argon2id → repository com INSERT parametrizado → PostgreSQL. A rota injeta o
+provider de banco existente, que mantém destino 127.0.0.1:5432/imobilead e papel
+imobilead_app, com verificação prévia de privilégios. Nenhum grant/schema alterado.
+A validação em shared/ não importa servidor, ambiente, crypto ou persistência;
+password/repository/handler têm marcador server-only. Cliente futuro pode reutilizar
+as mesmas regras; tela/validação no navegador ainda não entregues.
+
+Entrada: name/email/password/passwordConfirmation presentes; name string até 150
+pontos de código, sem mínimo além do tipo, preservando DB-001. Senha ASCII
+alfanumérica 8–35 sem exigência de misturar letras/números; confirmação exata,
+nunca persistida. Opcionais address/city/state/country/postalCode/message aceitam
+string ou null, sem tamanho individual/formato brasileiro inventado. Strings com
+NUL são incompatíveis com text PostgreSQL e retornam 400. Não se remove HTML dos
+textos: armazenamento parametrizado preserva os dados; futura UI deve renderizar
+como texto, sem dangerouslySetInnerHTML. Transporte limita o JSON inteiro a 16 KiB.
+
+E-mail: espaços ASCII externos removidos como btrim do contrato; checagem ASCII
+antes de lowercase, local dot-atom e domínio DNS pontuado com labels sem hífen nas
+pontas. Sintaxe suportada é deliberadamente limitada: sem quoted locals, comentários,
+literais IP, SMTPUTF8 ou prova de posse. O dot-atom segue a
+[RFC 5322 seção 3.2.3](https://www.rfc-editor.org/rfc/rfc5322#section-3.2.3).
+Historicamente, a implementação inicial REG-001 não acrescentava limites de
+comprimento; essa omissão foi reproduzida e corrigida em REG-001-E1. Estado atual:
+parte local até 64 bytes, cada label do domínio até 63 bytes e e-mail normalizado
+completo até 254 bytes. Após checar ASCII, cada caractere ocupa um byte; `.length`
+é suficiente, sem Buffer ou importação de Node no validador compartilhado.
+A [RFC 5321 §4.5.3.1.1–3](https://www.rfc-editor.org/rfc/rfc5321#section-4.5.3.1)
+limita parte local a 64 octetos e caminho SMTP a 256 incluindo pontuação;
+254 é o limite adotado para a mailbox normalizada deixando dois bytes para `<`/`>`.
+A [RFC 1035 §2.3.4](https://www.rfc-editor.org/rfc/rfc1035#section-2.3.4)
+limita labels DNS a 63 octetos. Não há consulta DNS, envio ou verificação de posse.
+Excesso retorna o mesmo erro email: INVALID_EMAIL, sem ecoar a entrada. A API valida
+formato e comprimento mais estritamente que o CHECK básico do banco; nenhuma
+constraint/migration/grant foi alterada. A revisão inicial não cobriu a omissão de
+comprimento; descoberta e regressões pertencem exclusivamente à correção E1.
+
+Dependência nova: @node-rs/argon2 **2.2.2**, exata no manifest/lock. Binding nativo
+com binário disponível no Windows/Node local, sem ampliar privilégios ou instalar
+compiladores. argon2@0.45.1 foi tentado e descartado: exigiu Python/node-gyp
+indisponível. npm ci posterior confirmou instalação reproduzível local. Argon2id
+v19, m=19456 KiB (19 MiB), t=2, p=1, salt criptográfico novo de 16 bytes, saída de
+32 bytes em formato PHC com parâmetros e salt. Parâmetros mínimos recomendados
+pela [OWASP](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html).
+Testes verificam custo/versão/salt único e verificação positiva/negativa. Não há
+comparação de senha em texto, armazenamento da senha original ou confirmação.
+Reavaliar custo com medições sob carga antes de produção; outras plataformas não
+foram executadas nesta rodada.
+
+SQL lista só campos de cadastro e hash; papel/id/datas vêm dos defaults do banco.
+Qualquer chave não pública, inclusive role=admin, causa 400. A restrição UNIQUE de
+email é o árbitro concorrente: somente SQLSTATE 23505 com constraint
+users_email_key vira 409, sem SELECT prévio vulnerável a corrida. Demais erros
+retornam 500 com código constante. Não se serializa Error/SQL/detalhe/credencial;
+log do servidor contém somente REGISTRATION_FAILED. Resposta 201 é apenas
+{user:{id}}, sem hash, e-mail, papel, confirmação, cookie ou sessão. Erros e sucesso
+usam no-store e nosniff. Métodos não implementados seguem comportamento 405 do Next.
+409 permite inferir existência do cadastro: trade-off explícito deste POST; não é
+contrato de erro do futuro login, que deve evitar enumeração.
+
+Origem esperada vem exclusivamente de APP_ORIGIN (sem caminho ou barra final),
+obrigatória em produção, padrão http://localhost:3000 apenas em desenvolvimento.
+URL/Host/Forwarded da requisição não definem confiança. Origin presente deve ser
+exatamente igual; null, outra origem ou Sec-Fetch-Site: cross-site são recusados.
+Sem Origin, clientes não navegador podem usar JSON; cabeçalhos podem ser forjados
+por clientes diretos e não autenticam usuários. Não há Access-Control-Allow-Origin
+ou credenciais CORS; o OPTIONS automático não autoriza leitura cross-origin.
+Somente application/json (opcional charset=utf-8) e encoding identity são aceitos,
+impedindo submissões HTML simples. Nesta etapa sem sessão/cookie/autoridade ambiente,
+não há operação autenticada vulnerável a CSRF; JSON/origem reduzem cadastro forçado
+por navegador, mas não substituem controles de CSRF da futura autenticação.
+
+Abuso: orçamento global de 20 tentativas/minuto por instância, incluindo rejeições,
+sem confiar em IP/Forwarded; Retry-After em 429. Estado de tamanho fixo evita mapa
+controlado por atacante. No máximo dois corpos/hashes/inserts ativos, sem fila;
+leitura do corpo limitada em bytes reais, com prazo de cinco segundos, cancelamento
+e liberação de slot em finally. Isso limita trabalho Argon2 a cerca de 38 MiB
+simultâneos de memória de hashing. Content-Length não é a única defesa. Antes de
+produção, gateway precisa impor conexões, tamanho/tempo, quotas por identidade/IP
+confiável e orçamento compartilhado. Reinícios/múltiplas instâncias reiniciam/dividem
+o orçamento; um cliente pode esgotar a quota global e negar serviço a outros.
+Não há proteção anti-bot distribuída ou promessa de disponibilidade sob ataque.
+
+Testes reais: o runner descartável existente inicia Next **dev com webpack** numa
+cópia temporária e usa a rota e módulos inalterados. Somente server/db/index.ts da
+fixture é substituído para apontar ao banco/papel exclusivos desta execução; exige
+prefixos exatos aleatórios e loopback, checker e grants mínimos preservados. Nenhum
+segredo é escrito na fixture; env do processo não inclui credenciais administrativas,
+de migrations ou runtime principal. Essa adaptação não flexibiliza o runtime real,
+nem comprova sua configuração conectando a imobilead. Build de produção validado
+separadamente; HTTP real nesta rodada é servidor de desenvolvimento local. Limpeza
+remove processo, junction e diretório próprios, banco e papéis próprios; catálogo
+confirma zero recursos da execução e metadados/ACLs protegidos iguais. Não lemos
+linhas pessoais ou executamos INSERT/DELETE/GRANT no banco principal.
