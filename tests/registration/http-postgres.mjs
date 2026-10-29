@@ -46,11 +46,11 @@ export function database() { return pool ??= (async () => {
     let ready=false;
     for(let i=0;i<120;i++) {
       if(child.exitCode!==null) throw new Error('HTTP_FIXTURE_EXITED');
-      try { const response=await fetch(origin+'/api/users',{signal:AbortSignal.timeout(1000)}); if(response.status===405){ ready=true; break; } } catch { /* bounded startup */ }
+      try { const response=await fetch(origin+'/api/users',{signal:AbortSignal.timeout(1000)}); if(response.status===401){ ready=true; break; } } catch { /* bounded startup */ }
       await new Promise(resolve=>setTimeout(resolve,250));
     }
     assert.equal(ready,true,'HTTP_FIXTURE_READY');
-    if (scenario === 'authentication') { await runScenario(origin); return; }
+    if (runScenario) { await runScenario(origin); return; }
     const valid={name:'Fixture',email:' Http@Example.test ',password:'Abc12345',passwordConfirmation:'Abc12345',address:"Fixture '); DROP TABLE users; --",city:'Test City',state:'Region',country:'Test Country',postalCode:'A1 Test',message:'<script>fixture</script>'};
     let count=0;
     const post=(body=valid,headers={})=>{ count++; return fetch(origin+'/api/users',{method:'POST',headers:{'content-type':'application/json',origin,...headers},body:typeof body==='string'?body:JSON.stringify(body),signal:AbortSignal.timeout(15000)}); };

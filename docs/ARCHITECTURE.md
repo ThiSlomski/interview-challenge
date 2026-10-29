@@ -512,3 +512,51 @@ Fontes oficiais consultadas em 29/10/2026: [Next cookies](https://nextjs.org/doc
 [OWASP sessões](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html).
 Aplicação das fontes: verificação servidor, erro genérico/trabalho hash equivalente,
 origem confiável e atributos/vida de sessão. Não representam certificação.
+
+## AUTHZ-001 — autorização e consulta, 29/10/2026
+
+Decisão implementada, revisão humana pendente. README2,7,8,10,14–18.
+[Contrato](harness/evidence/authorization-plan.md), [evidência](harness/evidence/authorization.md)
+e [execução/contrato HTTP](../SOLUTION.md#consulta-e-autorização-authz-001).
+
+server/users/policy.mjs contêm a regra pura: identidade UUID completa, admin
+consulta/lista, user consulta somente o próprio UUID. handler.mjs autentica pela
+função central existente, busca id/role novamente no banco e verifica política
+antes da consulta-alvo em repository.mjs. Nenhuma autorização depende de UI ou
+middleware; nenhuma confiança em identidade/papel de entrada. Papel desconhecido,
+linha ausente ou identidade divergente falham fechados. Sessão mínima e TTL3600
+absoluto sem renovação permanecem inalterados. Não há cache de papel administrativo.
+Uma promoção/rebaixamento concorrente após a leitura do papel pode afetar a próxima
+requisição; não se promete cancelamento de requisição já autorizada em andamento.
+
+Escolha mínima para ambiguidade de caminhos do README: preservar POST /api/users
+e acrescentar GET /api/users exclusivo admin, mais GET /api/users/[id] próprio/admin.
+User recebe403 para qualquer alvo diferente inclusive malformado/inexistente,
+antes de verificar existência. Admin recebe400 inválido/404 inexistente. Ambos401
+sem sessão; falhas de banco/config503 genérico e diagnóstico fixo, sem dados pessoais.
+Query desconhecida400 após autorização, body e cabeçalhos de identidade ignorados.
+GET não muda estado, não habilita CORS entre origens; política de mesma origem
+do navegador impede leitura por outro site. Respostas pessoais no-store.
+
+SQL parametrizado e colunas explícitas, com allowlist adicional de projeção JSON:
+id e campos do cadastro sem senha/confirmação. role/datas/material de sessão não
+são necessários ao consumidor desta consulta. UUID identifica o recurso, não
+prova autorização. O runtime mantêm exatamente os grants anteriores.
+Lista usa limite fixo100 mais um registro para nextCursor, UUID ascendente/after.
+Permite percorrer todos os registros com memória limitada; não oferece snapshot
+estável sob inserções/exclusões concorrentes nem limite de bytes por campo textual
+(o schema anterior permite textos livres). Sem migração/índice/dependência novos.
+
+Promoção administrativa: CLI local em scripts/database/admin-user-cli.mjs,
+ADMIN_DATABASE_URL separada, destino fixo local/identidade/superuser conferidos;
+função compartilhada transacional em admin-user.mjs. SELECT id FOR UPDATE e UPDATE
+parametrizados, cardinalidade exatamente1; ausente/erro faz rollback. Sem seed padrão,
+endpoint ou grant runtime. Superuser ? escolha conservadora compatével com
+provisionamento administrativo local existente, não necessidade de executar app
+com privilégio. Nenhum papel foi alterado no banco principal nesta rodada.
+
+Revisão independente Backend somente leitura não encontrou IDOR/escalada/vazamento.
+Lacuna de teste de falhas após autenticação foi corrigida: exceções em sessão, papel
+e projeção verificadas separadamente. Resultado real Next+PostgreSQL40/40 e seis
+casos controlados de autorização; não substituem revisão humana ou HTTPS/navegador
+de produção. UI/página protegida/clima permanecem fora desta entrega.

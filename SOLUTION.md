@@ -179,8 +179,8 @@ afirma isolamento absoluto do papel entre bancos nem bloqueio de tabela temporá
 Futuras migrations devem revisar grants mínimos explícitos para seus novos
 objetos. Não há grant padrão de SELECT para toda tabela futura. Mantenha objetos
 internos em schema sem acesso runtime. Atualize `db:grant` junto do contrato quando
-necessário. Não crie conta admin padrão: a próxima etapa preparará promoção local
-explícita de usuário existente por UUID, sem expor esse poder no cadastro público.
+necessário. Não crie conta admin padrão: AUTHZ-001 prepara a promoção local
+explícita por UUID descrita abaixo, sem esse poder no cadastro público.
 
 ## Aplicação
 
@@ -300,3 +300,53 @@ Para retomada, leia [handoff](docs/harness/memory/handoff.md), confira Git e use
 [comandos do harness](docs/harness/commands.md). Decisões e critérios estão em
 [arquitetura](docs/ARCHITECTURE.md), [requisitos](docs/REQUIREMENTS.md) e
 [evidências DB-001](docs/harness/evidence/database.md).
+
+## Consulta e autorização AUTHZ-001
+
+Estado vigente sobre sugestões históricas de próximas etapas acima.
+
+- GET /api/users: somente admin. Retorna { users: [...], nextCursor: UUID|null }.
+  Páginas de até 100, ordenadas por UUID ascendente; envie ?after=UUID com
+  nextCursor até receber null. Cursor inválido/duplicado ou chave extra:400.
+  Registros criados/removidos entre páginas não têm garantia de snapshot.
+- GET /api/users/[id]: user acessa apenas seu próprio UUID; admin acessa qualquer
+  UUID. Retorna { user: {...} }. Query extra:400 após autorização.
+- Ambos retornam somente id,name,email,address,city,state,country,postalCode,message,
+  com campos opcionais null conforme banco. Sem senha/hash, papel ou material de sessão.
+  Respostas usam Cache-Control:no-store e não habilitam CORS entre origens.
+- Sem sessão válida:401. Papel desconhecido/incompleto ou permissão ausente:403.
+  User recebe403 para outro UUID, inexistente ou malformado, antes de consultar alvo.
+  Admin recebe400 para UUID inválido e404 para inexistente. Falha de banco/config:503
+  com USERS_FAILED sanitizado. POST /api/users continua público para cadastro.
+
+O papel vem de leitura nova do banco em cada requisição; não é armazenado na
+sessão nem aceito de query/body/cabeçalhos/cookies adicionais. Rebaixamento vale
+na próxima requisição com a mesma sessão. A consulta mínima de sessão não muda.
+
+### Promover explicitamente usuário existente
+
+Operação administrativa local separada da aplicação, sem conta/senha padrão ou
+endpoint. Configure ADMIN_DATABASE_URL em .env.local com credencial administrativa
+superuser separada de DATABASE_URL; preserve DB_TRUST_REMOVED=true. O comando
+valida 127.0.0.1:5432/imobilead, identidade e superuser, exige exatamente um UUID,
+bloqueia a linha em transação e confirma exatamente um registro encontrado/alterado.
+Runtime continua sem UPDATE(role). UUID já admin é aceito idempotentemente.
+
+Execute somente quando houver autorização explícita para a conta/destino desejados:
+
+```powershell
+npm run db:promote-admin -- UUID_DO_USUARIO_EXISTENTE
+```
+
+Substitua o marcador pelo UUID obtido legitimamente; não há listagem de contas
+no procedimento. Sucesso: ADMIN_USER_UPDATED: 1; falha: ADMIN_USER_OPERATION_FAILED
+e saída1, sem valores/SQL/detalhes privados. Não passe credenciais na linha de comando.
+Nesta rodada a CLI não foi executada contra imobilead: somente o mecanismo
+compartilhado foi exercitado com fixtures no banco descartável autorizado.
+
+Testes: npm run test:authorization:server (seis casos controlados, sem banco);
+npm test inclui esse launcher no CI existente. npm run test:db:integration
+inclui sete cenários AUTHZ reais, além das regressões anteriores, com as mesmas
+guardas descartáveis acima. Ver [evidência](docs/harness/evidence/authorization.md).
+Próxima etapa depende de autorização: interface de cadastro/login/página protegida;
+clima e demais telas seguem pendentes. API protegida não conclui página protegida.

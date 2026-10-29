@@ -1,3 +1,17 @@
+## AUTHZ-001 — atualização vigente, 29/10/2026
+
+Prevalece sobre as pendências de autorização nos registros históricos abaixo.
+[Evidência](harness/evidence/authorization.md) e [matriz/contrato](harness/evidence/authorization-plan.md).
+
+| IDs | Estado atual | Lacuna |
+| --- | --- | --- |
+| 2 GET,8,10.g | GET /api/users admin paginado; GET /api/users/[id] próprio/admin;401/403 no servidor; papel fresco; promoção local explícita preparada | Revisão humana; nenhuma promoção principal nesta rodada |
+| 7 | APIs de consulta protegidas | Página frontend protegida permanece pendente |
+| 14,15.a | Seis casos controlados de autorização e sete cenários novos HTTP Next+PG reais; regressões preservadas | Não comprova segurança exaustiva |
+| 15.b | npm test inclui launcher de autorização no workflow existente | CI remoto deste diff e PostgreSQL no CI não executados |
+| 16–18 | Contrato, arquitetura, execução, prompt, evidência e memória atualizados | Revisão humana pendente |
+| 11–13 | Telas de cadastro/login/sucesso/área protegida e clima ausentes | Fora desta rodada |
+
 ﻿## AUTH-001 — atualização vigente, 29/10/2026
 
 Prevalece sobre a matriz histórica abaixo. Base main/1c96acb; CI-base aprovado

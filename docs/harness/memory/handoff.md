@@ -1,3 +1,25 @@
+## AUTHZ-001 — estado vigente, 29/10/2026
+
+Base real main/012f9caa2ef9513feca0b9bbca64b87dbf312eb7, árvore limpa inicial;
+CI-base aprovado conforme usuário, nenhum CI remoto desta rodada. Pedido atual
+autoriza API/consulta e procedimento admin, supera pendências AUTH-001 abaixo.
+GET /api/users admin paginado100/cursor UUID; GET /api/users/[id] próprio/admin.
+401 sem sessão;403 sem permissão antes da consulta-alvo;admin UUID inválido400,
+ausente404. Papel fresco no banco, projeção explícita/no-store; POST público intacto.
+Procedimento db:promote-admin por UUID com ADMIN_DATABASE_URL local/superuser,
+transação exatamente1; testado somente descartável, não executado em imobilead.
+[Plano](../evidence/authorization-plan.md) e [evidência](../evidence/authorization.md).
+Revisão Backend independente sem achados de segurança; lacuna de falhas por fase
+corrigida/testada. Revisão humana pendente. Testes offline29 (launchers incluem
+registro8/auth11/autorização6), autorização explícita6/6; Next+PG real40/40 sem skips.
+Limpeza0 recursos, metadados/ACLs protegidos iguais; processos/fixtures encerrados.
+Lint/typecheck/build/audit/doctor/validate/verify --product e diff --check aprovados;
+Harness parcial/readiness not-assessed, conforme evidência.
+Sem mudança de schema/grants principais/dependências/Harness/CI, DML principal,
+remotos, commit/push/publicação. Telas de cadastro/login, página protegida e clima
+permanecem pendentes; não iniciar próxima etapa sem pedido. HTTPS/navegador de
+produção e integração em CI não exercitados. Histórico abaixo preservado.
+
 ﻿# Checkpoint para retomada
 
 ## AUTH-001 — estado vigente, 29/10/2026
