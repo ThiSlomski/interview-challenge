@@ -1,3 +1,50 @@
+# Matriz consolidada — 30/10/2026
+
+Estado atual da entrega, substituindo as pendências funcionais dos checkpoints
+históricos abaixo. Fontes primárias: e-mail original fornecido pelo usuário nesta
+auditoria e [último README original, commit 11fa5e1](https://github.com/imobilead-app/interview-challenge/blob/11fa5e1/README.md).
+O README atual é o guia da solução, não o enunciado original.
+Resultados desta rodada, limites de comprovação e CI por commit na
+[auditoria final](harness/evidence/final-delivery-audit.md).
+
+| Requisito original | Classe | Implementação / arquivos principais | Testes correspondentes | Documentação | Status / evidência objetiva |
+| --- | --- | --- | --- | --- | --- |
+| E-mail: Next App Router + TypeScript, full-stack | Obrigatório | `app/`, `server/`, `tsconfig.json` | lint, typecheck, build | README, ARCHITECTURE | Atendido; build nativo e container |
+| 1: cadastro persistido; banco justificado | Obrigatório | `components/ui/RegistrationForm.tsx`, `server/registration/`, PostgreSQL | `tests/registration/http-postgres.mjs` | README, ARCHITECTURE | Atendido; POST 201 e persistência real |
+| 1.a–j: nome até150, e-mail único, senha8–35 alfanumérica, confirmação e demais campos | Obrigatório | `shared/schemas.mjs`, migration inicial/3 | `tests/registration/validation.test.mjs`, `tests/database/essential-fields.mjs` | README campos/tecnologias | Atendido; limites, normalização, unicidade concorrente e campos opcionais |
+| 2: REST POST/GET, sem senha/hash | Obrigatório | `app/api/users/`, projeções explícitas em `server/users/` | registro/autorização HTTP/PG | README API, SOLUTION | Atendido; respostas sem credenciais |
+| 3: validação cliente e servidor | Obrigatório | Zod4.6.7 direto; schemas estritos compartilhados | validação Node, HTTP e UI | README, ARCHITECTURE | Atendido; rejeição de campos internos e erros públicos |
+| 4: schema/migrations reproduzíveis | Obrigatório | três arquivos em `database/migrations/`, scripts de preparação/check ACL | `tests/database/integration.test.mjs` | README execução nova/Compose | Atendido; migrations3/0 e db-init0 no banco novo |
+| 5: login contra hash | Obrigatório | `server/auth/handler.mjs`, Argon2id | `tests/auth/server.test.mjs`, HTTP/PG | README segurança, ARCHITECTURE | Atendido; válido/inválido, sem comparação em texto puro |
+| 6: sessão e justificativa | Obrigatório | `server/auth/session.mjs`, digest persistido, cookie HttpOnly/Secure | auth HTTP/PG e `tests/container/browser.test.mjs` | README, ARCHITECTURE | Atendido; cookie Secure real em HTTPS |
+| 7: endpoints e página protegidos | Obrigatório | `app/area/page.tsx`, guards centrais de API | UI redirect/401 e auth HTTP/PG | README API/fluxos | Atendido; acesso direto negado sem sessão |
+| 8: user próprio, admin listagem, 403 e promoção documentada | Obrigatório | `server/users/policy.mjs`, handlers, CLI UUID separada | autorização Node/HTTP/PG | README primeiro admin | Atendido; IDOR/forja recusados e papel fresco |
+| 9: logout efetivo | Obrigatório | revogação persistida e remoção cookie | auth HTTP/PG, UI e Compose | README | Atendido; replay negado após logout |
+| 10: CSRF/CORS, brute force, enumeração, TTL e controle servidor | Obrigatório | origem exata nas operações de sessão/perfil/exclusão, limites por processo, erros genéricos, TTL3600 | auth/server e HTTP/PG | README limites, ARCHITECTURE | Atendido no escopo básico; controles distribuídos não implementados |
+| 11: feedback/loading/acessibilidade básica | Obrigatório | formulários, foco, mensagens associadas e CSS responsivo | UI integrada/perfil/exclusão | README, galeria | Atendido no Chromium; revisão humana/acessibilidade assistiva pendentes |
+| 12: login/logout e área por papel | Obrigatório | `components/ui/Area.tsx`, LoginForm | UI integrada e produção Compose | README, galeria | Atendido; user/admin e logout reais |
+| 13: sucesso/resumo sem senha | Obrigatório | RegistrationForm/Record; somente memória | UI integrada, produção Chromium | README | Atendido; confirmação/credenciais ausentes do resumo |
+| 13: previsão de amanhã por REST grátis no cliente | Obrigatório | `shared/weather.mjs`, `components/ui/Weather.tsx` | weather Node/UI e Chromium Compose | README, ARCHITECTURE | Atendido; requests do navegador com fixture; disponibilidade externa não comprovada |
+| Parte4: injeção/XSS/segredos/headers | Obrigatório, decisões conscientes | SQL parametrizado, texto React, allowlists, CSP connect-src/no-store/nosniff, env ignorado | HTTP/PG, escape UI e inspeção Git | README segurança/limites | Atendido no escopo documentado; CSP de scripts/HSTS explícito não implementados |
+| Parte4: dependências e CI | Obrigatório | lockfile, `.github/workflows/ci.yml`, SCA bloqueante high/critical | npm ci/audit, quatro jobs | README CI | Atendido no commit-base; novo diff ainda sem CI remoto |
+| 14–15: validação/autorização/API e execução no CI | Obrigatório | suites Node e integração HTTP/PG; jobs quality/postgres-integration | npm test69/69; HTTP/PG74/74 | README testes | Atendido; sem placeholder obrigatório; UI/concorrência navegador locais |
+| 16: arquitetura e escolhas | Obrigatório | `docs/ARCHITECTURE.md` | revisão documental/links | arquitetura e ADRs | Atendido; banco/camadas/auth/trade-offs registrados |
+| 17: log e uso crítico de IA | Obrigatório | `docs/AI_PROMPTS.md`, `docs/prompts/` | rastreabilidade documental | índice/prompt/evidência | Atendido; histórico preservado sem reconstrução |
+| 18: execução app/banco/testes/CI/variáveis | Obrigatório | README + SOLUTION + `.env.example` | instalação nativa e Compose novo | README | Atendido; Compose independe de `.env.local` |
+| E-mail/entrega: público novo, sem fork, main e CI | Obrigatório de entrega | remoto próprio e histórico preservado | API pública GitHub, ls-remote/check-runs | auditoria final | Parcial até commit/push do usuário: base pública/sincronizada e CI verde, diff local pendente |
+| Verificação de e-mail, reset de senha, papéis granulares | Diferenciais originais | Ausentes | Não aplicável | README limitações | Não atendidos; opcionais, sem bloqueio do núcleo |
+| Containerização app+banco | Diferencial original | Dockerfile, compose.yaml, Caddy TLS | smoke, Chromium produção e persistência | README, SOLUTION | Atendido; ambiente novo/limpeza discriminados na auditoria |
+| IaC | Diferencial original | Ausente | Não aplicável | README limitações | Não atendido; opcional |
+| Edição própria e exclusão admin de user | Extensões posteriores, não diferenciais originais | perfil/versionamento e delete transacional | perfil/delete HTTP/PG/UI, corridas | README, ARCHITECTURE | Atendidas; sem alteração de contrato nesta auditoria |
+| HTTPS local, fixtures descartáveis, smoke bloqueante | Decisões técnicas entregues | gateway/guardas/CI | Compose e runners | README, SOLUTION | Atendidas; não ampliam requisitos originais |
+| Paginação por cursor | Decisão técnica da implementação | `server/users/repository.mjs` | autorização HTTP/PG | README API | Atendido; não é requisito nem diferencial original |
+
+## Histórico das etapas
+
+As seções seguintes preservam o estado de cada rodada. Expressões como
+"estado atual", "pendente", "README preservado" e contagens antigas se aplicam
+à data/etapa descrita, não substituem a matriz consolidada acima.
+
 ## ADMIN-DELETE-001 — evolução adicional autorizada, 30/10/2026
 
 README preservado como enunciado. Exclusão é extensão solicitada, não requisito
@@ -6,7 +53,7 @@ original. Perfil e CI-base publicados/verdes antes de iniciar, árvore limpa.
 | ID | Aceite | Implementação/evidência |
 | --- | --- | --- |
 | DELETE-1 | Sessão válida/admin obrigatório;403 antes de alvo/UUID | Handler com cliente único, autorização inicial e revalidação transacional |
-| DELETE-2 | Somente alvo user, sem autoexclusão/admin/lote |409 SELF_DELETE_FORBIDDEN/ADMIN_DELETE_FORBIDDEN;404 USER_NOT_FOUND |
+| DELETE-2 | Somente alvo user, sem autoexclusão/admin/lote | 409 SELF_DELETE_FORBIDDEN/ADMIN_DELETE_FORBIDDEN;404 USER_NOT_FOUND |
 | DELETE-3 | DELETE exatamente1+sessões atomicamente;204 após commit | Locks UUID ordenados, sessão FOR SHARE, papel/TTL frescos e cascade existente |
 | DELETE-4 | Login concorrente não cria sessão órfã utilizável | FK preservada e401 genérico se exclusão vence INSERT |
 | DELETE-5 | Menor privilégio, sem migration artificial | DELETE users permitido; DELETE sessions revogado; checker efetivo/PUBLIC; sem aplicação persistente |
@@ -133,7 +180,8 @@ conforme usuário, nenhum CI remoto deste diff. [Evidência](harness/evidence/au
 | 14.a,15.a | Onze casos auth controlados e comandos documentados | Unitários de autorização pendentes |
 | 15.b,CI-3 | npm test inclui auth sem alterar workflow | CI remoto do diff e integração CI não executados |
 | 11-13 | Telas, área protegida e clima ausentes | Fora AUTH-001 |
-# Matriz de requisitos do desafio
+
+## Matriz de requisitos do desafio
 
 Data: 28/10/2026. Origem: [README canônico](../README.md), inspecionado
 integralmente, e retornos H-001-F/B/D/X. Estado: consolidação automatizada H-001-R;
@@ -188,6 +236,7 @@ migrations e contratos preparados em DB-001; os registros F/B/D/X continuam
 históricos. PostgreSQL real, conexão da aplicação e permissões ainda dependem
 das condições registradas na [evidência atual](harness/evidence/database.md).
 Estrutura de banco não conclui cadastro, autenticação, autorização ou logout.
+
 ## Obrigações numeradas
 
 | ID | Fonte | Requisito | Critério de aceite | Implementação atual | Teste/evidência | Status |
@@ -330,6 +379,7 @@ fluxo e estados acessíveis preservados. Sem alteração funcional de autentica�
 [Pedido integral](prompts/2026-10-30-login-refinement.txt),
 [matriz e resultados](harness/evidence/login-refinement.md).
 Teclado virtual físico, revisão humana e CI remoto do diff permanecem pendentes.
+
 ## REG-UI-001 — refinamento do cadastro, 30/10/2026
 
 Introdução e cartão centralizados com a mesma largura, duas colunas confortáveis
@@ -337,6 +387,7 @@ em desktop/tablet e uma em celular, sem rolagem horizontal ou sobreposição do
 rodapé. Preservar validações, foco, busy, duplicação e sucesso/clima existentes.
 [Pedido integral](prompts/2026-10-30-registration-refinement.txt) e
 [verificações e limites](harness/evidence/registration-refinement.md).
+
 ## REG-ESSENTIAL-001 — cadastro/perfil e Zod, 30/10/2026
 
 Pedido novo supera a opcionalidade histórica de nome/localização:7 obrigatórios

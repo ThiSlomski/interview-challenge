@@ -1,5 +1,17 @@
 # Executar a solução local
 
+## Estado consolidado — auditoria final, 30/10/2026
+
+Comece pelo [README](README.md) para execução atual do zero e pela
+[auditoria final](docs/harness/evidence/final-delivery-audit.md) para resultados e limites
+desta rodada. As seções por etapa abaixo preservam resultados e decisões históricos;
+pendências antigas não descrevem o produto atual. Cadastro, autenticação, autorização,
+clima, edição própria, exclusão administrativa e Compose estão implementados.
+Zod 4.6.7 compartilha os schemas de cadastro/edição. Nome, cidade, estado e país
+não podem ficar vazios; cadastro também exige e-mail, senha e confirmação.
+Endereço, CEP e mensagem são opcionais. Existem três migrations; a terceira recusa
+legado incompatível sem reescrever cadastros. Preparação nova: migrations → grants → check.
+
 ## Exclusão administrativa — ADMIN-DELETE-001
 
 Aplicação local posterior autorizada e concluída: db:inspect antes/depois,
@@ -52,7 +64,7 @@ Evolução adicional ao enunciado; README preservado. Usuários e administradore
 podem editar somente o próprio nome/endereço/cidade/estado/país/CEP/mensagem em
 `/area` pelo botão **Editar meu cadastro**. E-mail permanece identificador imutável;
 senha/papel não são editáveis. Cadastro e edição compartilham as mesmas regras
-de texto, inclusive nome vazio, Unicode até150 e campos opcionais sem novos
+de texto, nome obrigatório com Unicode até150 e campos opcionais sem novos
 limites por campo. O limite HTTP continua16KiB, igual ao cadastro.
 
 Após revisão da entrega, um banco existente exige **nova migration e novos
@@ -259,7 +271,7 @@ e definição local de suas próprias senhas. O exemplo usa somente placeholders
 2. Defina senhas distintas para os papéis por entrada protegida de `psql`:
 
    ```powershell
-   & 'C:\Program Files\PostgreSQL\18\bin\psql.exe' -X -W -h 127.0.0.1 -p 5432 -U postgres -d imobilead
+   psql -X -W -h 127.0.0.1 -p 5432 -U postgres -d imobilead
    ```
 
    Se o administrador local tiver outro nome, substitua apenas o usuário. Dentro

@@ -1,0 +1,525 @@
+AUDITORIA FINAL DA ENTREGA — DESAFIO TÉCNICO IMOBILEAD
+
+Realize uma revisão final completa da entrega, considerando todas as alterações implementadas desde a última auditoria.
+
+Esta etapa deve ser baseada prioritariamente:
+
+1. No e-mail original do desafio.
+2. No último README original do enunciado, antes das nossas alterações.
+3. Em docs/REQUIREMENTS.md.
+4. Nos critérios obrigatórios e diferenciais originais.
+5. No estado atual real do código, banco, testes, CI, Compose e documentação.
+
+OBJETIVO
+
+Confirmar que o repositório público está pronto para entrega, reproduzível por terceiros e alinhado ao desafio, sem ampliar novamente o escopo.
+
+Não desenvolver novas funcionalidades.
+
+Corrigir somente:
+- defeitos;
+- regressões;
+- inconsistências documentais;
+- instruções incompletas;
+- falhas de segurança;
+- falhas de build, testes, CI ou Compose;
+- informações desatualizadas;
+- arquivos ou segredos que não deveriam estar no Git.
+
+FASE 1 — ESTADO DO REPOSITÓRIO
+
+1. Registrar:
+   - branch atual;
+   - commit atual;
+   - status do Git;
+   - remoto configurado;
+   - origem do repositório;
+   - divergência em relação ao remoto;
+   - arquivos rastreados e não rastreados.
+
+2. Confirmar:
+   - repositório público novo, sem fork;
+   - branch de entrega `main`;
+   - ausência de alterações locais esquecidas;
+   - ausência de arquivos temporários;
+   - ausência de credenciais;
+   - ausência de `.env.local`;
+   - presença de `.env.example`;
+   - `.gitignore` protegendo arquivos sensíveis.
+
+3. Pesquisar por:
+   - senhas reais;
+   - tokens;
+   - chaves;
+   - cookies;
+   - URLs privadas;
+   - dados pessoais usados somente em testes manuais;
+   - caminhos locais como `C:\`;
+   - links para arquivos temporários;
+   - referências inválidas a localhost em documentação pública, salvo instruções de execução.
+
+4. Não exibir valores sensíveis no relatório. Informar somente arquivo, categoria e ação necessária.
+
+FASE 2 — MATRIZ DO E-MAIL E DO ESCOPO ORIGINAL
+
+5. Criar uma matriz de conformidade com:
+
+- requisito original;
+- obrigatório ou diferencial;
+- implementação atual;
+- arquivos principais;
+- testes correspondentes;
+- documentação;
+- status: atendido, parcial, não atendido ou não aplicável;
+- evidência objetiva.
+
+6. Revisar expressamente:
+
+BACKEND E BANCO
+- API RESTful;
+- PostgreSQL;
+- schema versionado;
+- migrations;
+- consultas parametrizadas;
+- preparação de banco novo;
+- grants de runtime;
+- separação entre migration/administração e aplicação;
+- integridade e limpeza de testes.
+
+AUTENTICAÇÃO
+- login validando senha contra hash;
+- hashing seguro;
+- sessão autenticada;
+- cookie seguro;
+- persistência de sessão;
+- rotas protegidas;
+- logout;
+- expiração;
+- invalidação;
+- proteção contra enumeração;
+- rate limiting e brute force;
+- CSRF;
+- CORS.
+
+AUTORIZAÇÃO
+- usuário comum visualiza somente o próprio cadastro;
+- administrador visualiza a listagem completa;
+- autorização aplicada no servidor;
+- proteção contra alteração de papel;
+- proteção contra acesso direto indevido;
+- exclusão somente de usuários comuns;
+- proibição de autoexclusão administrativa;
+- proibição de excluir administradores.
+
+CADASTRO
+- validação no cliente;
+- validação no servidor;
+- campos obrigatórios atuais;
+- campos opcionais;
+- senha nunca retornada;
+- tela de sucesso;
+- resumo sem senha;
+- previsão do dia seguinte;
+- consumo de API REST gratuita pelo cliente;
+- tratamento de erros da previsão.
+
+EDIÇÃO DE PERFIL
+- usuário edita apenas o próprio cadastro;
+- administrador edita o próprio cadastro;
+- e-mail imutável;
+- proteção por versão;
+- concorrência;
+- regras compartilhadas com o cadastro;
+- ausência de duplicação visual;
+- largura e responsividade padronizadas.
+
+SEGURANÇA E DEVSECOPS
+- proteção contra SQL injection;
+- proteção contra XSS;
+- CSP;
+- headers de segurança;
+- gestão de segredos;
+- dependências auditadas;
+- SCA bloqueante;
+- permissões mínimas;
+- actions fixadas por SHA;
+- Node correto;
+- nenhum diagnóstico ocultado indevidamente.
+
+TESTES
+- regras de validação;
+- autenticação;
+- autorização user/admin;
+- ao menos um teste de API;
+- PostgreSQL;
+- concorrência;
+- interface;
+- execução no CI.
+
+DOCUMENTAÇÃO
+- README;
+- docs/ARCHITECTURE.md;
+- docs/AI_PROMPTS.md;
+- decisões técnicas;
+- modelo de autenticação e autorização;
+- uso crítico de IA;
+- instruções reproduzíveis.
+
+DIFERENCIAIS
+- edição de perfil;
+- exclusão administrativa;
+- containerização;
+- gateway HTTPS;
+- banco descartável;
+- smoke test bloqueante;
+- quaisquer diferenciais realmente implementados.
+
+7. Não classificar paginação como requisito ou diferencial original. Ela deve ser descrita somente como decisão técnica da implementação.
+
+FASE 3 — ZOD E VALIDAÇÃO
+
+8. Confirmar o resultado final da auditoria de validação:
+   - dependência direta utilizada;
+   - versão;
+   - schemas criados;
+   - compartilhamento entre cliente e servidor;
+   - cadastro;
+   - edição;
+   - rejeição de campos internos;
+   - normalização;
+   - adaptação segura dos erros.
+
+9. Confirmar como obrigatórios:
+   - nome;
+   - e-mail;
+   - senha;
+   - confirmação de senha;
+   - cidade;
+   - estado;
+   - país.
+
+10. Confirmar como opcionais:
+   - endereço;
+   - CEP;
+   - mensagem.
+
+11. Verificar que a edição não permite apagar nome, cidade, estado ou país.
+
+12. Confirmar que nenhuma senha, confirmação ou detalhe interno do Zod aparece em:
+   - respostas;
+   - logs;
+   - HTML;
+   - resumo;
+   - documentação;
+   - capturas.
+
+FASE 4 — REVISÃO VISUAL
+
+13. Revisar as telas atuais em desktop e celular:
+
+- Home;
+- Cadastro;
+- Cadastro com erros;
+- Cadastro concluído;
+- Previsão do tempo;
+- Login;
+- Minha área;
+- Edição do usuário;
+- Painel administrativo;
+- Edição do administrador;
+- Confirmação de exclusão;
+- Estados de erro relevantes.
+
+14. Confirmar:
+   - larguras padronizadas;
+   - formulário substituindo o cartão durante edição;
+   - ausência de dados duplicados;
+   - modal abrindo no primeiro clique;
+   - botão de exclusão legível;
+   - rodapé compartilhado;
+   - link da Slomski Solutions;
+   - responsividade;
+   - foco;
+   - teclado;
+   - contraste;
+   - ausência de rolagem horizontal.
+
+15. Confirmar o link institucional:
+
+https://www.slomskisolutions.com.br
+
+Com:
+- nova aba;
+- `noopener noreferrer`;
+- nome acessível;
+- foco visível;
+- área completa da marca clicável.
+
+FASE 5 — README
+
+16. Revisar integralmente o README atual.
+
+17. Atualizar o README para refletir o produto realmente entregue, incluindo:
+
+- visão geral;
+- funcionalidades;
+- cadastro;
+- autenticação;
+- autorização por papel;
+- edição de perfil;
+- exclusão administrativa;
+- previsão do tempo;
+- validação compartilhada com Zod;
+- campos obrigatórios;
+- PostgreSQL;
+- migrations;
+- segurança;
+- testes;
+- CI;
+- Docker Compose;
+- HTTPS local;
+- arquitetura;
+- documentação de IA;
+- limitações conhecidas;
+- próximos passos somente quando realmente pertinentes.
+
+18. Atualizar a lista de tecnologias com:
+   - Zod e sua finalidade;
+   - versões reais relevantes;
+   - sem inventar ferramentas não utilizadas.
+
+19. Atualizar a imagem principal do README:
+   - utilizar uma captura atual;
+   - preferir uma tela visualmente forte e representativa;
+   - salvar em caminho rastreado no repositório;
+   - utilizar link relativo compatível com GitHub;
+   - não utilizar caminho `C:\`;
+   - não utilizar arquivo temporário;
+   - confirmar renderização no GitHub.
+
+20. Verificar se as capturas do README representam a interface atual e não versões antigas.
+
+21. Tornar o passo a passo reproduzível para alguém sem `.env.local`:
+
+- requisitos;
+- clone;
+- instalação;
+- criação do `.env.local` a partir do `.env.example`;
+- explicação das variáveis;
+- banco;
+- migrations;
+- grants;
+- check;
+- execução;
+- login;
+- testes;
+- Docker Compose;
+- HTTPS;
+- limpeza segura.
+
+22. Não incluir segredos reais ou credenciais persistentes.
+
+FASE 6 — DOCUMENTAÇÃO
+
+23. Revisar e sincronizar:
+
+- README.md;
+- SOLUTION.md;
+- docs/ARCHITECTURE.md;
+- docs/REQUIREMENTS.md;
+- docs/AI_PROMPTS.md;
+- evidências;
+- galeria de capturas;
+- memória canônica;
+- instruções do banco;
+- documentação de CI;
+- documentação de Compose.
+
+24. Remover ou corrigir:
+   - números de testes antigos;
+   - versões antigas;
+   - funcionalidades descritas incorretamente;
+   - caminhos temporários;
+   - pendências já concluídas;
+   - afirmações sem evidência;
+   - links quebrados;
+   - referências a capturas substituídas.
+
+25. Preservar o histórico real do uso de IA. Não reconstruir prompts nem inventar decisões.
+
+FASE 7 — EXECUÇÃO NATIVA
+
+26. Executar em ambiente compatível:
+
+- instalação reproduzível;
+- lint;
+- typecheck;
+- testes offline;
+- testes unitários;
+- testes das APIs;
+- testes de autenticação;
+- testes de autorização;
+- testes de validação;
+- testes de perfil;
+- testes de exclusão;
+- testes PostgreSQL;
+- testes de interface;
+- testes de concorrência;
+- build;
+- audit;
+- Harness aplicável;
+- UTF-8;
+- links;
+- âncoras;
+- `git diff --check`.
+
+27. Nenhum teste obrigatório pode ser placeholder.
+
+28. Relatar separadamente testes completos e avaliações parciais.
+
+FASE 8 — DOCKER COMPOSE
+
+29. Validar a execução do zero com:
+
+`docker compose up --build`
+
+30. Confirmar:
+
+- PostgreSQL saudável;
+- `db-init` concluído com código zero;
+- migrations aplicadas;
+- grants aplicados;
+- `db:check` aprovado;
+- aplicação saudável;
+- gateway saudável;
+- HTTPS disponível;
+- porta 5432 não publicada;
+- runtime sem privilégios administrativos;
+- aplicação não root;
+- filesystem somente leitura;
+- `/tmp` temporário;
+- capabilities removidas;
+- persistência do volume;
+- reinício;
+- desligamento;
+- limpeza do ambiente descartável.
+
+31. Testar em produção containerizada:
+
+- home;
+- cadastro;
+- login;
+- área protegida;
+- usuário;
+- administrador;
+- edição;
+- exclusão;
+- logout;
+- previsão ou fixture documentada;
+- sessão Secure via HTTPS.
+
+32. Não executar `docker compose down -v` contra projeto ou volume não confirmado como descartável.
+
+FASE 9 — CI
+
+33. Comparar o workflow atual com o ambiente local.
+
+34. Confirmar os jobs:
+
+- Quality;
+- PostgreSQL integration;
+- Security (SCA);
+- container-smoke.
+
+35. Confirmar:
+   - actions atuais com runtime Node 24;
+   - aplicação em Node 22.13.1;
+   - actions fixadas por SHA;
+   - permissões mínimas;
+   - timeouts;
+   - concorrência;
+   - cleanup;
+   - audit bloqueante;
+   - PostgreSQL descartável;
+   - container smoke bloqueante.
+
+36. Executar localmente os equivalentes possíveis.
+
+37. Após commit e push pelo usuário, verificar que todos os jobs remotos ficaram verdes e sem avisos inesperados.
+
+FASE 10 — ENTREGA PÚBLICA
+
+38. Confirmar:
+
+- repositório público;
+- URL correta;
+- branch `main`;
+- commit final;
+- CI verde;
+- README renderizando;
+- imagem carregando;
+- links funcionando;
+- árvore limpa;
+- branch sincronizada;
+- ausência de secrets;
+- instruções suficientes para avaliação.
+
+39. Preparar o resumo final com:
+
+- requisitos obrigatórios atendidos;
+- diferenciais entregues;
+- arquitetura;
+- segurança;
+- testes;
+- CI;
+- Compose;
+- documentação;
+- limitações reais;
+- link e branch.
+
+40. Preparar a versão final do e-mail de entrega contendo:
+   - agradecimento;
+   - link do repositório público;
+   - branch;
+   - instrução de execução no README;
+   - disponibilidade para esclarecimentos;
+   - disponibilidade para apresentar a solução;
+   - interesse em fazer parte da equipe.
+
+RESTRIÇÕES
+
+41. Não criar novas funcionalidades durante esta auditoria.
+
+42. Não alterar contratos funcionais aprovados sem encontrar um defeito comprovado.
+
+43. Não alterar banco persistente sem autorização.
+
+44. Não excluir usuários reais.
+
+45. Não executar commit, push ou publicação.
+
+46. Caso encontre bloqueador:
+   - apresentar evidência;
+   - explicar impacto;
+   - propor a menor correção segura;
+   - aguardar autorização quando houver alteração sensível.
+
+ENTREGA DA AUDITORIA
+
+Apresentar:
+
+1. Veredito geral.
+2. Matriz do desafio.
+3. Bloqueadores.
+4. Correções realizadas.
+5. Arquivos alterados.
+6. Resultado de cada teste.
+7. Resultado do Compose.
+8. Situação esperada do CI remoto.
+9. Revisão do README.
+10. Revisão da imagem.
+11. Segurança e secrets.
+12. Pendências reais.
+13. Diff exclusivo.
+14. Sugestão de commit.
+15. Checklist final para commit, push e envio do e-mail.

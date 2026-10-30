@@ -181,7 +181,7 @@ Envio comprovado: **29/10/2026 14:14:34.546 -03:00**; Codex, sessão `01a18817-e
 - Limitações/revisão: Falhas de restauração de grants e lacuna USAGE corrigidas. Sem auditoria exaustiva RLS/funções/TOCTOU ou autorização API; revisão humana pendente.
 - Evidências: [detalhes](harness/evidence/database.md#db-001-p1--contrato-de-detecção-de-divergência-de-privilégios-29102026).
 
-# REG-001 — cadastro pela API, 29/10/2026
+## REG-001 — cadastro pela API, 29/10/2026
 
 Envio comprovado: **29/10/2026 14:36:43.413 -03:00**; Codex, sessão `01a188bc-3600-7083-90c1-4d50b3b9531f`, linha 16.
 
@@ -470,7 +470,7 @@ Pedido complementar para compartilhar substituição e largura do cartão de per
 
 Centralizar o conjunto de autenticação e equilibrar ações responsivas preservando contratos de segurança. [Pedido integral](prompts/2026-10-30-login-refinement.txt) e [evidência](harness/evidence/login-refinement.md).
 
-# REG-UI-001 — refinamento visual do cadastro, 30/10/2026
+## REG-UI-001 — refinamento visual do cadastro, 30/10/2026
 
 Centralizar introdução e formulário em até920px, com grade responsiva e estados
 preservados. [Pedido integral](prompts/2026-10-30-registration-refinement.txt) e
@@ -495,3 +495,17 @@ e [evidência](harness/evidence/registration-success-layout.md).
 Restaurar a marca completa como link externo seguro, preservando o rodapé
 compartilhado e sua aparência. [Pedido integral](prompts/2026-10-30-footer-official-link.txt)
 e [evidência](harness/evidence/footer-official-link.md).
+
+## FINAL-AUDIT-001 — auditoria final, 30/10/2026
+
+Auditar a entrega frente ao e-mail original e ao último README do desafio,
+sem novas funcionalidades. [Pedido integral](prompts/2026-10-30-final-delivery-audit.txt),
+[matriz atual](REQUIREMENTS.md#matriz-consolidada--30102026) e
+[resultados, correções e limites](harness/evidence/final-delivery-audit.md).
+Ferramenta: Codex, com uma revisão Backend independente somente leitura.
+Aceitos: sincronização documental, captura atual em produção local e proteção
+de extensões de chaves no Git. Ajustados: generalizações sobre origem/códigos de
+erro do cadastro; as regras funcionais foram preservadas. Rejeitada a conclusão
+de prontidão integral apenas pelo Harness. O e-mail original foi fornecido pelo
+usuário em resposta à consulta desta rodada; conferido sem inventar instruções
+ou reconstruir prompts anteriores. Commit, push, envio e revisão humana pendentes.

@@ -1,3 +1,27 @@
+## FINAL-AUDIT-001 — auditoria final, 30/10/2026
+
+Base main/b174912 inicialmente limpa. Núcleo confrontado com e-mail original
+fornecido pelo usuário e último README original11fa5e1. Matriz atual no topo de
+REQUIREMENTS; documentação sincronizada com Zod4.6.7/essenciais/migration3,
+origem e erros reais do cadastro. Somente docs, capturas e gitignore alterados;
+sem funcionalidades, banco persistente, commit/push/publicação ou envio.
+Revisão Backend independente somente leitura sem bloqueador material; duas
+imprecisões no README corrigidas. Humana pendente.
+QA nativo: ci/lint/tipos/build/audit0, Node69/69, HTTP/PG74/74, UI integrada0,
+perfil41/41 após oscilação inicial39/41 sem causa determinada, exclusão45/45,
+corridas62/62. Não ocultar a oscilação ao avaliar prontidão. Harness doctor/
+validate/verify --product passou, parcial/readiness:not-assessed.
+Compose novo HTTPS: init0/health3/3, smoke/persistência/restart/recreate/controles
+aprovados, Chromium1/1 e fluxo adicional desktop/mobile user/admin/perfil/delete.
+Cleanup confirmou0 recursos próprios e metadados protegidos iguais nos runners;
+Compose descartável removeu4 containers/1 volume/1 rede, inventário final vazio.
+CI remoto do exato b174912: quatro jobs success, zero anotações/warnings de
+Actions; avisos React18/ESLint9 conhecidos. Novo diff depende do usuário fazer
+commit/push, conferir CI e README/imagem publicada. Repositório público/sem fork,
+main sincronizada na base. Revisão humana e estabilidade da oscilação pendentes.
+[Relatório, falhas, arquivos, checklist](../evidence/final-delivery-audit.md),
+[rascunho de e-mail](../../delivery-email.md). Nenhuma próxima etapa funcional.
+
 ## REG-SUCCESS-UI-001 — conclusão alinhada, 30/10/2026
 
 Base main/75da973 inicialmente limpa; etapa independente concluída. Sucesso usa

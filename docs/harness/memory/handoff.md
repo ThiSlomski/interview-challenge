@@ -1,3 +1,27 @@
+## FINAL-AUDIT-001 — auditoria final, 30/10/2026
+
+Base main/b174912 inicialmente limpa. Núcleo confrontado com e-mail original
+fornecido pelo usuário e último README original11fa5e1. Matriz atual no topo de
+REQUIREMENTS; documentação sincronizada com Zod4.6.7/essenciais/migration3,
+origem e erros reais do cadastro. Somente docs, capturas e gitignore alterados;
+sem funcionalidades, banco persistente, commit/push/publicação ou envio.
+Revisão Backend independente somente leitura sem bloqueador material; duas
+imprecisões no README corrigidas. Humana pendente.
+QA nativo: ci/lint/tipos/build/audit0, Node69/69, HTTP/PG74/74, UI integrada0,
+perfil41/41 após oscilação inicial39/41 sem causa determinada, exclusão45/45,
+corridas62/62. Não ocultar a oscilação ao avaliar prontidão. Harness doctor/
+validate/verify --product passou, parcial/readiness:not-assessed.
+Compose novo HTTPS: init0/health3/3, smoke/persistência/restart/recreate/controles
+aprovados, Chromium1/1 e fluxo adicional desktop/mobile user/admin/perfil/delete.
+Cleanup confirmou0 recursos próprios e metadados protegidos iguais nos runners;
+Compose descartável removeu4 containers/1 volume/1 rede, inventário final vazio.
+CI remoto do exato b174912: quatro jobs success, zero anotações/warnings de
+Actions; avisos React18/ESLint9 conhecidos. Novo diff depende do usuário fazer
+commit/push, conferir CI e README/imagem publicada. Repositório público/sem fork,
+main sincronizada na base. Revisão humana e estabilidade da oscilação pendentes.
+[Relatório, falhas, arquivos, checklist](../evidence/final-delivery-audit.md),
+[rascunho de e-mail](../../delivery-email.md). Nenhuma próxima etapa funcional.
+
 ## FOOTER-LINK-001 — site oficial, 30/10/2026
 
 Base main/533b184 inicialmente limpa. Marca completa do único rodapé no RootLayout
@@ -406,6 +430,7 @@ UI29/29 (13 cenários +15 SQL +principal),12 sondagens de foco sem deslocamento/
 por painéis. Cadastro autofill nativo; login pseudoestado controlado, sem perfil salvo.
 Seis capturas afetadas atualizadas,12 preservadas; referências oficiais inalteradas.
 Sem mudanças funcionais/auth/banco/clima. Histórico abaixo preservado.
+
 ## Padronização de caminhos visuais — 29/10/2026
 
 Pastas operacionais: [ui-captures](../evidence/ui-captures/README.md) e
@@ -414,6 +439,7 @@ identificador histórico da correção e dos testes. Nesta padronização não h
 browser/banco/build nem nova captura;22 arquivos movidos, conteúdo das18 imagens
 e3 referências preservado por SHA-256. Somente README/links/gerador foram atualizados.
 Resultados de execução abaixo pertencem às rodadas anteriores identificadas.
+
 ## Consolidação documental vigente — 29/10/2026
 
 Entrada frontend: [ui.md](../evidence/ui.md). Detalhe histórico/técnico:
@@ -521,6 +547,7 @@ Navegador/HTTPS produção não exercitados. Limites locais exigem controles pro
 Sem mudança de schema/grants principais/Harness/CI/dependências, DML principal,
 remotos ou commit/push/publicação. Roles/listagem403/página protegida/telas/clima
 pendentes. Não iniciar etapa nova nem repetir mutações por memória.
+
 ## REG-001-E1 — estado vigente, 29/10/2026
 
 Comece por Git e project-state; a árvore já tinha os 23 arquivos REG-001 pendentes
@@ -699,7 +726,8 @@ sem reset/clean nem repetição automática de ações com efeitos externos.
 Próximo passo recomendado: revisão humana do Harness; depois contrato funcional
 dos requisitos 1,4,5–10 e 14–15 mediante autorização. Nenhuma publicação, mudança
 de confiança ou implementação funcional foi autorizada pelo checkpoint.
-# REG-001 — retomada, 29/10/2026
+
+## REG-001 — retomada, 29/10/2026
 
 Comece por Git e estado atual. Base desta rodada main/835537d, árvore limpa no
 início; implementação e documentos desta rodada sem commit. CI do commit-base

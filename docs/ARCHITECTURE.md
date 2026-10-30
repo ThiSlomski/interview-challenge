@@ -1,5 +1,20 @@
 # Arquitetura da solução
 
+## Leitura atual — auditoria final, 30/10/2026
+
+O [README](../README.md) apresenta o produto atual. O enunciado original está no
+[commit anterior às alterações locais](https://github.com/imobilead-app/interview-challenge/blob/11fa5e1/README.md).
+As seções por etapa preservam contexto histórico; afirmações de funcionalidades
+ainda ausentes ou README preservado se referem à respectiva etapa. A
+[matriz atual](REQUIREMENTS.md#matriz-consolidada--30102026) e a
+[auditoria final](harness/evidence/final-delivery-audit.md) discriminam execução,
+CI remoto e revisão humana. Não houve mudança de arquitetura nesta auditoria.
+Zod 4.6.7 é dependência direta runtime; `shared/schemas.mjs` mantém schemas estritos
+de cadastro, textos e PATCH/versionamento, consumidos por cliente e servidor.
+Erros saem por adaptador de códigos públicos; senha não sofre normalização e
+confirmação não sai do schema. Nome/cidade/estado/país são essenciais em cadastro,
+edição e migration 3. Omissão no PATCH preserva valor; vazio/null não apaga essencial.
+
 ## ADMIN-DELETE-001 — exclusão somente user, 30/10/2026
 
 Extensão autorizada além do README, que permanece preservado. DELETE de conta
@@ -264,7 +279,6 @@ Cadastro/login/área protegida e logout integrados, com listagem administrativa.
 A seção UI-001 ao final descreve decisões vigentes; descrições anteriores de telas
 pendentes são históricas. Clima permanece pendente. Evidências e limites em
 [UI-001](harness/evidence/ui.md).
-
 
 ## Estado atual — REG-001 (29/10/2026)
 
@@ -975,6 +989,7 @@ o conteúdo cresce no fluxo quando a altura disponível é pequena. Ações empi
 até480px, com alvos de toque de pelo menos48px. LoginForm e contratos de segurança
 permanecem intactos. [Pedido](prompts/2026-10-30-login-refinement.txt) e
 [evidência](harness/evidence/login-refinement.md). Revisão humana pendente.
+
 ## REG-UI-001 — contêiner do cadastro, 30/10/2026
 
 Wrapper exclusivo do estado de formulário centraliza introdução/cartão em920px,
@@ -984,6 +999,7 @@ Fluxo vertical natural e rodapé compartilhado preservados. Sucesso/resumo/clima
 permanecem fora do wrapper. Nenhuma alteração nos contratos funcionais.
 [Pedido](prompts/2026-10-30-registration-refinement.txt) e
 [evidência](harness/evidence/registration-refinement.md). Revisão humana pendente.
+
 ## REG-ESSENTIAL-001 — schemas Zod e essenciais, 30/10/2026
 
 Zod4.6.7, antes somente transitivo dev do ESLint, passa a direto runtime.

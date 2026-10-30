@@ -2,6 +2,17 @@
 
 Dados sintéticos. Desktop: 1280 × 900; celular: 390 × 844
 
+## Auditoria final — 30/10/2026
+
+A galeria histórica abaixo foi preservada. O README principal agora usa a
+[home atual em produção local](../../../images/overview.png), com
+[variante celular](../../../images/overview-mobile.png), capturadas nesta rodada
+no Compose HTTPS. Edição, estados de erro e confirmação foram também exercitados
+e capturados em produção desktop/celular no
+[conjunto da auditoria](../final-audit-captures/README.md).
+Resultados de execução e limites na [auditoria final](../final-delivery-audit.md).
+As capturas usam somente contas sintéticas de ambiente descartável.
+
 ## PROFILE-UI-003 — edição compartilhada, 30/10/2026
 
 Somente par04 (Minha área, desktop/mobile) atualizado pela estrutura compartilhada
@@ -109,12 +120,14 @@ permanecem idênticas por SHA256. [Evidência](../home-refinement.md) e
 [manifesto antes/depois](../home-refinement-hashes.json). Capturas em Chromium
 com build de produção e HTTPS local; inspecionadas pelo agente. Revisão humana
 pendente. Nenhum fluxo funcional alterado.
+
 ## REG-UI-001 — cadastro centralizado, 30/10/2026
 
 Somente pares02 (erros) e09 (formulário) atualizados pelo refinamento visual.
 Sucesso/resumo/clima preservados. [Evidência](../registration-refinement.md) e
 [captura normal desktop](../registration-captures/desktop.png),
 [tablet](../registration-captures/tablet.png), [celular](../registration-captures/mobile.png).
+
 ## REG-ESSENTIAL-001 — dados essenciais e Zod, 30/10/2026
 
 Pares02/09 e três vistas em registration-captures atualizados pelos textos/erros

@@ -4,7 +4,7 @@
 
 Solução do **desafio técnico da Imobilead**, desenvolvida por **Thiago Slomski / Slomski Solutions**. Aplicação web com cadastro, sessão persistida em PostgreSQL, área protegida por papel, edição do próprio perfil e administração de usuários. Inclui previsão do tempo no navegador, testes automatizados, CI e execução com Docker Compose.
 
-![Página inicial da solução](docs/harness/evidence/ui-captures/01-home-normal-desktop.png)
+![Página inicial da solução em produção local](docs/images/overview.png)
 
 [Desafio-base oficial](https://github.com/imobilead-app/interview-challenge) · [Capturas desktop e mobile](docs/harness/evidence/ui-captures/README.md) · [Decisões de arquitetura](docs/ARCHITECTURE.md)
 
@@ -58,13 +58,15 @@ Migrations versionadas, credenciais separadas e verificação de privilégios pr
 | Proteções | Autoexclusão e exclusão de outro administrador recusadas também na API |
 | Sessões da conta excluída | Removidas na mesma transação por `ON DELETE CASCADE` |
 
+No cadastro, **nome, e-mail, senha, confirmação de senha, cidade, estado e país são obrigatórios**. Endereço, CEP e mensagem são opcionais. Cadastro e edição usam schemas Zod compartilhados entre navegador e servidor; a edição também exige nome, cidade, estado e país não vazios e preserva campos omitidos no PATCH. E-mail, senha e papel não podem ser alterados pela edição.
+
 ### Segurança e DevSecOps
 
 - **Senhas:** Argon2id, salt gerado pela biblioteca e política de 8 a 35 caracteres alfanuméricos. Senhas não são retornadas nem guardadas no resumo.
 - **Sessões:** token aleatório de 32 bytes; somente seu digest SHA-256 fica no banco. Validade absoluta de 3.600 segundos, sem renovação automática.
 - **Cookies:** `HttpOnly`, `SameSite=Lax`, `Path=/`, sem `Domain`. Em produção, `Secure` e prefixo `__Host-`; o Compose fornece HTTPS para esse modo.
 - **Autorização:** papel consultado novamente no banco em cada requisição. Identidade e permissões enviadas pelo cliente não concedem acesso.
-- **Origem e CSRF:** escritas conferem a origem exata e metadados de navegação; não há CORS amplo. Clientes de API devem enviar `Origin` compatível com `APP_ORIGIN`.
+- **Origem e CSRF:** login, logout, edição e exclusão exigem origem exata e conferem metadados de navegação; não há CORS amplo. O cadastro público aceita `Origin` ausente, mas recusa origem divergente e contexto cross-site. Clientes de API devem enviar `Origin` compatível com `APP_ORIGIN` nos fluxos que o exigem.
 - **Abuso e enumeração:** limites por processo em cadastro/login/escritas, mensagens uniformes de credenciais inválidas e verificação de hash fictício quando a conta não existe. Isso não garante tempo constante da requisição inteira.
 - **Dados e XSS:** consultas parametrizadas, validação por lista de campos e renderização de texto pelo React. Campos do usuário não executam HTML.
 - **Headers:** APIs sensíveis usam `Cache-Control: no-store` e `X-Content-Type-Options: nosniff`. A CSP global limita `connect-src` à própria origem e aos dois hosts Open-Meteo; não é uma política completa de scripts nem inclui HSTS explícito.
@@ -115,6 +117,7 @@ Dependências conferidas em `package.json` e `package-lock.json`; imagens fixada
 | Caddy | 2.10.2 Alpine | Gateway HTTPS local |
 | `pg` / `node-pg-migrate` | 8.23.1 / 9.0.0 | Conexões e migrations |
 | `@node-rs/argon2` | 2.2.2 | Hash e verificação de senha |
+| Zod | 4.6.7 | Schemas estritos compartilhados de cadastro e edição; erros públicos sem detalhes internos |
 | Node Test Runner | Integrado ao Node.js | Testes unitários, controlados e integração |
 | Playwright | 1.64.1 | Testes de UI com Chromium |
 | ESLint / eslint-config-next | 9.39.5 / 16.4.3 | Análise estática |
@@ -294,7 +297,7 @@ npm run db:grant
 npm run db:check
 ```
 
-As migrations criam usuários/sessões e acrescentam a versão do perfil. O histórico fica em `imobilead_meta`; migrations já aplicadas não são repetidas. O grant concede o contrato atual, incluindo edição das colunas permitidas e exclusão de usuários, sem permitir ao runtime alterar senha, e-mail ou papel. `db:check` verifica identidade e privilégios efetivos e falha se o contrato divergir.
+As três migrations criam usuários/sessões, acrescentam a versão do perfil e exigem nome/cidade/estado/país não vazios. A terceira recusa registros legados incompatíveis, sem reescrevê-los automaticamente. O histórico fica em `imobilead_meta`; migrations já aplicadas não são repetidas. O grant concede o contrato atual, incluindo edição das colunas permitidas e exclusão de usuários, sem permitir ao runtime alterar senha, e-mail ou papel. `db:check` verifica identidade e privilégios efetivos e falha se o contrato divergir.
 
 Em banco do projeto **já provisionado**, não repita `db:provision`: aplique apenas migrations pendentes, grants e check nessa ordem, depois reinicie a aplicação.
 
@@ -308,8 +311,8 @@ Abra **http://localhost:3000**. No desenvolvimento HTTP, o cookie é `imobilead_
 
 ## Primeiro acesso
 
-1. Clique em **Criar cadastro** ou abra `/cadastro`. Informe e-mail, senha e confirmação, além dos campos do formulário. A senha aceita de 8 a 35 letras/números.
-2. Confira a confirmação e o resumo sem senha. Informar cidade permite consultar o clima; falhas meteorológicas não desfazem o cadastro. Resumo e clima ficam em memória e são descartados ao sair/recarregar.
+1. Clique em **Criar cadastro** ou abra `/cadastro`. Informe nome, e-mail, senha, confirmação, cidade, estado e país. Endereço, CEP e mensagem são opcionais. A senha aceita de 8 a 35 letras/números.
+2. Confira a confirmação e o resumo sem senha. A cidade informada permite consultar o clima; falhas meteorológicas não desfazem o cadastro. Resumo e clima ficam em memória e são descartados ao sair/recarregar.
 3. Acesse `/login` e entre com a conta criada. Não existem credenciais padrão nem login automático após cadastro.
 4. Abra **Minha área** (`/area`). Use **Editar meu cadastro**, altere os campos permitidos e salve. E-mail, senha e papel não são editáveis. Em conflito entre abas, recarregue os dados antes de reenviar.
 5. Para encerrar a sessão atual, use **Sair**.
@@ -360,7 +363,7 @@ Todas as rotas existem em `app/api`. A autenticação usa o cookie de sessão; o
 | `PATCH` | `/api/profile` | Sim | `user` / `admin` | Editar perfil próprio com `expectedVersion` e `If-Match` |
 | `DELETE` | `/api/users/[id]` | Sim | `admin` | Excluir somente conta `user`, sem corpo |
 
-Cadastro retorna `201`; exclusão confirmada retorna `204`. APIs protegidas retornam `401` sem sessão e `403` sem permissão. Conflitos de versão e tentativas de excluir administrador/si próprio retornam `409`; indisponibilidade de configuração/banco retorna `503`. O login usa `401` genérico para credenciais inválidas. Contratos detalhados: [SOLUTION.md](SOLUTION.md).
+Cadastro retorna `201`; exclusão confirmada retorna `204`. APIs protegidas retornam `401` sem sessão e `403` sem permissão. Conflitos de versão e tentativas de excluir administrador/si próprio retornam `409`. Falhas de configuração/infraestrutura nos fluxos protegidos retornam `503`; no cadastro, falha interna de hash/persistência retorna `500 REGISTRATION_FAILED`, e configuração de origem inválida retorna `503`. O login usa `401` genérico para credenciais inválidas. Contratos detalhados: [SOLUTION.md](SOLUTION.md).
 
 ## 🧪 Testes e qualidade
 
@@ -482,6 +485,7 @@ O PostgreSQL do CI não é o banco persistente local. Suítes de UI/concorrênci
 | [Perfil](docs/harness/evidence/profile.md) | Edição, concorrência e verificações |
 | [Exclusão administrativa](docs/harness/evidence/admin-delete.md) | Autorização, transações e encerramento de sessões |
 | [CI](docs/harness/evidence/ci.md) | Preparação e verificação do pipeline |
+| [Auditoria final](docs/harness/evidence/final-delivery-audit.md) | Matriz atual, verificações desta rodada, limitações e checklist de entrega |
 | [Containerização](docs/harness/evidence/containerization.md) | Segurança, testes e persistência do Compose |
 | [Operação dos containers](SOLUTION.md#compose-local-de-produção--container-001) | HTTPS local, portas, logs, smoke e limpeza |
 
@@ -526,7 +530,7 @@ Os prompts estão organizados cronologicamente em [AI_PROMPTS.md](docs/AI_PROMPT
 | Núcleo obrigatório | Implementado: cadastro, login, sessão, proteção de página/API, autorização por papel, logout, clima, testes e documentação |
 | Diferenciais entregues | Edição própria com controle de versão, exclusão administrativa protegida e Docker Compose com HTTPS local |
 | Branch | `main` |
-| CI remoto verificado | Os quatro jobs estavam verdes na última validação. Consulte o estado atual no [GitHub Actions](https://github.com/ThiSlomski/interview-challenge/actions/workflows/ci.yml). |
+| CI remoto verificado | Quatro jobs verdes para `b174912` em [30/10/2026](https://github.com/ThiSlomski/interview-challenge/actions/runs/41053576348). Alterações desta auditoria ainda dependem de commit/push e novo CI. |
 | Revisão | Evidências técnicas disponíveis; revisão humana integral pendente |
 | Deploy público | Não realizado |
 | Evoluções futuras | Separadas da entrega atual na seção anterior |
