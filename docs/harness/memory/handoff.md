@@ -1,3 +1,20 @@
+## PROFILE-001-L1 — aplicação local autorizada, 30/10/2026
+
+Pedido posterior autorizou somente nova migration/grants/checagens e restart.
+db:inspect antes/depois confirmou127.0.0.1:5432/imobilead; db:migrate applied:1,
+db:grant e db:check passaram (runtime imobilead_app). profile_version integer
+NOT NULL DEFAULT1/check positivo; UPDATE apenas textos editáveis/updated_at/
+profile_version, sem credenciais/papel/ID/email. Nenhum DROP/TRUNCATE/provision,
+fixture ou DML de cadastro pelo agente. Next do checkout reiniciado por npm run dev
+na porta3000; acréscimo automático em AGENTS restaurado, sem outras alterações.
+Login manual pelo usuário com HTTP200/login/área/sessão/consulta administrativa
+e própria observados no servidor. Conector browser indisponível; confirmação
+visual dos papéis separada dos códigos HTTP: usuário confirmou sucesso de user
+em Minha área e admin em Painel administrativo. [Evidência](../evidence/profile.md#profile-001-l1--aplicação-persistente-local-autorizada).
+Sem erro DB/login observado, aviso React18 preexistente. Doctor/validate passaram.
+Revisão humana/CI remoto do diff pendentes; sem commit/push/exclusão/containerização.
+A pendência de aplicar migration/grants/restart nos registros abaixo está superada.
+
 ## PROFILE-001 — edição própria, 30/10/2026
 
 Base main/5ff4fc5, árvore inicialmente limpa. Pedido atual autorizou somente

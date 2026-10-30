@@ -1,3 +1,17 @@
+## PROFILE-001-L1 — persistente local, 30/10/2026
+
+Migration/grants/check/restart explicitamente autorizados e executados pelo
+agente por comandos canônicos. Destino127.0.0.1:5432/imobilead confirmado antes/
+depois; applied:1, grant/check aprovados; runtime sem UPDATE de identidade/
+credenciais/papel nem DELETE users. App reiniciada por npm run dev na porta3000.
+Sem operação destrutiva, fixtures no persistente ou DML de cadastro pelo agente.
+HTTP200 de login/área/sessão/consultas observados após entrada de credenciais
+pelo usuário; usuário confirmou sucesso nos dois papéis/telas. Confirmação visual
+manual separada da observação HTTP; conector browser indisponível.
+Doctor/validate passaram; sem commit/push. [Evidência L1](../evidence/profile.md#profile-001-l1--aplicação-persistente-local-autorizada).
+Pendências de aplicação local abaixo são históricas; exclusão/containerização
+continuam não iniciadas e CI remoto/revisão humana do diff seguem pendentes.
+
 ## PROFILE-001 — edição própria, 30/10/2026
 
 Estado vigente: implementação local do perfil sobre main/5ff4fc5 inicialmente

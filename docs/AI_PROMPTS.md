@@ -1,5 +1,14 @@
 # Log de prompts de AI
 
+## PROFILE-001-L1 — aplicação persistente local, 30/10/2026
+
+[Autorização integral](prompts/2026-10-30-profile.md#autorização-posterior-de-aplicação-persistente--texto-integral):
+Codex executou apenas migration/grants/checks canônicos e restart. Destino
+confirmado antes/depois; applied:1 e privilégios aprovados. Sem operação destrutiva
+ou DML de cadastro pelo agente. Usuário digitou credenciais e confirmou os dois
+papéis; agente conferiu respostas HTTP200. Conector browser indisponível,
+sem inspeção visual independente. [Evidência](harness/evidence/profile.md#profile-001-l1--aplicação-persistente-local-autorizada).
+
 ## PROFILE-001 — 30/10/2026
 
 [Pedido integral](prompts/2026-10-30-profile.md): plano ajustado e edição do

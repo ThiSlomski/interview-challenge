@@ -2,6 +2,12 @@
 
 ## Edição do próprio perfil — PROFILE-001
 
+Aplicação local autorizada posteriormente: migration do perfil applied:1,
+grants e db:check aprovados em127.0.0.1:5432/imobilead, destino conferido antes/
+depois; app reiniciada em localhost:3000. [Evidência L1](docs/harness/evidence/profile.md#profile-001-l1--aplicação-persistente-local-autorizada).
+Os parágrafos abaixo distinguem a implementação inicial do procedimento para
+outros bancos existentes; não repetir provisionamento ou criar fixtures no persistente.
+
 Evolução adicional ao enunciado; README preservado. Usuários e administradores
 podem editar somente o próprio nome/endereço/cidade/estado/país/CEP/mensagem em
 `/area` pelo botão **Editar meu cadastro**. E-mail permanece identificador imutável;

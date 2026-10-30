@@ -1,5 +1,59 @@
 # PROFILE-001 — evidência, 30/10/2026
 
+## PROFILE-001-L1 — aplicação persistente local autorizada
+
+Pedido posterior autorizou exclusivamente migration aditiva, grants do perfil,
+checagens correspondentes e reinício; sem apagar/recriar recursos, alterar
+e-mail/senha/papel/registros existentes por DML do agente ou executar fixtures
+no banco persistente. Supera somente a pendência de aplicação local abaixo.
+
+Comandos canônicos de SOLUTION executados pelo agente, todos com saída0:
+
+| Ordem | Comando | Resultado sanitizado |
+| --- | --- | --- |
+|1|npm run db:inspect|Antes:127.0.0.1:5432/imobilead, imobilead_migrate;9 objetos/6 da aplicação |
+|2|npm run db:migrate|Mesmo destino/papel; applied:1 |
+|3|npm run db:grant|Mesmo destino; administrador local; sem erro |
+|4|npm run db:check|Mesmo destino; imobilead_app; contrato efetivo aprovado |
+|5|npm run db:inspect|Depois:127.0.0.1:5432/imobilead;9 objetos/6 da aplicação |
+
+Única migration pendente aplicada:1793404800000-profile-version.cjs. Acrescenta
+users.profile_version integer NOT NULL DEFAULT1, CHECK users_profile_version_positive
+(profile_version>0). Users passa a14 colunas, sessions mantém5; a migration
+original e a FK ON DELETE CASCADE foram preservadas. Nenhum comando DROP,
+TRUNCATE, provision/reset ou fixture foi executado contra esse destino.
+
+Novo grant: UPDATE(name,address,city,state,country,postal_code,message,updated_at,
+profile_version) em imobilead.users para imobilead_app. O comando canônico também
+reaplica idempotentemente SELECT/INSERT por colunas de users e DML de sessions
+já existentes. Checker aprovou direitos efetivos por coluna/PUBLIC e proibições:
+sem UPDATE email/password_hash/role/id/created_at, sem INSERT role/profile_version,
+sem DELETE/TRUNCATE/DDL users, grant option ou acesso ao histórico. Nenhum novo
+papel, usuário, schema, tabela ou índice criado por essa migration.
+
+Reinício: somente os dois processos Next deste checkout, identificados antes
+da parada, foram encerrados; porta3000 liberada. npm run dev reiniciou o projeto
+e ficou disponível em http://localhost:3000. Next acrescentou bloco automático
+ao AGENTS.md na inicialização; restaurado exclusivamente esse acréscimo gerado,
+pois o arquivo estava intacto antes do reinício. Nenhuma configuração alterada.
+
+Login: usuário assumiu a entrada das credenciais no navegador. Servidor reiniciado
+registrou múltiplos POST /api/auth/login200, GET /area200, GET /api/auth/session200,
+GET /api/users200 (autorização administrativa) e GET próprio200; logout200 também
+observado. Sem senha, cookie, token, UUID ou dados cadastrais registrados aqui.
+Conector de navegador indisponível: nenhuma inspeção visual independente realizada.
+Usuário confirmou: ambos funcionaram nos respectivos papéis, user em Minha área
+e admin em Painel administrativo. Esse relato manual é separado dos códigos
+HTTP observados pelo agente; não é inspeção visual independente do agente.
+Não houve teste automatizado de edição nem UPDATE de cadastro pelo agente;
+ações manuais feitas pelo próprio usuário no navegador não são atribuídas ao agente.
+
+Sem erro nos comandos de banco ou nos logins observados/confirmados pelo usuário. Aviso preexistente de
+React18 emitido no restart. Doctor/validate aprovados; suítes da implementação
+abaixo não foram reexecutadas contra o persistente. Sem commit/push.
+
+## Histórico da implementação inicial
+
 Base main/5ff4fc5fad66453c2a7b95f811aad7ae394cb17a, árvore inicialmente limpa.
 [Contrato](profile-plan.md), [decisão](../../ARCHITECTURE.md#profile-001--edição-própria-30102026),
 [instruções](../../../SOLUTION.md#edição-do-próprio-perfil--profile-001).
