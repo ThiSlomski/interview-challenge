@@ -1,56 +1,17 @@
 # Log de prompts de AI
 
-## ADMIN-DELETE-UI-001 — contraste visual, 30/10/2026
-
-[Pedido integral](prompts/2026-10-30-admin-delete-visual.md): correção isolada dos
-botões danger, sem mudança funcional. Codex reproduziu contraste1.05:1, corrigiu
-cascata com paleta existente e validou cinco estados/mouse/teclado em desktop e
-celular emulado. Capturas06 atualizadas, par10 incluído, demais16 PNGs/3 referências
-preservados. [Evidência/cores/testes/hashes](harness/evidence/admin-delete-visual.md).
-Sem commit/push; revisão humana pendente.
-
-## ADMIN-DELETE-001-L1 — preparação persistente, 30/10/2026
-
-[Autorização integral](prompts/2026-10-30-admin-delete.md#autorização-posterior--preparação-do-banco-persistente):
-Codex executou inspect/grant/check/inspect e restart no destino local autorizado.
-Expôs a limitação de db:inspect e obteve autorização adicional para ACLs READ ONLY;
-comparação confirmou só as duas mudanças DELETE, com grants por coluna preservados.
-Sem exclusões/DML cadastral/migration/fixtures/commit/push.
-[Evidência](harness/evidence/admin-delete.md#admin-delete-001-l1--preparação-persistente-autorizada).
-
-## ADMIN-DELETE-001 — 30/10/2026
-
-[Pedido integral](prompts/2026-10-30-admin-delete.md): excluir somente user por
-admin, com transação/cascade, concorrência, confirmação acessível e paginação.
-Codex aceitou as exclusões de escopo e a separação entre implementação/fixtures
-e aplicação persistente. Ajustou projeção admin para role e retirou DELETE direto
-de sessions; não criou migration artificial. [Contrato](harness/evidence/admin-delete-plan.md),
-[evidência e avaliação crítica](harness/evidence/admin-delete.md). Sem commit/push,
-grants/exclusão no persistente; CI/revisão humana do diff não presumidos.
-
-## PROFILE-001-L1 — aplicação persistente local, 30/10/2026
-
-[Autorização integral](prompts/2026-10-30-profile.md#autorização-posterior-de-aplicação-persistente--texto-integral):
-Codex executou apenas migration/grants/checks canônicos e restart. Destino
-confirmado antes/depois; applied:1 e privilégios aprovados. Sem operação destrutiva
-ou DML de cadastro pelo agente. Usuário digitou credenciais e confirmou os dois
-papéis; agente conferiu respostas HTTP200. Conector browser indisponível,
-sem inspeção visual independente. [Evidência](harness/evidence/profile.md#profile-001-l1--aplicação-persistente-local-autorizada).
-
-## PROFILE-001 — 30/10/2026
-
-[Pedido integral](prompts/2026-10-30-profile.md): plano ajustado e edição do
-próprio cadastro. Codex aceitou o recorte exclusivo de perfil, reutilizou regras
-do cadastro e versão integer/número, mantendo e-mail imutável. Descartou limites
-novos e o mecanismo anterior de proteção administrativa; exclusão só planejada,
-sem implementação/commit/push. [Evidência e avaliação crítica](harness/evidence/profile.md),
-com resultados locais separados de CI/revisão humana.
+Registros ordenados pelo envio original, do mais antigo para o mais recente.
+Os horários abaixo usam America/Sao_Paulo (-03:00) e provêm das mensagens
+`response_item` com `role=user` das transcrições JSONL do Codex, inclusive os
+envios de anexos. Cópias herdadas por especialistas não são novos acontecimentos.
+A numeração histórica, os textos, os resultados e as âncoras foram preservados.
 
 `docs/prompts/` é a fonte principal dos textos integrais, por data e assunto.
 Este índice cronológico reúne objetivo, link, resultado e limitações. Evidências
 detalhadas, verificações, falhas e correções ficam em `docs/harness/evidence/`.
-Resumos históricos sem texto integral ou data continuam identificados como tais;
-nenhum texto ou data ausente foi reconstruído.
+Os originais dos prompts 1 e 4 foram recuperados em 30/10/2026 de mensagens reais
+do Codex de 28/10/2026; origem, datas e hashes estão nos respectivos registros.
+Os resumos históricos foram preservados; nenhum texto ou data foi reconstruído.
 
 ## Ferramentas usadas
 
@@ -60,12 +21,16 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 
 ## Prompt 1 — diagnóstico anterior
 
+Envio comprovado: **28/10/2026 18:14:25.431 -03:00**; Codex, sessão `01a1845d-362b-7dd0-93cd-e549d9c6e800`, linha 12.
+
 - Objetivo: Diagnosticar dependências e tooling sem modificar arquivos.
-- Registro: [resumo histórico e resultado](prompts/2026-10-28-estabilizacao.md#registro-1).
+- Registro: [prompt integral recuperado, resumo e resultado](prompts/2026-10-28-estabilizacao.md#registro-1).
 - Resultado: Identificados next lint removido e incompatibilidade de ESLint; typecheck/build passaram.
-- Limitações/revisão: Somente resumo; data ausente na fonte. O agente gerou artefatos e alterou next-env.d.ts apesar da restrição. Autorização posterior para correção não equivale à revisão final.
+- Limitações/revisão: Original e data recuperados da transcrição real de 28/10/2026, preservando o resumo anterior. O agente gerou artefatos e alterou next-env.d.ts apesar da restrição. Autorização posterior para correção não equivale à revisão final.
 
 ## Prompt 2 — migração do lint (28/10/2026)
+
+Envio comprovado: **28/10/2026 18:16:39.647 -03:00**; Codex, sessão `01a1845d-362b-7dd0-93cd-e549d9c6e800`, linha 57.
 
 - Objetivo: Migrar lint preservando Next 16.4.3 e React.
 - Registro: [prompt e registro da etapa](prompts/2026-10-28-estabilizacao.md#registro-2).
@@ -74,6 +39,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 
 ## Prompt 3 — preparação do clone para entrega (28/10/2026)
 
+Envio comprovado: **28/10/2026 18:27:02.424 -03:00**; Codex, sessão `01a18468-ba4d-7a72-9f20-a35efeb0a699`, linha 12.
+
 - Objetivo: Preparar o clone com transferência seletiva da estabilização.
 - Registro: [prompt e registro da etapa](prompts/2026-10-28-estabilizacao.md#registro-3).
 - Resultado: Arquivos autorizados transferidos, ignore ajustado e origin base removido; verificações locais passaram.
@@ -81,12 +48,16 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 
 ## Prompt 4 — primeiro commit de estabilização (28/10/2026)
 
+Envio comprovado: **28/10/2026 18:30:52.924 -03:00**; Codex, sessão `01a18468-ba4d-7a72-9f20-a35efeb0a699`, linha 80.
+
 - Objetivo: Revisar a estabilização e criar o primeiro commit autorizado.
-- Registro: [resumo histórico e resultado](prompts/2026-10-28-estabilizacao.md#registro-4).
+- Registro: [prompt integral recuperado, resumo e resultado](prompts/2026-10-28-estabilizacao.md#registro-4).
 - Resultado: Ajustes Next em tsconfig aceitos; segunda rodada lint/typecheck/build estável e diff revisado.
-- Limitações/revisão: Somente resumo do pedido; audit/ci anteriores não repetidos, browser não exercitado. Autorização de commit não equivale à revisão humana, ainda pendente.
+- Limitações/revisão: Original recuperado da transcrição real de 28/10/2026, preservando o resumo anterior; audit/ci anteriores não repetidos, browser não exercitado. Autorização de commit não equivale à revisão humana, ainda pendente.
 
 ## Prompt 5 — Harness V2 (28/10/2026)
+
+Envio comprovado: **28/10/2026 19:49:44.955 -03:00**; Codex, sessão `01a184b3-fea3-74c0-9d43-8677419a6894`, linha 16.
 
 - Objetivo: Construir o Harness V2 sem implementar produto.
 - Registro: [prompt e registro da etapa](prompts/2026-10-28-harness.md#registro-5).
@@ -100,6 +71,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 
 ## Prompt 6 — Correção dos cinco achados do Harness (28/10/2026)
 
+Envio comprovado: **28/10/2026 20:17:00.164 -03:00**; Codex, sessão `01a184b3-fea3-74c0-9d43-8677419a6894`, linha 401.
+
 - Objetivo: Corrigir cinco achados do Harness (H-002).
 - Registro: [prompt e registro da etapa](prompts/2026-10-28-harness-corrections.md#registro-6).
 - Resultado: Checkpoint, probe, hooks, fixture e prova de testes corrigidos; 12 testes direcionados e verificações passaram.
@@ -112,6 +85,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 
 ## Prompt 7 — revisão humana pontual de docs/HARNESS.md (28/10/2026)
 
+Envio comprovado: **28/10/2026 20:46:55.873 -03:00**; Codex, sessão `01a184b3-fea3-74c0-9d43-8677419a6894`, linha 567.
+
 - Objetivo: Esclarecer componentes e limites da demonstração em HARNESS.md.
 - Registro: [prompt e registro da etapa](prompts/2026-10-28-revisoes-documentais-harness.md#registro-7).
 - Resultado: Papéis/instâncias, retomada e timeout esclarecidos; validação documental passou.
@@ -119,6 +94,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 - Evidências: [detalhes](harness/BUILD_LOG.md#h-003--revisão-humana-pontual-do-guia-28102026).
 
 ## Prompt 8 — prevenção de instruções desatualizadas em AGENTS.md (28/10/2026)
+
+Envio comprovado: **28/10/2026 20:52:39.137 -03:00**; Codex, sessão `01a184b3-fea3-74c0-9d43-8677419a6894`, linha 629.
 
 - Objetivo: Prevenir instruções temporárias desatualizadas em AGENTS.md.
 - Registro: [prompt e registro da etapa](prompts/2026-10-28-revisoes-documentais-harness.md#registro-8).
@@ -128,6 +105,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 
 ## Prompt 9 — revisão das instruções dos quatro especialistas (29/10/2026)
 
+Envio comprovado: **29/10/2026 09:29:31.995 -03:00**; Codex, sessão `01a184b3-fea3-74c0-9d43-8677419a6894`, linha 660.
+
 - Objetivo: Ajustar escopo e contexto seletivo dos quatro especialistas.
 - Registro: [prompt e registro da etapa](prompts/2026-10-29-especialistas.md#registro-9).
 - Resultado: Quatro TOML atualizados; validação estrutural/configuração e reconhecimento de metadados observados.
@@ -135,6 +114,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 - Evidências: [detalhes](harness/BUILD_LOG.md).
 
 ## Prompt 10 — seis achados consolidados dos scripts (29/10/2026)
+
+Envio comprovado: **29/10/2026 10:02:27.749 -03:00**; Codex, sessão `01a184b3-fea3-74c0-9d43-8677419a6894`, linha 729.
 
 - Objetivo: Reproduzir e corrigir seis achados dos scripts (H-006).
 - Registro: [prompt e registro da etapa](prompts/2026-10-29-harness-six-findings.md#registro-10).
@@ -152,6 +133,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 
 ## Prompt 11 — DB-001: etapa de banco Imobilead (29/10/2026)
 
+Envio comprovado: **29/10/2026 11:37:11.275 -03:00**; Codex, sessão `01a18817-e055-77a1-9eaf-e1d9e310dbdc`, linha 16.
+
 - Objetivo: Preparar persistência DB-001 no PostgreSQL local.
 - Registro: [prompt e registro da etapa](prompts/2026-10-29-database.md#registro-11).
 - Resultado: SQL/migrations e papéis mínimos preparados; 4 testes offline e checks locais passaram.
@@ -159,6 +142,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 - Evidências: [detalhes](harness/evidence/database.md).
 
 ## Prompt 12 — DB-001-D2: correção de identidade e provisionamento (29/10/2026)
+
+Envio comprovado: **29/10/2026 12:42:37.425 -03:00**; Codex, sessão `01a18817-e055-77a1-9eaf-e1d9e310dbdc`, linha 598.
 
 - Objetivo: Corrigir identidade e provisionar uma vez (DB-001-D2).
 - Registro: [prompt e registro da etapa](prompts/2026-10-29-database.md#registro-12).
@@ -168,6 +153,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 
 ## Prompt 13 — DB-001-M1: registrar execução manual (29/10/2026)
 
+Envio comprovado: **29/10/2026 13:43:51.819 -03:00**; Codex, sessão `01a18817-e055-77a1-9eaf-e1d9e310dbdc`, linha 698.
+
 - Objetivo: Registrar execução manual informada (DB-001-M1).
 - Registro: [prompt e registro da etapa](prompts/2026-10-29-database.md#registro-13).
 - Resultado: Relato de inspect/migrate/grant/check preservado sem repetir comandos ou atribuí-los ao agente.
@@ -175,6 +162,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 - Evidências: [detalhes](harness/evidence/database.md#db-001-m1--execução-manual-informada-pelo-usuário-29102026).
 
 ## Prompt 14 — DB-001-I1: executar integração descartável (29/10/2026)
+
+Envio comprovado: **29/10/2026 14:02:30.094 -03:00**; Codex, sessão `01a18817-e055-77a1-9eaf-e1d9e310dbdc`, linha 740.
 
 - Objetivo: Executar integração descartável autorizada (DB-001-I1).
 - Registro: [prompt e registro da etapa](prompts/2026-10-29-database.md#registro-14).
@@ -184,6 +173,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 
 ## Prompt 15 — DB-001-P1: detectar divergência de privilégios (29/10/2026)
 
+Envio comprovado: **29/10/2026 14:14:34.546 -03:00**; Codex, sessão `01a18817-e055-77a1-9eaf-e1d9e310dbdc`, linha 866.
+
 - Objetivo: Detectar divergências de privilégios efetivos (DB-001-P1).
 - Registro: [prompt e registro da etapa](prompts/2026-10-29-database.md#registro-15).
 - Resultado: Reprodução anterior; checker ampliado, 16 offline/16 integração, db:check de leitura e checks locais passaram.
@@ -191,6 +182,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 - Evidências: [detalhes](harness/evidence/database.md#db-001-p1--contrato-de-detecção-de-divergência-de-privilégios-29102026).
 
 # REG-001 — cadastro pela API, 29/10/2026
+
+Envio comprovado: **29/10/2026 14:36:43.413 -03:00**; Codex, sessão `01a188bc-3600-7083-90c1-4d50b3b9531f`, linha 16.
 
 - Objetivo: Implementar cadastro público pela API (REG-001).
 - Registro: [prompt e registro da etapa](prompts/2026-10-29-registration.md#registro-16).
@@ -200,6 +193,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 
 ## REG-001-E1 — prompt integral da correção, 29/10/2026
 
+Envio comprovado: **29/10/2026 15:13:05.989 -03:00**; Codex, sessão `01a188bc-3600-7083-90c1-4d50b3b9531f`, linha 245.
+
 - Objetivo: Corrigir limites de comprimento de e-mail (REG-001-E1).
 - Registro: [prompt e registro da etapa](prompts/2026-10-29-registration.md#registro-17).
 - Resultado: Dois exemplos reproduzidos; limites 64/63/254 adotados e probes HTTP separados da quota.
@@ -207,6 +202,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 - Evidências: [detalhes](harness/evidence/registration.md#reg-001-e1--comprimento-de-e-mail-29102026).
 
 ## AUTH-001 — login, sessão persistida e logout, 29/10/2026
+
+Envio comprovado: **29/10/2026 16:33:44.554 -03:00**; Codex, sessão `01a18927-60f0-7180-b3d0-37ac41a64989`, linha 16.
 
 - Objetivo: Implementar login, sessão persistida e logout (AUTH-001).
 - Registro: [prompt e registro da etapa](prompts/2026-10-29-authentication.md#registro-18).
@@ -216,29 +213,17 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 
 ## AUTHZ-001 — autorização e consulta, 29/10/2026
 
+Envio comprovado: **29/10/2026 17:08:48.466 -03:00**; Codex, sessão `01a18947-7c81-7ed1-8069-e9798048c145`, linha 16.
+
 - Objetivo: Implementar autorização e consulta (AUTHZ-001).
 - Registro: [prompt e registro da etapa](prompts/2026-10-29-authorization.md#registro-19).
 - Resultado: Consulta própria/admin, listagem paginada e promoção explícita preparada; falhas nas três fases ajustadas após revisão.
 - Limitações/revisão: Testes descartáveis; revisão humana pendente.
 - Evidências: [detalhes](harness/evidence/authorization.md).
 
-## Organização dos registros de prompts — 29/10/2026
-
-- Objetivo: Restabelecer arquivos por data/assunto e índice resumido para todo o histórico.
-- Registro: [prompt integral e resultado](prompts/2026-10-29-organizacao-prompts.md#prompt-integral).
-- Resultado: 24 registros anteriores reorganizados, cinco arquivos reutilizados e nove criados, incluindo este pedido; orientações documentais corrigidas.
-- Limitações/revisão: Prompts 1 e 4 só possuíam resumos; Prompt 1 sem data. Sem reconstrução de texto ou data; revisão humana pendente.
-- Evidências: [inventário, comparação e verificações](harness/evidence/prompt-organization.md).
-
-## Commit exclusivo da reorganização de prompts — 29/10/2026
-
-- Objetivo: Versionar somente a reorganização documental, separada da entrega UI-001.
-- Registro: [pedido integral e separação](prompts/2026-10-29-organizacao-prompts.md#pedido-de-commit-exclusivo--29102026).
-- Resultado: Preparação por trechos, com entradas e prompts dependentes da UI reservados no diretório de trabalho; orientações e histórico anterior à UI no commit documental.
-- Limitações/revisão: Validação documental sobre a árvore preparada, sem testes funcionais; aprovação do commit não equivale à revisão humana da UI.
-- Evidências: [escopo, dependências e verificações](harness/evidence/prompt-organization.md#commit-documental-separado--29102026).
-
 ## UI-001 — interface integrada, 29/10/2026
+
+Envio comprovado: **29/10/2026 17:25:50.239 -03:00**; Codex, sessão `01a18957-13db-7e21-b4c9-953d269ccdea`, linha 16.
 
 - Objetivo: Integrar interface às APIs (UI-001).
 - Registro: [prompt e registro da etapa](prompts/2026-10-29-ui.md#registro-20).
@@ -248,6 +233,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 
 ## UI-001-P1 — corrida e identidade, 29/10/2026
 
+Envio comprovado: **29/10/2026 18:09:51.432 -03:00**; Codex, sessão `01a18957-13db-7e21-b4c9-953d269ccdea`, linha 445.
+
 - Objetivo: Corrigir corrida assíncrona e aplicar identidade oficial (UI-001-P1).
 - Registro: [prompt e registro da etapa](prompts/2026-10-29-ui.md#registro-21).
 - Resultado: Geração/aborto, identidade/permissão, deadline e recuperação; tokens/assets/fontes locais aplicados e regressões registradas.
@@ -255,6 +242,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 - Evidências: [detalhes](harness/evidence/ui-p1.md).
 
 ## Organização da entrega frontend — 29/10/2026
+
+Envio comprovado: **29/10/2026 19:12:15.010 -03:00**; Codex, sessão `01a18957-13db-7e21-b4c9-953d269ccdea`, linha 719.
 
 - Objetivo: Consolidar documentação e capturas da entrega frontend.
 - Registro: [prompt e registro da etapa](prompts/2026-10-29-organizacao-frontend.md#registro-22).
@@ -264,6 +253,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 
 ## Padronização das pastas visuais do frontend — 29/10/2026
 
+Envio comprovado: **29/10/2026 19:29:52.359 -03:00**; Codex, sessão `01a18957-13db-7e21-b4c9-953d269ccdea`, linha 841.
+
 - Objetivo: Padronizar pastas visuais preservando o histórico P1.
 - Registro: [prompt e registro da etapa](prompts/2026-10-29-organizacao-frontend.md#registro-23).
 - Resultado: Galeria em ui-captures e referências em ui-reference; caminhos ativos atualizados e prompts históricos preservados.
@@ -272,13 +263,37 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 
 ## Campos de cadastro/login — 29/10/2026
 
+Envio comprovado: **29/10/2026 20:03:24.877 -03:00**; Codex, sessão `01a18957-13db-7e21-b4c9-953d269ccdea`, linha 928.
+
 - Objetivo: Padronizar visual dos campos de cadastro/login.
 - Registro: [prompt e registro da etapa](prompts/2026-10-29-campos.md#registro-24).
 - Resultado: CSS compartilhado, foco/geometry/autofill e capturas ajustados; gradiente original encontrado localmente.
 - Limitações/revisão: Continuação preservada; autofill com preenchimento opaco de 14%, distinto do gradiente comum. Sem funcionalidades novas; revisão humana pendente.
 - Evidências: [detalhes](harness/evidence/ui.md#ajuste-visual-dos-campos--29102026).
 
+## Organização dos registros de prompts — 29/10/2026
+
+Envio comprovado: **29/10/2026 22:57:22.423 -03:00**; Codex, sessão `01a18a86-8fea-7351-aeea-5c385e380759`, linha 16.
+
+- Objetivo: Restabelecer arquivos por data/assunto e índice resumido para todo o histórico.
+- Registro: [prompt integral e resultado](prompts/2026-10-29-organizacao-prompts.md#prompt-integral).
+- Resultado: 24 registros anteriores reorganizados, cinco arquivos reutilizados e nove criados, incluindo este pedido; orientações documentais corrigidas.
+- Limitações/revisão: Prompts 1 e 4 só possuíam resumos; Prompt 1 sem data. Sem reconstrução de texto ou data; revisão humana pendente.
+- Evidências: [inventário, comparação e verificações](harness/evidence/prompt-organization.md).
+
+## Commit exclusivo da reorganização de prompts — 29/10/2026
+
+Envio comprovado: **29/10/2026 23:09:33.272 -03:00**; Codex, sessão `01a18a86-8fea-7351-aeea-5c385e380759`, linha 141.
+
+- Objetivo: Versionar somente a reorganização documental, separada da entrega UI-001.
+- Registro: [pedido integral e separação](prompts/2026-10-29-organizacao-prompts.md#pedido-de-commit-exclusivo--29102026).
+- Resultado: Preparação por trechos, com entradas e prompts dependentes da UI reservados no diretório de trabalho; orientações e histórico anterior à UI no commit documental.
+- Limitações/revisão: Validação documental sobre a árvore preparada, sem testes funcionais; aprovação do commit não equivale à revisão humana da UI.
+- Evidências: [escopo, dependências e verificações](harness/evidence/prompt-organization.md#commit-documental-separado--29102026).
+
 ## Correção funcional React e hidratação — 29/10/2026
+
+Envio comprovado: **29/10/2026 23:16:46.312 -03:00**; Codex, sessão `01a18957-13db-7e21-b4c9-953d269ccdea`, linha 1077.
 
 - Objetivo: Corrigir flushSync de lifecycle preservando a proteção da área; investigar atributo externo no body e detectar diagnósticos nos testes.
 - Registro: [prompt integral](prompts/2026-10-29-react-console.md#prompt-integral).
@@ -288,6 +303,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 
 ## Revalidação periódica estável — 30/10/2026
 
+Envio comprovado: **30/10/2026 00:00:47.914 -03:00**; Codex, sessão `01a18ac0-a5c9-77c2-a7dd-6d16aa56d2b4`, linha 16.
+
 - Objetivo: Eliminar a oscilação na consulta periódica preservando as proteções da área.
 - Registro: [prompt integral](prompts/2026-10-30-revalidacao-sessao.md#prompt-integral).
 - Resultado: Modos restritivo e de fundo, conferência de respostas/identidade e regressões Chromium.
@@ -296,11 +313,15 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 
 ## Refinamento administrativo — 30/10/2026
 
+Envio comprovado: **30/10/2026 01:19:40.913 -03:00**; Codex, sessão `01a18b08-e535-7d80-93e7-503f3f6f44e1`, linha 16.
+
 - Objetivo: distinguir user/admin em /area e eliminar duplicação visual, preservando segurança.
 - Registro: [prompt integral](prompts/2026-10-30-area-administrativa.md).
 - Resultado: cabeçalho administrativo, marcador próprio, paginação contextual e CEP visual; navegação raiz preservada pela arquitetura estática. Evidências/testes em [UI](harness/evidence/ui.md#refinamento-administrativo--30102026); revisão humana pendente.
 
 ## Previsão de amanhã WEATHER-001 — 30/10/2026
+
+Envio comprovado: **30/10/2026 01:36:45.368 -03:00**; Codex, sessão `01a18b18-87a2-7492-b41a-a314cb43e064`, linha 16.
 
 - Pedido aceito: implementar README13 com Open-Meteo client, privacidade, estados,
   CSP mínima, testes/capturas e documentação. [Prompt integral](prompts/2026-10-30-weather.txt).
@@ -315,6 +336,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 
 ### Revisão da configuração de clima — 30/10/2026
 
+Envio comprovado: **30/10/2026 02:03:49.873 -03:00**; Codex, sessão `01a18b18-87a2-7492-b41a-a314cb43e064`, linha 283.
+
 - Pedido aceito: conferir consumidores, remover configuração legada do exemplo e
   documentos, preservar sessão e restringir endpoints/CSP; sem commit/push.
 - Resultado: apenas o exemplo ainda continha placeholders; nenhum consumidor ou
@@ -325,6 +348,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 
 ### Refinamento visual do clima — 30/10/2026
 
+Envio comprovado: **30/10/2026 02:14:21.560 -03:00**; Codex, sessão `01a18b18-87a2-7492-b41a-a314cb43e064`, linha 332.
+
 - Pedido: SVGs locais derivados dos códigos WMO e remoção do aviso ambíguo do
   resumo, preservando persistência e integração. [Prompt integral](prompts/2026-10-30-weather-visual.txt).
 - Resultado: WeatherIcon decorativo/estático, condição textual preservada,
@@ -334,6 +359,8 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 
 ## Pipeline obrigatório DevSecOps — 30/10/2026
 
+Envio comprovado: **30/10/2026 02:38:58.709 -03:00**; Codex, sessão `01a18b51-7e28-76a3-8f05-efde5f3565cd`, linha 16.
+
 - Pedido aceito: três jobs bloqueantes, PostgreSQL descartável, SCA high,
   validações locais e documentação; sem commit/push. [Prompt integral](prompts/2026-10-30-devsecops-ci.txt).
 - Ferramenta: Codex; skills locais de retomada/entrega/verificação/registro;
@@ -341,7 +368,65 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
   pelas decisões na arquitetura. [Resultados e limites](harness/evidence/ci.md).
 - Fase2 e revisão humana pendentes; CI verde anterior não aprova este diff.
 
+## PROFILE-001 — 30/10/2026
+
+Envio comprovado: **30/10/2026 03:27:31.243 -03:00**; Codex, sessão `01a18b78-b43d-7702-a689-08f7957d4ff0`, linha 80.
+
+[Pedido integral](prompts/2026-10-30-profile.md): plano ajustado e edição do
+próprio cadastro. Codex aceitou o recorte exclusivo de perfil, reutilizou regras
+do cadastro e versão integer/número, mantendo e-mail imutável. Descartou limites
+novos e o mecanismo anterior de proteção administrativa; exclusão só planejada,
+sem implementação/commit/push. [Evidência e avaliação crítica](harness/evidence/profile.md),
+com resultados locais separados de CI/revisão humana.
+
+## PROFILE-001-L1 — aplicação persistente local, 30/10/2026
+
+Envio comprovado: **30/10/2026 03:43:10.700 -03:00**; Codex, sessão `01a18b78-b43d-7702-a689-08f7957d4ff0`, linha 347.
+
+[Autorização integral](prompts/2026-10-30-profile.md#autorização-posterior-de-aplicação-persistente--texto-integral):
+Codex executou apenas migration/grants/checks canônicos e restart. Destino
+confirmado antes/depois; applied:1 e privilégios aprovados. Sem operação destrutiva
+ou DML de cadastro pelo agente. Usuário digitou credenciais e confirmou os dois
+papéis; agente conferiu respostas HTTP200. Conector browser indisponível,
+sem inspeção visual independente. [Evidência](harness/evidence/profile.md#profile-001-l1--aplicação-persistente-local-autorizada).
+
+## ADMIN-DELETE-001 — 30/10/2026
+
+Envio comprovado: **30/10/2026 03:53:38.442 -03:00**; Codex, sessão `01a18b78-b43d-7702-a689-08f7957d4ff0`, linha 468.
+
+[Pedido integral](prompts/2026-10-30-admin-delete.md): excluir somente user por
+admin, com transação/cascade, concorrência, confirmação acessível e paginação.
+Codex aceitou as exclusões de escopo e a separação entre implementação/fixtures
+e aplicação persistente. Ajustou projeção admin para role e retirou DELETE direto
+de sessions; não criou migration artificial. [Contrato](harness/evidence/admin-delete-plan.md),
+[evidência e avaliação crítica](harness/evidence/admin-delete.md). Sem commit/push,
+grants/exclusão no persistente; CI/revisão humana do diff não presumidos.
+
+## ADMIN-DELETE-001-L1 — preparação persistente, 30/10/2026
+
+Envio comprovado: **30/10/2026 04:12:31.453 -03:00**; Codex, sessão `01a18b78-b43d-7702-a689-08f7957d4ff0`, linha 732.
+
+[Autorização integral](prompts/2026-10-30-admin-delete.md#autorização-posterior--preparação-do-banco-persistente):
+Codex executou inspect/grant/check/inspect e restart no destino local autorizado.
+Expôs a limitação de db:inspect e obteve autorização adicional para ACLs READ ONLY;
+comparação confirmou só as duas mudanças DELETE, com grants por coluna preservados.
+Sem exclusões/DML cadastral/migration/fixtures/commit/push.
+[Evidência](harness/evidence/admin-delete.md#admin-delete-001-l1--preparação-persistente-autorizada).
+
+## ADMIN-DELETE-UI-001 — contraste visual, 30/10/2026
+
+Envio comprovado: **30/10/2026 04:22:11.797 -03:00**; Codex, sessão `01a18b78-b43d-7702-a689-08f7957d4ff0`, linha 839.
+
+[Pedido integral](prompts/2026-10-30-admin-delete-visual.md): correção isolada dos
+botões danger, sem mudança funcional. Codex reproduziu contraste1.05:1, corrigiu
+cascata com paleta existente e validou cinco estados/mouse/teclado em desktop e
+celular emulado. Capturas06 atualizadas, par10 incluído, demais16 PNGs/3 referências
+preservados. [Evidência/cores/testes/hashes](harness/evidence/admin-delete-visual.md).
+Sem commit/push; revisão humana pendente.
+
 ## Containerização DevSecOps — 30/10/2026
+
+Envio comprovado: **30/10/2026 04:43:03.051 -03:00**; Codex, sessão `01a18bc3-15f8-7250-9a5c-94ae886f632a`, linha 16.
 
 - [Prompt integral](prompts/2026-10-30-containerization.txt).
 - Codex; skills resume-project, deliver-requirement, verify-delivery e record-decision;

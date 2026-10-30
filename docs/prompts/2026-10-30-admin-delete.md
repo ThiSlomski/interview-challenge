@@ -1,43 +1,13 @@
 # ADMIN-DELETE-001 — pedido integral
 
-## Autorização posterior — preparação do banco persistente
+Ordem de envio comprovada (30/10/2026, America/Sao_Paulo, -03:00), conforme
+mensagens `response_item`, `role=user`, da sessão Codex
+`01a18b78-b43d-7702-a689-08f7957d4ff0`:
 
-Autorizo preparar o banco persistente local para a exclusão administrativa.
-
-Destino permitido:
-
-- host: 127.0.0.1
-- porta: 5432
-- banco: imobilead
-
-Execute exclusivamente pelos comandos canônicos:
-
-1. db:inspect
-2. db:grant
-3. db:check
-4. db:inspect
-5. reinício da aplicação
-
-Autorizações:
-
-- conceder DELETE em users ao papel de runtime;
-- revogar DELETE direto em sessions;
-- preservar os grants existentes por coluna.
-
-Proibições:
-
-- não excluir nenhum usuário;
-- não excluir sessões manualmente;
-- não alterar dados cadastrais;
-- não executar DROP, TRUNCATE ou recriar estruturas;
-- não fazer commit ou push.
-
-Confirme o destino antes da alteração e apresente a comparação dos privilégios antes e depois.
-
-Complemento solicitado por limitação de db:inspect: o usuário respondeu
-"Autorizar leitura das ACLs antes e depois". Essas leituras foram exclusivamente
-de metadados, em READ ONLY; nenhum cadastro/segredo foi lido pelo agente.
-[Resultado L1](../harness/evidence/admin-delete.md#admin-delete-001-l1--preparação-persistente-autorizada).
+| Registro | Horário | Linha da transcrição JSONL |
+| --- | --- | --- |
+| [Texto integral recebido](#texto-integral-recebido) | 03:53:38.442 | 468 (envio do anexo) |
+| [Autorização posterior](#autorização-posterior--preparação-do-banco-persistente) | 04:12:31.453 | 732 |
 
 Ferramenta: Codex. Data: 30/10/2026. Escopo autorizado somente implementação e
 testes descartáveis; sem grants/exclusões no persistente ou Git/publicação.
@@ -276,3 +246,42 @@ Não faça commit, push ou publicação.
 [evidência](../harness/evidence/admin-delete.md) registram implementação, limites,
 revisão, falhas intermediárias e resultados reais separados. Não se atribui
 aprovação humana ou CI remoto ao novo diff.
+
+## Autorização posterior — preparação do banco persistente
+
+Autorizo preparar o banco persistente local para a exclusão administrativa.
+
+Destino permitido:
+
+- host: 127.0.0.1
+- porta: 5432
+- banco: imobilead
+
+Execute exclusivamente pelos comandos canônicos:
+
+1. db:inspect
+2. db:grant
+3. db:check
+4. db:inspect
+5. reinício da aplicação
+
+Autorizações:
+
+- conceder DELETE em users ao papel de runtime;
+- revogar DELETE direto em sessions;
+- preservar os grants existentes por coluna.
+
+Proibições:
+
+- não excluir nenhum usuário;
+- não excluir sessões manualmente;
+- não alterar dados cadastrais;
+- não executar DROP, TRUNCATE ou recriar estruturas;
+- não fazer commit ou push.
+
+Confirme o destino antes da alteração e apresente a comparação dos privilégios antes e depois.
+
+Complemento solicitado por limitação de db:inspect: o usuário respondeu
+"Autorizar leitura das ACLs antes e depois". Essas leituras foram exclusivamente
+de metadados, em READ ONLY; nenhum cadastro/segredo foi lido pelo agente.
+[Resultado L1](../harness/evidence/admin-delete.md#admin-delete-001-l1--preparação-persistente-autorizada).

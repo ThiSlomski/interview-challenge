@@ -1,3 +1,17 @@
+## Recuperação documental dos prompts 1 e 4 — 30/10/2026
+
+Mensagens originais de 28/10/2026 recuperadas das transcrições reais do Codex;
+uma correspondência por prompt em 40 sessões pesquisadas de 28–30/10, com
+respostas seguintes compatíveis. [Originais, datas e hashes](../../prompts/2026-10-28-estabilizacao.md#registro-1)
+e [índice](../../AI_PROMPTS.md). Resumos, decisões e âncoras preservados.
+As antigas observações de texto/data ausente são históricas, superadas somente
+para esses dois prompts. Sem reconstrução, alteração funcional, banco, CI,
+Docker, commit ou push. Autorrevisão sequencial; revisão humana pendente.
+QA: igualdade literal/SHA-256 com origem e preservação dos resumos/decisões e
+blocos2/3 confirmadas; UTF-8/Markdown,191 links/87 âncoras,doctor/validate e
+diff --check aprovados. Apenas quatro documentos; verify/testes funcionais não
+executados nesta recuperação documental.
+
 ## CONTAINER-001 — 30/10/2026, estado vigente
 
 Pedido atual autoriza containerização, superando restrições históricas desta etapa.

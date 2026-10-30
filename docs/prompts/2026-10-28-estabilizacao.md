@@ -1,18 +1,67 @@
 # 2026-10-28-estabilizacao
 
-Fonte: registros anteriores de docs/AI_PROMPTS.md. Textos integrais e resumos
-conservados conforme a fonte; a data no nome corresponde às etapas datadas.
-
-O Prompt 1 não tem data registrada; sua inclusão neste arquivo da estabilização
-não lhe atribui a data de 28/10/2026. Prompts 1 e 4 contêm somente resumos.
+Fonte inicial: registros anteriores de docs/AI_PROMPTS.md. Resumos, decisões e
+resultados históricos preservados. Em 30/10/2026, os textos originais dos prompts
+1 e 4 foram recuperados das mensagens do usuário em sessões locais do Codex de
+28/10/2026, com origem e correspondência registradas abaixo, sem reconstrução.
 
 Registro histórico transferido do índice em 29/10/2026. Links navegáveis fora
 dos prompts foram ajustados à localização atual; instruções históricas não foram
 atualizadas. Resultados abaixo pertencem às respectivas rodadas.
 
+Ordem de envio comprovada (America/Sao_Paulo, -03:00); a sequência 1 → 2 → 3 → 4
+já estava correta. Horários das mensagens `response_item`, `role=user`, nas
+transcrições JSONL locais do Codex:
+
+| Registro | Envio em 28/10/2026 | Sessão / linha |
+| --- | --- | --- |
+| [Prompt 1](#registro-1) | 18:14:25.431 | `01a1845d-362b-7dd0-93cd-e549d9c6e800` / 12 |
+| [Prompt 2](#registro-2) | 18:16:39.647 | `01a1845d-362b-7dd0-93cd-e549d9c6e800` / 57 |
+| [Prompt 3](#registro-3) | 18:27:02.424 | `01a18468-ba4d-7a72-9f20-a35efeb0a699` / 12 |
+| [Prompt 4](#registro-4) | 18:30:52.924 | `01a18468-ba4d-7a72-9f20-a35efeb0a699` / 80 |
+
 <a id="registro-1"></a>
 
 ## Prompt 1 — diagnóstico anterior
+
+**Prompt integral recuperado em 30/10/2026:**
+
+```text
+Leia integralmente o README.md e as instruções locais aplicáveis.
+
+Faça apenas um diagnóstico, sem modificar arquivos nem instalar pacotes.
+
+Contexto:
+Executei npm install e npm audit fix --force.
+O Next.js e o eslint-config-next foram atualizados para 16.4.3.
+Houve conflito com ESLint 8 e aviso sobre React 18.
+O npm run dev funciona e o npm audit informou zero vulnerabilidades.
+
+Tarefas:
+1. Confira package.json, package-lock.json, configuração do ESLint,
+   next.config.mjs e tsconfig.json.
+2. Confira as versões de Node.js e npm.
+3. Execute npm ls --depth=0, npm run lint, npm run typecheck
+   e npm run build.
+4. Confira git status, caso exista um repositório Git.
+5. Apresente os resultados, distinguindo erros de avisos.
+6. Proponha o menor conjunto coerente de ajustes, sem aplicá-los ainda.
+
+Não use --force nem --legacy-peer-deps.
+Não leia nem exponha valores de segredos.
+```
+
+**Origem comprovada:** transcrição JSONL local do Codex, sessão
+`01a1845d-362b-7dd0-93cd-e549d9c6e800`, linha 12, mensagem `response_item`
+com `role=user` e um bloco `input_text`. Enviada em 28/10/2026 às
+18:14:25.431 (America/Sao_Paulo), timestamp original `2026-10-28T21:14:25.431Z`.
+SHA-256 do texto UTF-8, incluindo a quebra de linha final:
+`014babe92ae3fa4987dc6e3094a397b0ae8eb49e6adcb7de24cdc9886b0e64e8`.
+As respostas seguintes, linhas 37 e 50 da mesma transcrição, confirmam falha de
+lint por `next lint`/ESLint 8, typecheck/build aprovados, ausência de Git e os
+artefatos gerados. Uma única mensagem correspondente nas 40 sessões locais
+pesquisadas de 28–30/10/2026; não houve combinação de mensagens. O ambiente era
+a pasta do esqueleto anterior ao clone, coerente com o resumo abaixo.
 
 - **Objetivo / resumo do prompt:** ler integralmente o README e instruções
   locais; diagnosticar o estado após `npm install` e `npm audit fix --force`,
@@ -232,6 +281,54 @@ Ao final, informe os resultados e quaisquer diferenças inesperadas.
 ## Prompt 4 — primeiro commit de estabilização (28/10/2026)
 
 **Ferramenta:** Codex, por comandos locais e revisão do diff.
+
+**Prompt integral recuperado em 30/10/2026:**
+
+```text
+Prepare o primeiro commit da solução, limitado à atualização
+e estabilização do projeto base.
+
+1. Execute npm run build e examine os ajustes automáticos
+   feitos pelo Next no tsconfig.json.
+2. Preserve os ajustes necessários à versão atual do Next,
+   explicando cada um. Não restaure o arquivo apenas por
+   estar fora do escopo anterior.
+3. Execute novamente lint, typecheck e build.
+4. Confirme que o segundo build não provoca novas alterações
+   inesperadas em arquivos versionados.
+5. Revise o diff completo, incluindo eslint.config.mjs.
+   Verifique se a alteração em components/Hello/index.tsx
+   preserva o comportamento original.
+6. Confira que documentação e log de AI descrevem apenas
+   ações e resultados reais.
+7. Verifique que nenhum segredo, .env, node_modules ou
+   arquivo gerado será incluído.
+8. Execute git diff --check.
+9. Adicione explicitamente os arquivos dessa etapa ao índice,
+   incluindo a remoção de .eslintrc.json e o novo
+   eslint.config.mjs.
+10. Confira git diff --cached --stat e crie o commit:
+    chore: stabilize dependencies and migrate eslint configuration
+
+Não implemente funcionalidades, não configure remotos e não faça push.
+Se a identidade Git não estiver configurada, informe isso sem
+inventar nome ou e-mail.
+
+Ao final, apresente o hash do commit, os resultados das verificações
+e git status --short.
+```
+
+**Origem comprovada:** transcrição JSONL local do Codex, sessão
+`01a18468-ba4d-7a72-9f20-a35efeb0a699`, linha 80, mensagem `response_item`
+com `role=user` e um bloco `input_text`. Enviada em 28/10/2026 às
+18:30:52.924 (America/Sao_Paulo), timestamp original `2026-10-28T21:30:52.924Z`.
+SHA-256 do texto UTF-8, incluindo a quebra de linha final:
+`5741f3f9f1d079ac746e9bfd5c8647006f5d75a0f4c83b6a1f0ba6178e3d937a`.
+As respostas seguintes, linhas 83, 100 e 117 da mesma transcrição, confirmam
+os ajustes do Next, a segunda rodada estável e o commit `f1b6f437756eb3c86c141986818c34bb720ab9c8`.
+Uma única mensagem correspondente nas 40 sessões locais pesquisadas de
+28–30/10/2026; não houve combinação de mensagens. O pedido sucede a preparação
+do clone já preservada no [registro 3](#registro-3).
 
 **Resumo do prompt do usuário:** executar build, examinar e preservar os
 ajustes necessários do Next no `tsconfig.json`; repetir lint, typecheck e
