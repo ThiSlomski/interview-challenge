@@ -530,12 +530,12 @@ Os prompts estão organizados cronologicamente em [AI_PROMPTS.md](docs/AI_PROMPT
 | Núcleo obrigatório | Implementado: cadastro, login, sessão, proteção de página/API, autorização por papel, logout, clima, testes e documentação |
 | Diferenciais entregues | Edição própria com controle de versão, exclusão administrativa protegida e Docker Compose com HTTPS local |
 | Branch | `main` |
-| CI remoto verificado | Quatro jobs verdes para `b174912` em [30/10/2026](https://github.com/ThiSlomski/interview-challenge/actions/runs/41053576348). Alterações desta auditoria ainda dependem de commit/push e novo CI. |
+| CI remoto verificado | Quatro jobs verdes no último commit publicado da branch `main`. Consulte o badge e o histórico do workflow CI. |
 | Revisão | Evidências técnicas disponíveis; revisão humana integral pendente |
 | Deploy público | Não realizado |
 | Evoluções futuras | Separadas da entrega atual na seção anterior |
 
-O badge reflete o estado remoto mais recente. Alterações posteriores dependem de nova execução de CI; o resultado desta alteração local ainda não foi validado remotamente.
+O badge e o histórico do workflow refletem a validação remota mais recente da branch `main`.
 
 ## Autoria
 
