@@ -1,5 +1,13 @@
 # Arquitetura da solução
 
+## Estado atual — UI-001 (29/10/2026)
+
+Cadastro/login/área protegida e logout integrados, com listagem administrativa.
+A seção UI-001 ao final descreve decisões vigentes; descrições anteriores de telas
+pendentes são históricas. Clima permanece pendente. Evidências e limites em
+[UI-001](harness/evidence/ui.md).
+
+
 ## Estado atual — REG-001 (29/10/2026)
 
 A etapa de banco está autorizada pelo [pedido atual](prompts/2026-10-29-database.md).
@@ -560,3 +568,85 @@ Lacuna de teste de falhas após autenticação foi corrigida: exceções em sess
 e projeção verificadas separadamente. Resultado real Next+PostgreSQL40/40 e seis
 casos controlados de autorização; não substituem revisão humana ou HTTPS/navegador
 de produção. UI/página protegida/clima permanecem fora desta entrega.
+
+## UI-001 — decisão de interface, 29/10/2026
+
+O pedido UI-001 autoriza as telas antes pendentes. Rotas simples: `/` orienta,
+`/cadastro` registra, `/login` autentica e `/area` consulta com proteção no servidor.
+Reutilizamos React, Next e CSS; nenhuma biblioteca visual foi adicionada.
+Validação compartilhada permanece a fonte dos limites e da normalização;
+servidor é autoridade final. A senha segue intacta no login.
+
+O resumo existe somente no estado do formulário após POST confirmado. Nenhum
+UUID público, armazenamento Web ou parâmetro de URL recupera cadastro; reload
+retorna ao formulário e o usuário precisa entrar para consultar seu registro.
+Não há sessão automática e a previsão de amanhã segue para a próxima etapa.
+
+A página protegida reutiliza autenticação central e consulta autorizada interna,
+com projeção existente, sem HTTP servidor para Host arbitrário. Dados pessoais
+não entram em cache compartilhado. Falhas de infraestrutura fecham o acesso.
+O cliente revalida a sessão sem renovação e esconde conteúdo no ciclo de saída
+para impedir que voltar ou expiração detectada reapresente dados autenticados.
+Logout só navega após confirmação da API; falhas permitem nova tentativa.
+
+Playwright `@playwright/test@1.64.1` (versão exata e lockfile) adiciona Chromium real
+para UI, teclado, viewport e screenshots. Justificativa: os testes HTTP existentes
+não executam React/navegação/layout. `test:ui` roda separadamente, não muda o
+adaptador Node do Harness nem promete cobertura de browser em CI. A fixture
+mantém API/páginas e adapta somente provider DB para destino descartável validado,
+sem copiar credenciais locais ao Next. Evidência e limitações em
+[UI-001](harness/evidence/ui.md); contrato em [plano](harness/evidence/ui-plan.md).
+
+## UI-001-P1 — invalidação assíncrona e identidade institucional
+
+Decisão29/10/2026: active de montagem não representa propriedade de operação.
+A reprodução Chromium anterior mostrou200 real retido revelando dados depois de
+pagehide sintético. Cada operação agora tem geração/controller/prazo8s; as antigas
+não finalizam bloqueios novos ou alteram DOM/estado/navegação. Layout e contexto data
+completo desativam closures antes da pintura, inclusive callbacks antigos de expiry.
+Visibilidade/ciclo/logout invalidam; retorno pode iniciar consulta nova. Falhas
+mantêm ocultação e oferecem recuperação explícita. Sessão/identidade conferidas
+antes e depois da permissão; troca recarrega contexto no servidor. TTL3600 absoluto
+sem renovação e autorização/projeção existentes preservados.
+
+A checagem final reduz a janela de troca de identidade durante a permissão; não
+cria notificação instantânea de revogação após a última resposta. APIs reautorizam
+sempre, UI detecta por nova consulta/polling30s/eventos. Interceptações e limites
+separados de reprodução nativa estão na [evidência P1](harness/evidence/ui-p1.md).
+
+Identidade principal do site oficial Slomski, inspecionado em Chromium antes da
+edição, foi aplicada via tokens CSS: preto/superfícies escuras/texto claro/amarelo.
+Marca SVG oficial local, Space Grotesk e IBM Plex Mono WOFF2 locais via next/font/local
+com OFL. Retirado next/font/google, eliminando fetch de fontes no build e runtime.
+Sem lib visual/dependência nova. Grid decorativa discreta, sem animação/cópia de
+comerciais ou estilos dos produtos. Contexto Imobilead secundário, Slomski como
+desenvolvedor; footer externo com aviso acessível. Skip-link em linha própria ao
+foco move para main#conteudo. Formulários/CSS reorganizados para leitura.
+
+Testes P1 adicionam runner direcionado, transporte controlado que ignora aborto
+mantendo HTTP real e harness React exclusivamente na cópia descartável Next.
+Não são rotas de produção nem mudanças do contrato público. Cópia inclui public
+para SVG; sem .env local. [Referência computada](harness/evidence/ui-reference/reference.json)
+e [galeria final](harness/evidence/ui-captures/README.md). Revisão humana pendente.
+
+## Documentação frontend consolidada — 29/10/2026
+
+A entrada principal é [ui.md](harness/evidence/ui.md); o
+[detalhe P1](harness/evidence/ui-p1.md) preserva reprodução/correção/regressões,
+e o [relato inicial](harness/evidence/ui-initial-history.md) preserva a primeira
+rodada. O roteiro operacional único está em SOLUTION.md. A galeria foi reduzida
+a18 imagens finais, sem mudança de arquitetura/código funcional/identidade.
+Esta organização não reaprova a correção assíncrona; contagens e rodadas estão
+separadas no relatório principal e no inventário documental.
+
+## Gate privado e lifecycle React — 29/10/2026
+
+O fechamento do gate DOM é síncrono, sem flushSync. O atributo hidden tem valor
+inicial constante no JSX/SSR; React não recebe um hidden=false de render antigo.
+Somente a operação atual, ativa, visível e revalidada antes/depois da permissão
+pode abrir o gate por ref. O estado visible serve à apresentação. Mantidos layout
+cleanup, gerações, abortos, prazos, identidade e logout; não há novo adiamento.
+Diagnósticos passam a ser conferidos nas suítes Chromium, com contadores
+sanitizados e teste diferencial de mutação externa antes da hidratação.
+Sem supressão de hidratação ou mudança de SSR. Detalhes em
+[UI-001](harness/evidence/ui.md#correção-funcional-react-e-hidratação--29102026).

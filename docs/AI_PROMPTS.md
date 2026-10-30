@@ -191,3 +191,59 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 - Resultado: Preparação por trechos, com entradas e prompts dependentes da UI reservados no diretório de trabalho; orientações e histórico anterior à UI no commit documental.
 - Limitações/revisão: Validação documental sobre a árvore preparada, sem testes funcionais; aprovação do commit não equivale à revisão humana da UI.
 - Evidências: [escopo, dependências e verificações](harness/evidence/prompt-organization.md#commit-documental-separado--29102026).
+
+## UI-001 — interface integrada, 29/10/2026
+
+- Objetivo: Integrar interface às APIs (UI-001).
+- Registro: [prompt e registro da etapa](prompts/2026-10-29-ui.md#registro-20).
+- Resultado: Cadastro/login/logout, SSR protegido e consulta própria/admin; revisão ajustou gate de snapshots, foco e fixtures.
+- Limitações/revisão: Continuação preservada no arquivo da etapa; clima fora do escopo, revisão humana pendente.
+- Evidências: [detalhes](harness/evidence/ui.md).
+
+## UI-001-P1 — corrida e identidade, 29/10/2026
+
+- Objetivo: Corrigir corrida assíncrona e aplicar identidade oficial (UI-001-P1).
+- Registro: [prompt e registro da etapa](prompts/2026-10-29-ui.md#registro-21).
+- Resultado: Geração/aborto, identidade/permissão, deadline e recuperação; tokens/assets/fontes locais aplicados e regressões registradas.
+- Limitações/revisão: Interceptações/controlados identificados na evidência; clima fora do escopo, revisão humana pendente.
+- Evidências: [detalhes](harness/evidence/ui-p1.md).
+
+## Organização da entrega frontend — 29/10/2026
+
+- Objetivo: Consolidar documentação e capturas da entrega frontend.
+- Registro: [prompt e registro da etapa](prompts/2026-10-29-organizacao-frontend.md#registro-22).
+- Resultado: 9 antigas e 2 duplicatas retiradas, 4 renomeadas e 18 finais preservadas; ui.md como entrada e ui-p1.md como detalhe.
+- Limitações/revisão: Organização não é nova aprovação funcional; autorrevisão sequencial e revisão humana pendente.
+- Evidências: [detalhes](harness/evidence/ui-organization.md).
+
+## Padronização das pastas visuais do frontend — 29/10/2026
+
+- Objetivo: Padronizar pastas visuais preservando o histórico P1.
+- Registro: [prompt e registro da etapa](prompts/2026-10-29-organizacao-frontend.md#registro-23).
+- Resultado: Galeria em ui-captures e referências em ui-reference; caminhos ativos atualizados e prompts históricos preservados.
+- Limitações/revisão: Escopo organizacional; identificadores históricos P1 mantidos. Verificações e limites na evidência.
+- Evidências: [detalhes](harness/evidence/ui-organization.md#padronização-posterior-das-pastas-visuais--29102026).
+
+## Campos de cadastro/login — 29/10/2026
+
+- Objetivo: Padronizar visual dos campos de cadastro/login.
+- Registro: [prompt e registro da etapa](prompts/2026-10-29-campos.md#registro-24).
+- Resultado: CSS compartilhado, foco/geometry/autofill e capturas ajustados; gradiente original encontrado localmente.
+- Limitações/revisão: Continuação preservada; autofill com preenchimento opaco de 14%, distinto do gradiente comum. Sem funcionalidades novas; revisão humana pendente.
+- Evidências: [detalhes](harness/evidence/ui.md#ajuste-visual-dos-campos--29102026).
+
+## Correção funcional React e hidratação — 29/10/2026
+
+- Objetivo: Corrigir flushSync de lifecycle preservando a proteção da área; investigar atributo externo no body e detectar diagnósticos nos testes.
+- Registro: [prompt integral](prompts/2026-10-29-react-console.md#prompt-integral).
+- Resultado: Gate DOM síncrono separado da apresentação React; testes de console/pageerror, fluxo limpo e mutação controlada.
+- Limitações/revisão: Sem identificação da extensão do usuário; revisão humana pendente. Ajuste visual pausado e histórico preservado.
+- Evidências: [causas, verificações e diff](harness/evidence/ui.md#correção-funcional-react-e-hidratação--29102026).
+
+## Revalidação periódica estável — 30/10/2026
+
+- Objetivo: Eliminar a oscilação na consulta periódica preservando as proteções da área.
+- Registro: [prompt integral](prompts/2026-10-30-revalidacao-sessao.md#prompt-integral).
+- Resultado: Modos restritivo e de fundo, conferência de respostas/identidade e regressões Chromium.
+- Limitações/revisão: Autorrevisão sequencial; revisão humana pendente. Sem continuação visual, commit, push ou publicação.
+- Evidências: [diagnóstico, garantias, testes e diffs](harness/evidence/ui.md#revalidação-periódica-estável--30102026).

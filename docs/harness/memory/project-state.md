@@ -1,3 +1,127 @@
+## Revalidação periódica estável — 30/10/2026
+
+Fase autorizada atual concluída: correção funcional da oscilação no intervalo30s
+da área protegida. Sucesso em fundo mantém snapshot verificado visível; demais
+gatilhos continuam restritivos. Falhas, identidade/usuário divergente, sessão
+final, expiração local e logout fecham; gerações/abortos/cleanup preservados.
+Concorrência50/50 e UI29/29 sem skips; ciclo válido sem mudança de hidden, foco,
+scroll/layout ou navegações/Document. Lint/typecheck/doctor/validate/verify parcial
+aprovados;29 Node offline.22 artefatos visuais preservados por SHA-256.
+Cleanup confirmado,0 recursos próprios e metadados/ACLs protegidos iguais.
+Autorrevisão e revisão humana pendente. Sem continuidade visual, commit/push ou
+publicação. [Evidência e diffs](../evidence/ui.md#revalidação-periódica-estável--30102026).
+Histórico abaixo preservado; não iniciar próxima etapa pela memória.
+
+## Correção funcional React e hidratação — 29/10/2026
+
+Prioridade funcional concluída: close sem flushSync, gate DOM síncrono com hidden
+constante no JSX; apenas operação atual revalidada pode abrir. Proteções de
+concorrência/sessão/logout/identidade/expiração preservadas. Ícone usa SVG local.
+Concorrência29/29; UI29/29; lint/typecheck, doctor/validate/verify parcial e
+validação documental aprovados. Monitor: zero diagnósticos inesperados;1 aviso
+de preload local de desempenho contabilizado. Mutação externa controlada produz1
+aviso de hidratação esperado; atributo ausente em HTML/DOM limpo. Sem prova da
+extensão específica no perfil do usuário.18 capturas/README e3 referências
+preservados por hash. Limpeza confirmada; dados/metadados protegidos preservados.
+Revisão humana pendente, ajuste visual pausado; sem commit/push/publicação.
+[Detalhes e diff](../evidence/ui.md#correção-funcional-react-e-hidratação--29102026).
+Histórico anterior preservado abaixo.
+
+## Organização dos registros de prompts — 29/10/2026
+
+Rodada exclusivamente documental: textos integrais em docs/prompts/, índice
+cronológico resumido em [AI_PROMPTS](../../AI_PROMPTS.md) e verificações na
+[evidência](../evidence/prompt-organization.md). 24 registros anteriores
+preservados, 17 blocos integrais idênticos, cinco arquivos reutilizados e nove
+novos, incluindo o pedido atual. Prompts 1/4 só têm resumo; Prompt 1 sem data.
+Doctor/validate documental, links/âncoras, UTF-8/Markdown e diff --check aprovados;
+verify/suítes funcionais/navegador/banco/build não executados nesta rodada.
+Implementação anterior preservada; fase funcional não mudou. Revisão humana
+pendente. Diffs exclusivo/acumulado e limites na evidência; histórico abaixo.
+
+## Ajuste visual vigente dos campos — 29/10/2026
+
+Apenas CSS compartilhado de inputs/textarea: fundo/borda oficiais, cantos retos,
+foco3px/offset3px, gradiente local e legibilidade de autofill. Ver detalhes e
+limitações em [UI-001](../evidence/ui.md#ajuste-visual-dos-campos--29102026).
+UI29/29 (13 cenários +15 SQL +principal),12 sondagens de foco sem deslocamento/corte
+por painéis. Cadastro autofill nativo; login pseudoestado controlado, sem perfil salvo.
+Seis capturas afetadas atualizadas,12 preservadas; referências oficiais inalteradas.
+Sem mudanças funcionais/auth/banco/clima. Histórico abaixo preservado.
+## Padronização de caminhos visuais — 29/10/2026
+
+Pastas operacionais: [ui-captures](../evidence/ui-captures/README.md) e
+[ui-reference](../evidence/ui-reference/reference.json). UI-001-P1 permanece como
+identificador histórico da correção e dos testes. Nesta padronização não houve
+browser/banco/build nem nova captura;22 arquivos movidos, conteúdo das18 imagens
+e3 referências preservado por SHA-256. Somente README/links/gerador foram atualizados.
+Resultados de execução abaixo pertencem às rodadas anteriores identificadas.
+## Consolidação documental vigente — 29/10/2026
+
+Entrada frontend: [ui.md](../evidence/ui.md). Detalhe histórico/técnico:
+[ui-p1.md](../evidence/ui-p1.md). [Histórico inicial](../evidence/ui-initial-history.md),
+[galeria final18 imagens](../evidence/ui-captures/README.md) e
+[inventário da organização](../evidence/ui-organization.md).
+SOLUTION contém um único roteiro vigente. Nesta organização: lint/typecheck e
+uma execução test:ui28/28 sem skips; nomes finais/enquadramento administrativo,
+sem alteração funcional/identidade. Corridas27/27, HTTP40/40, Node29/29 e build/audit
+citados abaixo são resultados históricos P1, não reexecuções desta consolidação.
+Revisão humana/clima/CI remoto/HTTPS continuam pendentes. Histórico abaixo preservado.
+
+## UI-001-P1 — fechamento vigente, 29/10/2026
+
+Corrida assíncrona reproduzida antes da edição no Chromium com resposta real
+retida e pagehide sintético. Corrigida por operação/geração, AbortController,
+invalidação no layout/contexto/ciclo de vida/logout, identidade antes/depois da
+permissão, deadline8s e recuperação explícita. Sem renovar sessão ou alterar APIs.
+
+Identidade institucional Slomski Solutions aplicada após inspeção do site oficial
+em desktop/celular: paleta confirmada, SVG oficial e Space Grotesk/IBM Plex Mono
+locais com OFL, sem dependências novas/hotlink. Footer acessível requerido e skip-link
+sem sobrepor marca. Telas funcionais preservadas, clima fora desta rodada.
+
+QA27/27 concorrência(11cenários), UI28/28(12cenários), Node29/29 e HTTP/PG40/40;
+sem skips. Lint/typecheck/build passaram. Revisão independente fechou achados de
+contexto/identidade/callback antigo; regressões com transporte que ignora abort e
+harness React somente temporário. Revisão humana final pendente.
+Recursos descartáveis limpos, metadados/ACLs protegidos iguais. Nenhuma leitura de
+usuários/mutação em imobilead, remotos, Harness/CI/schema/grants, commit/push/publicação.
+Snapshot Temp/ui-001-p1-before-Op3cBN preserva a base anterior; diffs P1/acumulado
+em Temp/ui-001-p1.diff e ui-001.diff. [Evidência P1](../evidence/ui-p1.md),
+[contrato](../evidence/ui-p1-plan.md), [capturas](../evidence/ui-captures/README.md).
+Estado anterior UI-001 abaixo é histórico. Clima/CI do diff/HTTPS/revisão humana
+continuam pendentes; nenhuma prontidão integral de produto declarada.
+
+## UI-001 — estado vigente, 29/10/2026
+
+Base real main/4c5c6fc7986dccaf88887fa5b1587853fc10c6b1, árvore limpa inicial.
+CI-base aprovado conforme usuário; nenhum CI remoto do diff disparado/consultado.
+Pedido UI-001 autorizou /, /cadastro, /login e /area; supera pendências históricas.
+Cadastro shared/feedback acessível/resumo só memória, login cookie HttpOnly,
+proteção servidor com auth/policy/projeção existentes, user próprio/admin100+cursor,
+logout confirmado e gate contra restauração de cache implementados. Clima pendente.
+Senha intacta, sem armazenamento Web/query string. Falha de infraestrutura fecha acesso.
+
+12 cenários Chromium reais aprovados; runner UI28/28 (12 UI,15 SQL e principal),
+zero skips. Revogação com dados visíveis detectada no polling30s, expiry/refresh,
+voltar/avançar/cliente e regressão cache exercitados. Screenshots sintéticas9.
+Node29/29; launchers incluem registro8/auth11/autorização6. Lint/typecheck/build,
+audit zero vulnerabilidades, doctor/validate/verify --product e diff --check aprovados.
+Harness parcial/readiness not-assessed; browser/build executados separadamente.
+Revisão independente encontrou snapshot cliente, corrigido e regredido; seguimento
+sem novo risco material no escopo. Revisão humana pendente.
+
+Cada rodada confirmou0 recursos DB próprios, metadados/ACLs protegidos iguais,
+Next/Chromium/fixtures encerrados. Nenhuma leitura de dados pessoais existentes
+ou DML em imobilead, banco remoto, mudança de APIs/migrations/grants, commit/push
+ou publicação. Playwright1.64.1 exato/lockfile; sem biblioteca visual nova.
+Responsabilidades/consolidação e falhas intermediárias na evidência.
+[Plano](../evidence/ui-plan.md), [evidência](../evidence/ui.md),
+[execução](../../../SOLUTION.md), [requisitos](../../REQUIREMENTS.md).
+Próximo requisito: clima por REST no navegador, não autorizado/iniciado nesta rodada.
+HTTPS/produção, CI do diff, múltiplos navegadores e revisão humana não comprovados.
+Histórico abaixo preservado.
+
 ## AUTHZ-001 — estado vigente, 29/10/2026
 
 Base real main/012f9caa2ef9513feca0b9bbca64b87dbf312eb7, árvore limpa inicial;
@@ -226,3 +350,10 @@ em [correções](../evidence/corrections.md). O estado H-001 acima é histórico
 Timeout de pai/descendente QA demonstrado em Windows. Hook real, seleção nativa
 e retomada em sessão limpa seguem não demonstrados. Produto e revisão humana
 permanecem pendentes; nenhuma escolha de banco/auth/runner da aplicação foi feita.
+
+QA complementar UI-001: regressão separada `npm run test:db:integration`40/40,
+zero skips, cleanup confirmado, metadados/ACLs protegidos iguais. UI28/28 separado.
+
+QA P1 final: doctor/validate/verify --product aprovados, audit0 vulnerabilidades;
+Harness parcial, Node29 comprovados, demais runners separados. Recursos descartáveis
+limpos, sem Next/Chromium próprios ativos. Revisão humana final permanece pendente.

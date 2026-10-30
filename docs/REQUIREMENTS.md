@@ -1,3 +1,35 @@
+## Entrada frontend consolidada — 29/10/2026
+
+[Entrega principal](harness/evidence/ui.md), [detalhe histórico P1](harness/evidence/ui-p1.md)
+e [capturas finais](harness/evidence/ui-captures/README.md). Esta organização
+não altera status funcional: clima13.c/d e revisão humana continuam pendentes.
+Apenas a suíte de captura foi reexecutada(28/28); resultados P1 de corrida/HTTP/
+Node/build/audit abaixo permanecem históricos, sem dupla contabilização.
+
+## UI-001-P1 — atualização vigente, 29/10/2026
+
+A finalização corrige corrida de respostas antigas na área e aplica identidade
+institucional Slomski Solutions com assets/fontes locais. Requisitos UI continuam
+funcionais, servidor mantém autorização/projeção/TTL; clima13.c/d permanece pendente.
+Reprodução prévia observada e regressões estão na [evidência P1](harness/evidence/ui-p1.md).
+27/27 concorrência,28/28 UI,29/29 Node,40/40 HTTP/PG; revisão humana pendente.
+
+## UI-001 — atualização vigente, 29/10/2026
+
+Esta atualização prevalece sobre as pendências históricas de telas abaixo.
+Base main/4c5c6fc limpa; CI-base aprovado conforme usuário, sem CI remoto do diff.
+[Plano](harness/evidence/ui-plan.md) e [evidência UI-001](harness/evidence/ui.md).
+
+| IDs | Estado atual | Limite |
+| --- | --- | --- |
+| 1,3,11.a-c | /cadastro completo, shared validation, erros associados/foco, loading e PT-BR responsivo | Contrato REG-001 preservado, servidor autoridade final |
+| 7.b,12.a | /area protegida no servidor; login/logout reais; cache cliente revalidado antes de revelar | Polling30s para revogação em uso ativo, TTL absoluto3600 sem renovação |
+| 8,12.b | Consulta própria e lista admin paginada pela política/projeção existentes | Sem permissões novas ou dados existentes lidos em imobilead |
+| 13.a-b | Sucesso com resumo somente em memória; sem senha/sessão automática | Reload/saída descarta resumo, login necessário |
+| 13.c-d | Clima não iniciado | Próxima etapa, mediante pedido |
+| 14–15 | 12 cenários Chromium/Next/PostgreSQL + regressões Node/HTTP | Browser separado do adaptador Harness; CI do diff não executado |
+| 16–18 | Rotas, avaliação manual, arquitetura, prompt integral, evidências/capturas e memória | Revisão humana pendente |
+
 ## AUTHZ-001 — atualização vigente, 29/10/2026
 
 Prevalece sobre as pendências de autorização nos registros históricos abaixo.

@@ -18,7 +18,8 @@
     "db:grant": "node scripts/database/cli.mjs grant",
     "db:check": "node scripts/database/cli.mjs check-app",
     "test:authorization:server": "node --conditions=react-server --test tests/authorization/server.test.mjs",
-    "db:promote-admin": "node scripts/database/admin-user-cli.mjs"
+    "db:promote-admin": "node scripts/database/admin-user-cli.mjs",
+    "test:ui": "node --test tests/ui/integration.test.mjs"
   },
   "dependencies": {
     "@node-rs/argon2": "2.2.2",
@@ -30,6 +31,7 @@
     "server-only": "0.0.1"
   },
   "devDependencies": {
+    "@playwright/test": "1.64.1",
     "@types/node": "20.11.20",
     "@types/pg": "8.23.1",
     "@types/react": "18.2.58",

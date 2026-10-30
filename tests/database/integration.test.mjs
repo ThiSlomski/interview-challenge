@@ -9,6 +9,8 @@ import { verifyRuntimePrivileges } from '../../server/db/config.mjs';
 import { authenticationHttpTests } from '../auth/http-postgres.mjs';
 import { registrationHttpTests } from '../registration/http-postgres.mjs';
 import { authorizationHttpTests } from '../authorization/http-postgres.mjs';
+import { uiBrowserTests } from '../ui/browser.mjs';
+import { uiRaceTests } from '../ui/races.mjs';
 
 // Explicitly separate from npm test. No mocks and no fallback to imobilead.
 // Requires explicit authorization of its disposable local destination.
@@ -49,9 +51,15 @@ test('PostgreSQL migrations, constraints, sessions and runtime permissions', asy
     await dbAdmin.query(runtimeGrantsSql(appRole));
     app = new pg.Client({ ...base, database, user: appRole, password }); await app.connect();
     const runtime = roleIdentifier(appRole);
-    await authenticationHttpTests(t, { ...base, database, user: appRole, password }, dbAdmin);
-    await authorizationHttpTests(t, { ...base, database, user: appRole, password }, dbAdmin, { ...base, database });
-    await registrationHttpTests(t, { ...base, database, user: appRole, password }, dbAdmin);
+    if (process.env.UI_RACE_TEST === 'true') {
+      await uiRaceTests(t, { ...base, database, user: appRole, password }, dbAdmin);
+    } else if (process.env.UI_BROWSER_TEST === 'true') {
+      await uiBrowserTests(t, { ...base, database, user: appRole, password }, dbAdmin);
+    } else {
+      await authenticationHttpTests(t, { ...base, database, user: appRole, password }, dbAdmin);
+      await authorizationHttpTests(t, { ...base, database, user: appRole, password }, dbAdmin, { ...base, database });
+      await registrationHttpTests(t, { ...base, database, user: appRole, password }, dbAdmin);
+    }
     await t.test('expected effective contract accepts column INSERT without whole-table INSERT', async () => {
       await verifyRuntimePrivileges(app);
       const { rows: [rights] } = await app.query(`SELECT

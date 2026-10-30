@@ -1,10 +1,49 @@
-﻿# Executar a solução local
+# Executar a solução local
+
+## Avaliar o frontend
+
+Roteiro vigente único do frontend UI-001, incluindo a correção histórica UI-001-P1.
+[Entrega principal](docs/harness/evidence/ui.md),
+[capturas finais](docs/harness/evidence/ui-captures/README.md) e
+[detalhe histórico da correção](docs/harness/evidence/ui-p1.md).
+
+1. Prepare o ambiente conforme [pré-requisitos](#pré-requisitos-e-instalação),
+   [credenciais](#credenciais-locais-separadas) e provisionamento abaixo. Não repita
+   preparação de banco já existente. Configure APP_ORIGIN exata e
+   SESSION_TTL_SECONDS=3600, execute `npm run dev` e abra essa mesma origem.
+2. Na inicial `/`, escolha Criar cadastro. Confira erros de validação e preencha
+   os campos com dados seus ou sintéticos no seu ambiente de avaliação.
+3. Após sucesso em `/cadastro`, confira resumo sem senha e aviso de login necessário.
+   Ele existe somente em memória; recarregar/saída descarta. Entre em `/login`.
+4. Consulte `/area`: usuário comum vê apenas o próprio cadastro. Sem sessão válida,
+   a URL deve redirecionar; falha de infraestrutura exibe indisponibilidade segura.
+5. Avalie a listagem paginada com administrador já provisionado pelo
+   [procedimento explícito documentado](#promover-explicitamente-usuário-existente).
+   Não há conta/senha padrão, e esta organização não promoveu usuários.
+6. Use Sair; confira bloqueio por URL direta, refresh, voltar/avançar e navegação
+   cliente. Falha de logout mantém erro seguro; Verificar acesso novamente permite
+   recuperar a área após uma checagem válida, sem renovar a sessão.
+7. Execute os [testes pertinentes](#testes-e-verificações): `npm test`,
+   `npm run test:ui` para Chromium e `node --test tests/ui/race.test.mjs` para
+   concorrência. Os dois últimos exigem somente o PostgreSQL descartável autorizado
+   e as variáveis de teste descritas abaixo; não testam usuários de imobilead.
+
+Rotas: `/`, `/cadastro`, `/login` e `/area` (admin usa `?after=UUID`).
+Validação compartilhada preserva normalização/limites e servidor como autoridade;
+senha de login segue intacta. Cookie HttpOnly recebido pelo navegador, sem token
+em armazenamento Web. SSR reutiliza autenticação/política/projeção existentes.
+Operações antigas são invalidadas por geração/aborto; checagens/logout têm prazo8s,
+identidade conferida antes/depois da permissão e sessão absoluta3600s sem renovação.
+
+Identidade Slomski Solutions com SVG/fontes locais; rodapé identifica o
+Desafio técnico Imobilead e abre o site oficial com aviso acessível de nova aba.
+Clima, revisão humana, CI remoto do diff e HTTPS/produção seguem pendentes.
+Resultados históricos e verificação desta organização estão separados na entrega
+principal; reorganizar documentos não reaprova por si só a correção assíncrona.
 
 ## AUTH-001 — autenticação API, 29/10/2026
 
-Estado atual: cadastro, login, sessão persistida e logout implementados. Autorização
-por papel, listagem, página protegida, telas e clima pendentes. Esta seção prevalece
-sobre descrições históricas de autenticação futura abaixo.
+Cadastro, login, sessões, logout e consulta autorizada estão implementados. O roteiro vigente do frontend está acima; esta seção preserva os contratos de API AUTH-001.
 
 Configure APP_ORIGIN exata sem barra/caminho e SESSION_TTL_SECONDS=3600, obrigatórias
 para auth também no desenvolvimento. Produção exige HTTPS; configuração inválida
@@ -36,7 +75,7 @@ Função central authenticateSession em server/auth/session.mjs recebe provider,
 Cookie, configuração e relógio; retorna sessão mínima/null e propaga falha DB para
 chamador falhar fechado. Em página servidor pode passar
 `(await cookies()).toString()`. Não confia em userId/role do cliente; páginas e
-controle por papel não foram implementados nesta etapa.
+controle por papel usam os serviços existentes conforme a entrega frontend.
 
 Limites por processo:30 tentativas/min global,5/min digest de e-mail,Map<=1024,
 janela fixa60s,concorrência2,corpo4096bytes/5s. Ignora IP/Forwarded arbitrários.
@@ -98,7 +137,7 @@ carregamento normal de ambiente. Nenhum cliente deve receber essas variáveis.
 | MIGRATION_DATABASE_URL | papel exclusivo imobilead_migrate, histórico e migrations |
 | DATABASE_URL | papel imobilead_app, uso exclusivo do servidor da aplicação |
 | DB_TRUST_REMOVED | defina true somente após conferir que regra trust temporária foi removida |
-| SESSION_TTL_SECONDS | contrato futuro de sessão: 3600; emissão/cookie ainda pendentes |
+| SESSION_TTL_SECONDS | sessão absoluta de3600 segundos, sem renovação |
 
 Todas as URLs desta etapa apontam para `127.0.0.1:5432/imobilead`. O runtime exige
 `imobilead_app` e verifica os privilégios efetivos; não use `postgres` na aplicação.
@@ -163,7 +202,7 @@ e definição local de suas próprias senhas. O exemplo usa somente placeholders
 O papel `imobilead_migrate` detém os schemas do desafio; `imobilead_app` recebe
 somente SELECT e INSERT por colunas em users, sem UPDATE/DELETE; `users.role`
 não pode ser inserido pela aplicação e `user` é o padrão. Sessões recebem DML
-necessário ao contrato futuro de criação/revogação. Histórico e CREATE de objetos
+necessário ao contrato de criação/revogação. Histórico e CREATE de objetos
 permanentes não são concedidos ao runtime. O check recusa privilégios perigosos
 e memberships; não altera permissões globais para corrigir o ambiente. A checagem
 também exige USAGE no schema da aplicação e confere o contrato efetivo das
@@ -188,11 +227,7 @@ explícita por UUID descrita abaixo, sem esse poder no cadastro público.
 npm run dev
 ```
 
-Abra http://localhost:3000. A tela ainda mostra a mensagem de `/api/v1` e não usa
-cadastro ou login. `server/db/index.ts` é entrada somente de servidor, inicializada
-sob demanda; build e tela pública não provam conexão PostgreSQL. Consultas futuras
-devem ser parametrizadas e retornar somente a projeção permitida, com autorização
-no servidor; hash de senha e material de sessão nunca integram respostas.
+Abra a origem exata configurada em APP_ORIGIN (por exemplo http://localhost:3000). As telas e o fluxo de avaliação estão no roteiro único acima. server/db/index.ts é somente servidor e inicializa sob demanda; build ou tela pública não comprovam conexão ao banco. APIs e SSR continuam responsáveis pela autorização e projeção mínima.
 
 ## Testes e verificações
 
@@ -209,12 +244,25 @@ git diff --check
 ```
 
 `npm test` usa o runner nativo de Node, com arquivos explícitos de testes offline de
-configuração, validação e um launcher para os oito testes de servidor (condição
-`react-server`, sem banco). O launcher exige resumo completo, sem skips e status
+configuração, validação e launchers para registro8/auth11/autorização6 (condição `react-server`, sem banco). O launcher exige resumo completo, sem skips e status
 de sucesso do processo filho. Também é possível rodar `npm run test:registration:server`.
 Estes casos não testam migrations, constraints ou permissões reais. O adaptador
 existente do harness reconhece os eventos estruturados desses casos; seu relatório
 continua parcial, sem declarar prontidão do produto. Não foi afrouxado para o runner.
+
+
+Para Chromium, instale o navegador uma vez com `npx playwright install chromium` e
+execute `npm run test:ui`. O launcher autoriza explicitamente só o destino descartável;
+exige TEST_ADMIN_DATABASE_URL local e DB_TRUST_REMOVED=true conforme a fixture abaixo.
+`node --test tests/ui/race.test.mjs` usa a mesma preparação. Não defina filtros de
+caso ou modo de reprodução antiga para uma avaliação completa normal.
+
+O provider é adaptado somente na cópia temporária Next, sem .env.local; captura
+somente dados sintéticos. Next, Chromium, banco/papéis e diretórios próprios são
+limpos em finally e conferidos por catálogo. O runner de corridas declara respostas
+retidas, transporte que ignora abort e harness React só temporário. Os testes de
+browser não são comprovados pelo adaptador Node do Harness. Nomes finais e
+estados de captura estão no índice da galeria; resultados por rodada na entrega.
 
 O teste PostgreSQL real está preparado em
 `tests/database/integration.test.mjs`, separado do comando offline:
@@ -261,10 +309,7 @@ a chamar os testes offline pelo script atualizado; integração PostgreSQL isola
 no CI fica pendente. A aprovação anterior de CI/build foi informada pelo usuário
 para o checkpoint do Harness V1; esta etapa não dispara nem comprova CI remoto.
 
-Próxima etapa sugerida, mediante autorização: login e sessão usando o contrato
-já acordado, depois autorização/consulta e logout. REG-001 não implementa telas,
-cookies, login/logout ou clima. A integração real segue separada do CI; `npm test`
-do workflow existente passa a executar também os casos controlados do cadastro.
+O frontend integra cadastro/login/consulta/logout. Clima é o próximo requisito, ainda pendente; CI remoto do diff, HTTPS e revisão humana também não foram aprovados. Integração e navegador permanecem separados do adaptador parcial do Harness.
 
 ## Contrato de cadastro REG-001
 
@@ -348,5 +393,5 @@ Testes: npm run test:authorization:server (seis casos controlados, sem banco);
 npm test inclui esse launcher no CI existente. npm run test:db:integration
 inclui sete cenários AUTHZ reais, além das regressões anteriores, com as mesmas
 guardas descartáveis acima. Ver [evidência](docs/harness/evidence/authorization.md).
-Próxima etapa depende de autorização: interface de cadastro/login/página protegida;
-clima e demais telas seguem pendentes. API protegida não conclui página protegida.
+Cadastro/login/página protegida estão integrados conforme o roteiro frontend.
+Clima permanece pendente; a evidência atual distingue SSR protegido de API protegida.

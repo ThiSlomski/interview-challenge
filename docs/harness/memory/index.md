@@ -1,5 +1,9 @@
 # Índice da memória
 
+Atualização documental, 29/10/2026: [índice de prompts](../../AI_PROMPTS.md) e
+[organização/verificações](../evidence/prompt-organization.md). Implementação e
+fase funcional preservadas; revisão humana pendente.
+
 28/10/2026 · origem Prompt 5 · estado versionado explícito · evidência
 [demo](../evidence/demo.md). Esta pasta não é descoberta/carregada automaticamente.
 
@@ -16,3 +20,28 @@ e [lacunas](../validation-gaps.md). H-001 permanece como histórico.
 Comece pelo checkpoint DB-001 em handoff/estado e pela
 [evidência atual](../evidence/database.md). H-001/H-002 e seus resultados continuam
 históricos; não usar restrição de fase antiga para cancelar autorização atual.
+
+Última atualização corrente: UI-001,29/10/2026. Comece pelos checkpoints UI-001
+em handoff/estado e pela [evidência UI](../evidence/ui.md). Telas integradas;
+clima é a próxima etapa, ainda não iniciada. Histórico acima preservado.
+
+Última atualização corrente: UI-001-P1,29/10/2026; comece pelo checkpoint P1 e
+[evidência P1](../evidence/ui-p1.md). Snapshot anterior preservado; concorrência e
+identidade oficial corrigidas. Clima/revisão humana final continuam pendentes.
+
+Entrada frontend consolidada: [ui.md](../evidence/ui.md). O [P1](../evidence/ui-p1.md)
+é detalhe histórico/técnico; [relato inicial](../evidence/ui-initial-history.md)
+preservado. [Galeria final18 imagens](../evidence/ui-captures/README.md) e
+[inventário desta organização](../evidence/ui-organization.md). Comece pela entrada
+principal; não confunda verificações históricas P1 com a organização atual.
+
+Pastas operacionais padronizadas: [galeria ui-captures](../evidence/ui-captures/README.md)
+e [referências ui-reference](../evidence/ui-reference/reference.json). P1 nos
+registros acima é histórico; comandos/resultados/snapshots/diffs foram preservados.
+Esta renomeação não executou novamente browser, banco ou build.
+
+Atualização vigente30/10/2026: revalidação periódica estável da área protegida.
+Comece pelos checkpoints de handoff/estado e pela
+[evidência UI existente](../evidence/ui.md#revalidação-periódica-estável--30102026).
+Sucesso em fundo sem oscilação; gatilhos restritivos e proteções preservados.
+Resultados desta rodada separados dos históricos; revisão humana pendente.

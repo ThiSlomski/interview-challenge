@@ -1,0 +1,26 @@
+{
+  "url": "https://www.slomskisolutions.com.br/",
+  "date": "2026-10-29",
+  "desktop": "1440x1000",
+  "mobile": "390x844",
+  "reducedMotion": true,
+  "rootTokens": {
+    "--color-surface": "#171a1d",
+    "--color-accent": "#f5c542",
+    "--color-text": "#f4f4f2",
+    "--color-bg": "#08090a",
+    "--color-border": "#30343a",
+    "--color-bg-elevated": "#101214",
+    "--color-text-muted": "#a7aaae",
+    "--color-accent-strong": "#ffda62",
+    "--color-accent-soft": "#f5c54224"
+  },
+  "bodyFont": "\"Space Grotesk\", \"Space Grotesk Fallback\", system-ui, sans-serif",
+  "headerFont": "\"Space Grotesk\", \"Space Grotesk Fallback\", system-ui, sans-serif",
+  "mark": "<svg class=\"BrandSignal-module__IyUIka__mark\" viewBox=\"0 0 44 44\" aria-hidden=\"true\" focusable=\"false\"><rect x=\"1\" y=\"1\" width=\"42\" height=\"42\" rx=\"3\"></rect><path d=\"M33 11H19C13 11 10 14 10 19C10 24 13 26 19 26H25C31 26 34 29 34 34C34 39 30 42 24 42H11\"></path><circle cx=\"33\" cy=\"11\" r=\"2.5\"></circle><circle cx=\"11\" cy=\"42\" r=\"2.5\"></circle></svg>",
+  "fontAssets": [
+    "https://www.slomskisolutions.com.br/_next/static/immutable/media/0c89a48fa5027cee-s.p.1ii7211jqpzi_.woff2",
+    "https://www.slomskisolutions.com.br/_next/static/immutable/media/99e609270109b47d-s.p.1dgcou5jor5q_.woff2",
+    "https://www.slomskisolutions.com.br/_next/static/immutable/media/effe91970fc4db64-s.p.28xcb7557rbh2.woff2"
+  ]
+}

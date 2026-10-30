@@ -49,6 +49,9 @@ e `Continue` permanecem com suas etapas; não geraram arquivos separados.
 | REG-001 e REG-001-E1 | [2026-10-29-registration.md](../../prompts/2026-10-29-registration.md) | Reutilizado; correção E1 e registros acrescentados |
 | AUTH-001 | [2026-10-29-authentication.md](../../prompts/2026-10-29-authentication.md) | Novo |
 | AUTHZ-001 | [2026-10-29-authorization.md](../../prompts/2026-10-29-authorization.md) | Novo |
+| UI-001 e UI-001-P1 | [2026-10-29-ui.md](../../prompts/2026-10-29-ui.md) | Novo; principal, continuação e correção juntos |
+| Organização frontend e pastas visuais | [2026-10-29-organizacao-frontend.md](../../prompts/2026-10-29-organizacao-frontend.md) | Novo; duas etapas relacionadas |
+| Campos cadastro/login | [2026-10-29-campos.md](../../prompts/2026-10-29-campos.md) | Novo; pedido e continuação |
 | Este pedido | [2026-10-29-organizacao-prompts.md](../../prompts/2026-10-29-organizacao-prompts.md) | Novo; texto integral recebido |
 
 Total: cinco arquivos reutilizados, nove novos; 25 entradas atuais no índice.

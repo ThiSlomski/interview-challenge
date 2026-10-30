@@ -9,16 +9,17 @@ import { verify } from '@node-rs/argon2';
 import { roleIdentifier } from '../../scripts/database/provision.mjs';
 import { emailLengthCases } from './email-length-fixtures.mjs';
 
-// Actual Next route, copied unchanged. Only the database provider is adapted in
-// an isolated temp fixture, since production deliberately refuses test DB/roles.
-export async function registrationHttpTests(t, config, admin, scenario = 'standard', runScenario) {
+// Actual app routes are copied unchanged. The DB provider is adapted only in
+// this isolated temp fixture, since production refuses test DB/roles. An explicit
+// prepareFixture callback may add a controlled React harness only to that copy.
+export async function registrationHttpTests(t, config, admin, scenario = 'standard', runScenario, prepareFixture) {
   assert.equal(config.host,'127.0.0.1'); assert.equal(config.port,5432);
   assert.match(config.database,/^imobilead_test_[a-f0-9]{12}$/);
   assert.match(config.user,/^imobilead_app_[a-f0-9]{12}$/);
   const directory = await mkdtemp(join(tmpdir(),'imobilead-registration-'));
   let child, exited;
   try {
-    for (const name of ['app','components','services','server','shared','tsconfig.json','next.config.mjs','package.json']) await cp(resolve(name),join(directory,name),{recursive:true});
+    for (const name of ['app','components','services','server','shared','public','tsconfig.json','next.config.mjs','package.json']) await cp(resolve(name),join(directory,name),{recursive:true});
     await symlink(resolve('node_modules'),join(directory,'node_modules'),process.platform==='win32'?'junction':'dir');
     await mkdir(join(directory,'server','db'),{recursive:true});
     await writeFile(join(directory,'server','db','index.ts'), `import 'server-only';
@@ -32,6 +33,7 @@ export function database() { return pool ??= (async () => {
   await verifyRuntimePrivileges(db); return db;
 })(); }
 `);
+    if (prepareFixture) await prepareFixture(directory);
     const socket = createServer(); socket.listen(0,'127.0.0.1'); await once(socket,'listening');
     const port = socket.address().port; await new Promise(resolve=>socket.close(resolve));
     const origin = `http://127.0.0.1:${port}`;

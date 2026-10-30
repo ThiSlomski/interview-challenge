@@ -1,21 +1,59 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import type { Metadata } from 'next';
+import localFont from 'next/font/local';
+import Image from 'next/image';
+import Link from 'next/link';
+import './globals.css';
 
-const inter = Inter({ subsets: ["latin"] });
+const grotesk = localFont({
+  src: './fonts/space-grotesk-latin.woff2',
+  variable: '--font-grotesk',
+  weight: '300 700',
+  display: 'swap',
+});
+const mono = localFont({
+  src: [
+    { path: './fonts/ibm-plex-mono-latin-400.woff2', weight: '400' },
+    { path: './fonts/ibm-plex-mono-latin-500.woff2', weight: '500' },
+  ],
+  variable: '--font-mono',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
-  title: "App Title",
-  description: "Good luck!",
+  title: 'Cadastro e consulta | Slomski Solutions',
+  description: 'Desafio técnico Imobilead desenvolvido por Slomski Solutions. Cadastro e consulta com autenticação.',
+  icons: { icon: '/brand/slomski-solutions-mark.svg' },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="pt-BR">
+      <body className={`${grotesk.variable} ${mono.variable}`}>
+        <a className="skip-link" href="#conteudo">Pular para o conteúdo</a>
+        <header className="site-header">
+          <nav className="nav shell" aria-label="Navegação principal">
+            <Link className="brand" href="/" aria-label="Slomski Solutions — início">
+              <Image src="/brand/slomski-solutions-mark.svg" width={40} height={40} alt="" priority />
+              <span className="brand-name"><span>SLOMSKI</span><span>SOLUTIONS</span></span>
+            </Link>
+            <div className="nav-links">
+              <Link href="/cadastro">Cadastro</Link>
+              <Link href="/login">Entrar</Link>
+              <Link href="/area" prefetch={false}>Minha área</Link>
+            </div>
+          </nav>
+        </header>
+        {children}
+        <footer className="shell site-footer">
+          <p>
+            Desenvolvido por{' '}
+            <a href="https://www.slomskisolutions.com.br" target="_blank" rel="noopener noreferrer">
+              Slomski Solutions<span className="sr-only"> (abre em nova aba)</span>
+            </a>
+            {' '}· Desafio técnico Imobilead
+          </p>
+        </footer>
+      </body>
     </html>
   );
 }
