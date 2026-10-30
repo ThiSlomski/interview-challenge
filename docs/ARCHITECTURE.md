@@ -1,5 +1,67 @@
 # Arquitetura da solução
 
+## CI-001 — pipeline bloqueante, 30/10/2026
+
+Decisão vigente para CI; referências abaixo a Node20/report-only/integração
+futura são históricas. [Contrato](harness/evidence/ci-plan.md),
+[evidência](harness/evidence/ci.md) e [execução local](../SOLUTION.md#ci-e-próxima-etapa).
+
+Três jobs independentes quality/postgres-integration/security com Node22.13.1,
+npm ci/cache, Ubuntu24.04 e timeouts15/20/10min. Quality executa lint, tipos,
+testes offline/servidor e build. PG18 é um serviço efêmero sem volume persistente,
+acessível pelo runner em127.0.0.1:5432 após health check limitado. A guarda já
+existente exige banco-base chamado imobilead: no CI esse nome identifica apenas
+o banco vazio do serviço, jamais o banco persistente local. Assim não se altera
+a guarda de produção nem se introduz conexão remota para viabilizar os testes.
+
+Administrador/URL exclusivamente sintéticos no workflow, sem repository secrets.
+As três variáveis do contrato de testes são TEST_ADMIN_DATABASE_URL, DB_TRUST_REMOVED=true e
+DB_DISPOSABLE_TEST_AUTHORIZED=true. O runner cria banco/papéis próprios aleatórios,
+migra e testa ACLs/constraints/sessões/HTTP cadastro/auth/autorização; limpa em
+finally e falha se limpeza/verificação falhar. Não se promete finally em kill
+forçado; o serviço e runner efêmeros limitam resíduos no CI. Em execução local,
+examine somente recursos próprios identificados se cleanup falhar, sem remoção
+por prefixo ou escrita no banco principal.
+
+O passo HTTP/PG executa o comando canônico dentro da imagem oficial
+node:22.13.1-bookworm, fixada no digest Linux amd64
+sha256:8ef2dd8a3a6d24354800fb796cf256a6ec7ec8c3a388289469255ed8a12ed378
+(verificado no manifest do registro). docker run --network container:<service-id>
+compartilha a rede do PostgreSQL, conservando127.0.0.1 tanto na URL quanto em
+inet_server_addr(). Uma porta publicada comum faria essa guarda falhar pelo
+endereço bridge. As dependências instaladas pelo npm ci no runner Linux são
+reutilizadas por mount read-only em /workspace; fixtures Next/saídas ficam em
+/tmp do contêiner. --rm/--init limitam resíduos e propagam o código de saída.
+POSTGRES_CONTAINER_ID é metadado sintético do serviço, não credencial.
+POSTGRES_INITDB_ARGS=--auth-host=scram-sha-256 também exige senha no TCP
+loopback; apenas POSTGRES_HOST_AUTH_METHOD não bastaria para as regras localhost
+geradas pelo initdb. Nenhuma guarda de produção foi alterada.
+
+Referência: [rede entre contêineres Docker](https://docs.docker.com/engine/network/#container-networks).
+
+SCA obrigatório: `npm audit --audit-level=high`, sem supressão; high/critical
+bloqueiam. Low/moderate continuam no relatório e não bloqueiam por esse limite.
+Zero findings atuais é fotografia do registro consultado, não ausência de falhas
+de código nem garantia futura. Sem instalação corretiva/force no pipeline.
+UI permanece local: navegador não provisionado, CDP/autofill/capturas e
+portabilidade Linux ainda não comprovados. HTTP/PG roda sem iniciar Chromium.
+
+Mínimo privilégio contents:read, checkout sem credencial persistida, sem escrita
+remota nem secrets, concorrência workflow/ref e cancelamento de execução antiga.
+Pinagem SHA imutável de actions oficiais verificada via GitHub API, com versões
+legíveis; política remota permite todas as actions e não exige SHA, mas adotamos
+pinagem. PostgreSQL18 usa tag major explícito (patches mutáveis, sem digest).
+
+Consulta read-only: repositório público, Actions habilitado, CodeQL default setup
+not-configured. Não se demonstrou configuração avançada de CodeQL; optou-se
+pelo SCA obrigatório neste escopo sem ampliar permissões/configurações remotas.
+Não há garantia de branch protection: jobs falham sem mascaramento, mas tornar
+os checks obrigatórios para merge é configuração remota fora desta entrega.
+
+Fontes oficiais: [serviços PostgreSQL](https://docs.github.com/en/actions/tutorials/use-containerized-services/create-postgresql-service-containers),
+[pinagem de actions](https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions#using-third-party-actions).
+Autorrevisão sequencial; revisão humana e CI remoto do diff pendentes (fase2).
+
 ## WEATHER-001 — previsão no navegador, 30/10/2026
 
 README 13.c/d implementados no sucesso do cadastro. Esta decisão substitui apenas

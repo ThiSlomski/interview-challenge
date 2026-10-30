@@ -1,28 +1,40 @@
-# Starter CI for the DevSecOps challenge.
-#
-# This is intentionally minimal: lint, typecheck, build and a dependency audit.
-# As part of the challenge you are expected to EXTEND it with at least one
-# dedicated security step (SAST/SCA/secret scan — e.g. CodeQL, gitleaks, trivy)
-# and, if you add a database/containers, the steps needed to validate them.
 name: CI
 
 on:
   push:
     branches: ["**"]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  quality:
+    name: Quality
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
-          node-version: 20
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22.13.1"
           cache: npm
 
-      - run: npm ci
+      - name: Install
+        run: npm ci
 
       - name: Lint
         run: npm run lint
@@ -30,20 +42,83 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
-      - name: Build
-        run: npm run build
-
-      # Tests are a REQUIRED part of the challenge (README, Parte 5). The
-      # starter `test` script is a placeholder — replace it with a real runner
-      # (Vitest/Jest/Playwright) and keep this step green.
       - name: Test
         run: npm test
 
-      # Security gate (starter, REPORT-ONLY). The base project ships with known
-      # advisories in its transitive dependencies. Part of this DevSecOps
-      # challenge is to assess them and decide what to do: upgrade, replace,
-      # accept with justification, or make this gate blocking (remove
-      # `|| true`) and add dedicated steps (CodeQL / gitleaks / trivy) as
-      # separate jobs. Document your decision in docs/ARCHITECTURE.md.
-      - name: Dependency audit (report-only)
-        run: npm audit --audit-level=high || true
+      - name: Build
+        run: npm run build
+
+  postgres-integration:
+    name: PostgreSQL integration
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: ci_fixture_admin
+          POSTGRES_PASSWORD: ci_only_disposable_2026
+          # The test guard requires this base name. It exists only in this job's
+          # service and is never the persistent local database.
+          POSTGRES_DB: imobilead
+          POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+          POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ci_fixture_admin -d imobilead"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-start-period 10s
+          --health-retries 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22.13.1"
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Test PostgreSQL and HTTP
+        env:
+          POSTGRES_CONTAINER_ID: ${{ job.services.postgres.id }}
+          TEST_ADMIN_DATABASE_URL: postgresql://ci_fixture_admin:ci_only_disposable_2026@127.0.0.1:5432/imobilead
+          DB_TRUST_REMOVED: "true"
+          DB_DISPOSABLE_TEST_AUTHORIZED: "true"
+        # The migration guard checks inet_server_addr() = 127.0.0.1 as well as
+        # the client URL. Share the service network instead of weakening it for
+        # Docker's bridge address. Reuse npm ci dependencies through a read-only
+        # workspace; Next fixtures and their output live only in container /tmp.
+        run: |
+          docker run --rm --init \
+            --network "container:$POSTGRES_CONTAINER_ID" \
+            --volume "$GITHUB_WORKSPACE:/workspace:ro" \
+            --workdir /workspace \
+            --env TEST_ADMIN_DATABASE_URL \
+            --env DB_TRUST_REMOVED \
+            --env DB_DISPOSABLE_TEST_AUTHORIZED \
+            node:22.13.1-bookworm@sha256:8ef2dd8a3a6d24354800fb796cf256a6ec7ec8c3a388289469255ed8a12ed378 \
+            npm run test:db:integration
+
+  security:
+    name: Security (SCA)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22.13.1"
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Dependency audit (blocking high and critical)
+        run: npm audit --audit-level=high

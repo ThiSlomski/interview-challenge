@@ -233,7 +233,7 @@ function temporary(prefix, action) {
 test('validate rejects broken skill metadata in isolated fixture and CLI exits nonzero', () => {
   const fixture = mkdtempSync(join(tmpdir(), 'harness-invalid-'));
   try {
-    for (const name of ['AGENTS.md', '.codex', '.agents', 'docs', 'scripts', 'SOLUTION.md', 'README.md', '.env.example']) cpSync(join(projectRoot, name), join(fixture, name), { recursive: true });
+    for (const name of ['AGENTS.md', '.codex', '.agents', '.github', 'docs', 'scripts', 'SOLUTION.md', 'README.md', '.env.example']) cpSync(join(projectRoot, name), join(fixture, name), { recursive: true });
     assert.deepEqual(validate(fixture).errors, []);
     assert.equal(validate(fixture).ok, true);
     const file = join(fixture, '.agents/skills/resume-project/SKILL.md');

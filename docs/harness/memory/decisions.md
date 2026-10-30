@@ -1,5 +1,15 @@
 # Índice de decisões
 
+## CI-001 — 30/10/2026
+
+Três jobs bloqueantes, Node22.13.1/npm ci/cache, PostgreSQL18 efêmero,
+SCA high/critical, SHA oficial e mínimo privilégio. UI fica local e CodeQL
+opcional não adicionado. Rede compartilhada com o serviço preserva a guarda
+inet_server_addr loopback, sem conexão ao principal.
+[Decisão](../../ARCHITECTURE.md#ci-001--pipeline-bloqueante-30102026),
+[contrato](../evidence/ci-plan.md) e [evidência](../evidence/ci.md).
+Fase2/revisão humana e CI remoto do diff pendentes; sem commit/push.
+
 ## WEATHER-001 — 30/10/2026
 
 Open-Meteo sem chave, diretamente no navegador: geocodificação com localização

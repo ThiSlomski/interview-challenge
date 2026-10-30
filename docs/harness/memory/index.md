@@ -45,3 +45,7 @@ Comece pelos checkpoints de handoff/estado e pela
 [evidência UI existente](../evidence/ui.md#revalidação-periódica-estável--30102026).
 Sucesso em fundo sem oscilação; gatilhos restritivos e proteções preservados.
 Resultados desta rodada separados dos históricos; revisão humana pendente.
+
+Atualização vigente CI-001,30/10/2026: fase1 local do pipeline obrigatório;
+comece pelo handoff/estado e pela [evidência CI](../evidence/ci.md).
+Fase2/revisão humana/novo CI remoto pendentes; histórico acima preservado.

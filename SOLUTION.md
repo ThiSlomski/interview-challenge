@@ -316,10 +316,96 @@ Não marque migrations ou permissões aprovadas com base somente em testes offli
 
 ## CI e próxima etapa
 
-O workflow existente não foi modificado nesta rodada. Seu passo `npm test` passa
-a chamar os testes offline pelo script atualizado; integração PostgreSQL isolada
-no CI fica pendente. A aprovação anterior de CI/build foi informada pelo usuário
-para o checkpoint do Harness V1; esta etapa não dispara nem comprova CI remoto.
+Estado vigente CI-001, 30/10/2026: [workflow](.github/workflows/ci.yml) com
+Node **22.13.1**, cache npm oficial e `npm ci` em três jobs independentes no
+Ubuntu24.04. Actions oficiais fixadas por SHA (checkout4.3.1/setup-node4.4.0),
+credencial Git não persistida, `contents: read`, concorrência por workflow/ref
+com cancelamento da execução antiga, eventos push/pull_request/workflow_dispatch.
+
+| Job (timeout) | Passos, em ordem |
+| --- | --- |
+| quality (15min) | Checkout; Setup Node; Install (`npm ci`); Lint (`npm run lint`); Typecheck (`npm run typecheck`); Test (`npm test`); Build (`npm run build`) |
+| postgres-integration (20min) | Serviço saudável; Checkout; Setup Node; Install; Test PostgreSQL and HTTP (`npm run test:db:integration`) |
+| security (10min) | Checkout; Setup Node; Install; Dependency audit (`npm audit --audit-level=high`) |
+
+O serviço `postgres:18` acompanha a versão major documentada do projeto, sem
+volume persistente. O tag major recebe atualizações menores; não é um digest
+imutável. Porta5432 do runner →5432 do serviço; health check `pg_isready`,
+intervalo10s, timeout5s, início10s e10 tentativas. O banco-base vazio se chama
+`imobilead` porque a guarda existente exige esse nome; ele existe exclusivamente
+no serviço deste job, sem relação com o banco persistente da máquina local.
+Administrador `ci_fixture_admin`/senha `ci_only_disposable_2026` são sintéticos,
+exclusivos desta fixture. Host auth usa scram-sha-256, sem trust de rede.
+
+Somente no passo de integração: `TEST_ADMIN_DATABASE_URL` aponta esse usuário
+para `127.0.0.1:5432/imobilead`, `DB_TRUST_REMOVED=true` e
+`DB_DISPOSABLE_TEST_AUTHORIZED=true`. Não há secrets do repositório nem
+DATABASE_URL/MIGRATION_DATABASE_URL/ADMIN_DATABASE_URL no workflow. Cada runner
+cria `imobilead_test_<hex12>` e dois papéis temporários com senha aleatória;
+migrations, grants, HTTP e mutações de teste usam somente esses recursos.
+O banco-base recebe apenas consultas de metadados; criação/remoção dos recursos
+próprios ocorre pela conexão administrativa. Cleanup em `finally`, conferência
+de catálogo/metadados e falhas de limpeza bloqueantes. Cancelamento forçado pode
+interromper `finally`; o serviço inteiro é descartado ao encerrar o job.
+
+`npm test` cobre configuração/guardas, validação, clima e launchers de servidor
+cadastro8/auth11/autorização6. Integração cobre migrations1/0, privilégios,
+constraints/sessões, cadastro/login/logout/sessão e consulta própria/admin via
+Next HTTP real, incluindo401/403. Não há skips configurados nessas suítes.
+Os launchers verificam quantidade, código e ausência de skips dos filhos.
+
+UI completa (`npm run test:ui`), concorrência (`node --test tests/ui/race.test.mjs`)
+e recorte clima (`npm run test:weather:ui`) permanecem locais: Chromium não é
+provisionado pelo CI existente, há autofill via CDP e escrita de capturas
+versionadas, e a portabilidade Ubuntu ainda não foi demonstrada. Os testes
+HTTP/PG não lançam browser.
+
+
+O passo HTTP/PG executa o comando canônico dentro da imagem oficial
+node:22.13.1-bookworm, fixada no digest Linux amd64
+sha256:8ef2dd8a3a6d24354800fb796cf256a6ec7ec8c3a388289469255ed8a12ed378
+(verificado no manifest do registro). docker run --network container:<service-id>
+compartilha a rede do PostgreSQL, conservando127.0.0.1 tanto na URL quanto em
+inet_server_addr(). Uma porta publicada comum faria essa guarda falhar pelo
+endereço bridge. As dependências instaladas pelo npm ci no runner Linux são
+reutilizadas por mount read-only em /workspace; fixtures Next/saídas ficam em
+/tmp do contêiner. --rm/--init limitam resíduos e propagam o código de saída.
+POSTGRES_CONTAINER_ID é metadado sintético do serviço, não credencial.
+POSTGRES_INITDB_ARGS=--auth-host=scram-sha-256 também exige senha no TCP
+loopback; apenas POSTGRES_HOST_AUTH_METHOD não bastaria para as regras localhost
+geradas pelo initdb. Nenhuma guarda de produção foi alterada.
+
+SCA bloqueia high/critical, inclusive dependências de desenvolvimento; o limite
+`high` permite que low/moderate não bloqueiem, mas continuem visíveis no relatório.
+Não há supressão de erro, correção automática nem `--force`. Em falha, examine
+job/passo: instalação/lock, lint/tipos/testes/build, saúde/fixture/cleanup do PG ou
+advisories no SCA; corrija a causa e repita. Não reduza o gate para obter verde.
+CodeQL foi avaliado e não adicionado nesta entrega SCA; decisão na arquitetura.
+
+Para reproduzir os grupos locais com Node22.13.1/npm10.9.2:
+
+```powershell
+npm ci
+npm run lint
+npm run typecheck
+npm test
+npm run build
+npm audit --audit-level=high
+# Configure TEST_ADMIN_DATABASE_URL localmente sem exibir a URL;
+# confirme DB_TRUST_REMOVED=true e DB_DISPOSABLE_TEST_AUTHORIZED=true.
+npm run test:db:integration
+node scripts/harness/harness.mjs doctor
+node scripts/harness/harness.mjs validate
+node scripts/harness/harness.mjs verify --product
+git diff --check
+```
+
+Não execute provision/migrate/grant no banco principal para reproduzir o CI.
+O runner carrega `.env.local` localmente; CI não cria esse arquivo. Nunca copie
+credenciais locais para o workflow. A execução local Windows não prova o serviço
+Linux do GitHub Actions. [Evidência CI-001](docs/harness/evidence/ci.md) distingue
+CI remoto verde da base e CI remoto do novo diff, pendente da fase2. Nenhum
+commit/push nesta fase; usuário revisará e fará ambos após aprovação humana.
 
 O frontend integra cadastro/login/consulta/logout e previsão de amanhã no sucesso.
 Execute `npm run test:weather` para 14 unitários offline (também no npm test) e

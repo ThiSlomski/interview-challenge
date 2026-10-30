@@ -1,3 +1,23 @@
+## CI-001 — atualização vigente, 30/10/2026
+
+Prevalece sobre descrições históricas do CI abaixo. Fase1 local sobre main/b98c2f4,
+árvore inicialmente limpa; [contrato](harness/evidence/ci-plan.md),
+[evidência atual](harness/evidence/ci.md),
+[comandos e variáveis](../SOLUTION.md#ci-e-próxima-etapa).
+
+| Requisito | Implementação | Estado |
+| --- | --- | --- |
+| CI-1 | quality: npm ci/cache, Node22.13.1, lint/typecheck/Test/build | Implementado localmente; novo CI remoto pendente |
+| CI-2, SEC-7 | security: npm audit --audit-level=high bloqueante | Gate high/critical; resultado local na evidência |
+| CI-3, 14–15 | npm test offline/servidor; postgres-integration com HTTP/PG18 real | Serviço efêmero/credenciais sintéticas; validação remota pendente |
+| 18.a | SOLUTION: grupos locais, variáveis, jobs, diagnóstico e limites | Documentado; execução do zero Ubuntu não comprovada |
+| ENT-4 | SHA oficial, permissões mínimas, timeouts e concorrência | Base remota verde; diff aguarda aprovação, commit/push do usuário e três jobs verdes |
+
+UI/concorrência/clima de navegador continuam como verificações locais documentadas;
+sem provisionamento determinístico do navegador no workflow vigente. Nenhuma
+funcionalidade/UI/schema/guarda/dependência modificada. Autorrevisão sequencial;
+revisão humana pendente; fase2 não executada.
+
 ## WEATHER-001 — atualização vigente, 30/10/2026
 
 README13.c/d implementados: Open-Meteo REST diretamente no navegador, geocodificação

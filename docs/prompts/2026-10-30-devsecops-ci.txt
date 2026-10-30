@@ -1,0 +1,312 @@
+Finalize o pipeline obrigatório do desafio DevSecOps.
+
+Contexto
+
+O produto está implementado e o CI remoto atual está verde, mas `.github/workflows/ci.yml` ainda é essencialmente o arquivo starter:
+
+- Node 20;
+- lint;
+- typecheck;
+- build;
+- npm test;
+- npm audit report-only com `|| true`;
+- nenhum PostgreSQL de integração;
+- comentários desatualizados dizendo que os testes são placeholder.
+
+O pipeline verde atual não é evidência suficiente do conjunto final.
+
+Antes de alterar
+
+Inspecione:
+
+- `.github/workflows/*.yml`;
+- `package.json` e todos os scripts;
+- versão de Node documentada;
+- `.env.example`;
+- scripts e guardas do banco;
+- testes unitários;
+- testes HTTP/PostgreSQL;
+- testes de autenticação e autorização;
+- testes UI;
+- Harness;
+- `SOLUTION.md`;
+- `docs/ARCHITECTURE.md`;
+- requisitos e evidências canônicas;
+- configuração atual do GitHub Actions.
+
+Não invente nomes de scripts. Use os comandos reais existentes.
+
+Objetivo
+
+Entregar um CI remoto bloqueante que valide, no mínimo:
+
+1. instalação reproduzível;
+2. lint;
+3. typecheck;
+4. testes automatizados;
+5. build;
+6. integração real com PostgreSQL descartável;
+7. verificação de segurança SCA bloqueante.
+
+Estrutura sugerida
+
+Organize o workflow em três jobs claros:
+
+1. `quality`
+2. `postgres-integration`
+3. `security`
+
+Pode usar nomes equivalentes se houver uma justificativa melhor.
+
+Configuração global
+
+- manter execução em `push` e `pull_request`;
+- permitir `workflow_dispatch` para execução manual;
+- usar `permissions: contents: read` por padrão;
+- adicionar `concurrency` para cancelar execução antiga da mesma referência;
+- usar `timeout-minutes` em todos os jobs;
+- não usar `continue-on-error`;
+- não usar `|| true`;
+- não incluir credenciais reais;
+- não acessar banco persistente ou remoto.
+
+Node
+
+Utilize a mesma versão validada pelo projeto:
+
+`22.13.1`
+
+Não mantenha Node 20 no pipeline.
+
+Use `npm ci` e o cache oficial do npm.
+
+Job quality
+
+Deve executar, em uma ordem coerente:
+
+- checkout;
+- setup do Node;
+- `npm ci`;
+- lint;
+- typecheck;
+- testes unitários e de servidor que não dependem de PostgreSQL;
+- build.
+
+Use os comandos canônicos encontrados no `package.json`.
+
+O passo deve se chamar claramente `Test`, `Unit tests` ou equivalente.
+
+Remova os comentários starter que afirmam que o runner é placeholder.
+
+PostgreSQL descartável
+
+Crie um job separado com serviço PostgreSQL.
+
+Use uma versão explícita e compatível do PostgreSQL, conforme a versão adotada/documentada pelo projeto.
+
+Configure:
+
+- usuário administrativo somente para a fixture do CI;
+- senha sintética e exclusiva do workflow;
+- banco-base descartável;
+- porta local;
+- health check com `pg_isready`;
+- timeout e tentativas de inicialização.
+
+O runner deve acessar apenas o serviço criado pelo próprio job.
+
+Não usar:
+
+- `DATABASE_URL` real;
+- secrets do repositório;
+- banco `imobilead` persistente;
+- credenciais locais;
+- dados pessoais.
+
+Configure somente as variáveis exigidas pelos testes descartáveis, como:
+
+- `TEST_ADMIN_DATABASE_URL`;
+- `DB_TRUST_REMOVED=true`;
+- `DB_DISPOSABLE_TEST_AUTHORIZED=true`;
+
+mas confirme primeiro os nomes e contratos reais no código.
+
+A URL deve apontar exclusivamente para o PostgreSQL do serviço do GitHub Actions.
+
+Execute os testes reais existentes de:
+
+- migrations;
+- privilégios;
+- cadastro HTTP;
+- sessões;
+- autenticação;
+- autorização;
+- integração PostgreSQL.
+
+Não execute comandos destrutivos fora da fixture isolada.
+
+Confirme que:
+
+- os testes criam somente bancos e roles temporários;
+- a limpeza ocorre também em falha;
+- nenhum valor sensível é impresso;
+- nenhum teste é ignorado;
+- qualquer falha quebra o job.
+
+Testes de UI
+
+Avalie os requisitos reais da suíte UI antes de adicioná-la ao GitHub Actions.
+
+Se ela já for portável para Ubuntu e possuir navegador instalado deterministicamente, inclua-a em um job adequado.
+
+Se exigir uma mudança relevante, navegador não provisionado ou ampliar o escopo de forma arriscada:
+
+- não improvise;
+- mantenha a suíte UI como verificação local documentada;
+- registre objetivamente essa decisão.
+
+O requisito mínimo do desafio é ter testes automatizados relevantes no CI; não enfraqueça o pipeline para forçar uma suíte de navegador instável.
+
+Segurança bloqueante
+
+Transforme o audit atual em SCA bloqueante:
+
+`npm audit --audit-level=high`
+
+Remova obrigatoriamente:
+
+`|| true`
+
+Coloque a verificação em um job ou passo claramente identificado como segurança.
+
+O job deve falhar em vulnerabilidades `high` ou `critical`.
+
+Não use `--force` e não altere dependências automaticamente durante o CI.
+
+Não aceite findings silenciosamente.
+
+Se existir alguma vulnerabilidade:
+
+1. analise;
+2. corrija ou justifique;
+3. documente a decisão;
+4. não masque o código de saída.
+
+O audit bloqueante é a etapa SCA obrigatória desta entrega.
+
+Avalie CodeQL apenas se o repositório e suas permissões suportarem a configuração avançada. Não adicione CodeQL cegamente se isso depender de GitHub Advanced Security indisponível para o repositório.
+
+Boas práticas
+
+- fixe versões explícitas das actions;
+- avalie pinagem por SHA imutável, conforme a política do projeto;
+- não use actions desconhecidas sem necessidade;
+- mantenha privilégios mínimos;
+- não exponha secrets;
+- não faça download de executáveis sem verificação;
+- não use `latest` para PostgreSQL;
+- não duplique etapas sem necessidade;
+- mantenha nomes dos jobs e passos legíveis.
+
+Documentação
+
+Atualize:
+
+- `SOLUTION.md`;
+- `docs/ARCHITECTURE.md`;
+- requisitos;
+- evidência de CI;
+- memória canônica;
+- instruções para executar localmente os mesmos grupos de testes.
+
+Documente:
+
+- versão do Node;
+- jobs do pipeline;
+- PostgreSQL descartável;
+- variáveis exclusivamente sintéticas do CI;
+- SCA bloqueante;
+- limite escolhido `high`;
+- suítes executadas no CI;
+- suítes mantidas apenas localmente, se houver;
+- como interpretar uma falha;
+- diferença entre CI local e remoto.
+
+Prompts
+
+Salve este prompt integral em `docs/prompts/`.
+
+Em `docs/AI_PROMPTS.md`, adicione apenas uma entrada resumida com link para o arquivo integral.
+
+Validação local
+
+Antes de pedir commit:
+
+- valide a sintaxe YAML;
+- execute lint;
+- typecheck;
+- testes unitários;
+- testes HTTP/PostgreSQL contra fixture local descartável autorizada;
+- build;
+- `npm audit --audit-level=high`;
+- validação documental;
+- links e âncoras;
+- UTF-8;
+- `git diff --check`;
+- Harness aplicável.
+
+A autorização de banco é somente para a fixture local descartável:
+
+- `TEST_ADMIN_DATABASE_URL`;
+- destino local;
+- banco e roles temporários;
+- nenhuma alteração em `imobilead`;
+- nenhuma alteração em cadastros reais;
+- limpeza completa ao terminar.
+
+Não executar contra produção ou ambiente remoto.
+
+Entrega em duas fases
+
+Fase 1 — implementação local:
+
+- apresentar o diff;
+- não fazer commit;
+- não fazer push;
+- informar exatamente quais jobs e passos serão executados.
+
+Fase 2 — somente após aprovação humana:
+
+- fornecer a mensagem de commit;
+- o usuário fará commit e push;
+- acompanhar o GitHub Actions;
+- não considerar concluído enquanto todos os jobs não estiverem verdes.
+
+Restrições
+
+- não alterar funcionalidades do produto;
+- não alterar UI;
+- não alterar banco principal;
+- não adicionar Dockerfile ou IaC;
+- não implementar diferenciais opcionais;
+- não publicar aplicação;
+- não fazer commit ou push;
+- não mascarar falhas.
+
+Entrega esperada
+
+Informe:
+
+1. problemas encontrados no CI starter;
+2. workflow final;
+3. jobs e passos;
+4. versão do Node;
+5. configuração do PostgreSQL descartável;
+6. variáveis sintéticas;
+7. comandos de teste usados;
+8. segurança bloqueante;
+9. resultado das validações locais;
+10. documentação atualizada;
+11. pendências;
+12. diff exclusivo;
+13. sugestão de commit, sem executá-lo.

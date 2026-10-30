@@ -1,3 +1,27 @@
+## CI-001 — pipeline obrigatório, 30/10/2026
+
+Fase1 autorizada sobre main/b98c2f4042a014fc57bfdfdd8ecdfe742e9fb716, árvore
+inicial limpa. quality/postgres-integration/security bloqueantes, Node22.13.1,
+npm ci/cache, actions oficiais por SHA, PG18 efêmero e SCA high/critical.
+Banco-base do serviço chamado imobilead apenas por contrato da guarda; nunca
+conecta ao banco persistente local. Variáveis sintéticas restritas ao passo.
+Produto/UI/schema/guardas/dependências/lock preservados; UI segue local.
+Autorrevisão sequencial; revisão humana pendente; nenhum commit/push/publicação.
+
+QA local atual: npm ci isolado aprovado após EPERM na raiz (binário em uso);
+dependências recompostas sem encerrar processos. Lint/typecheck/build aprovados,
+Node55/55, HTTP/PG40/40, zero falhas/skips, cleanup0 e metadados protegidos iguais.
+Audit high: zero vulnerabilidades. YAML/bash aprovados; Harness validate/verify
+aprovados, parcial/readiness not-assessed, Harness27/27 e Node55/55.
+Fixture Harness inclui .github para validar os novos links. Docker Linux
+também40/40 sem falhas/skips, npm ci Linux405 pacotes, PG18.6/SCRAM e cleanup0;
+contêiner PostgreSQL próprio removido. Limpeza de diretórios temporários npm
+bloqueada pela revisão automática, pendência separada do cleanup de banco.
+Resultados finais e diff exclusivo
+na [evidência](../evidence/ci.md). CI remoto da base confirmado verde
+(run41009122441); novo diff não executado. Fase2 aguarda aprovação humana,
+commit/push pelo usuário e três jobs verdes. Histórico abaixo preservado.
+
 ## Refinamento visual do clima — 30/10/2026
 
 Etapa pontual autorizada: SVGs React locais por código WMO e remoção do aviso

@@ -285,3 +285,12 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
   composição responsiva com tokens existentes e remoção somente do aviso.
 - Testes, capturas, hashes e limites na [evidência UI](harness/evidence/ui.md#refinamento-visual-do-clima--30102026).
   Autorrevisão sequencial; revisão humana pendente, sem commit/push/publicação.
+
+## Pipeline obrigatório DevSecOps — 30/10/2026
+
+- Pedido aceito: três jobs bloqueantes, PostgreSQL descartável, SCA high,
+  validações locais e documentação; sem commit/push. [Prompt integral](prompts/2026-10-30-devsecops-ci.txt).
+- Ferramenta: Codex; skills locais de retomada/entrega/verificação/registro;
+  execução e autorrevisão sequenciais. UI mantida local e CodeQL não adicionado,
+  pelas decisões na arquitetura. [Resultados e limites](harness/evidence/ci.md).
+- Fase2 e revisão humana pendentes; CI verde anterior não aprova este diff.
