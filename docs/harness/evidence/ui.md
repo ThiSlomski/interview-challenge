@@ -926,3 +926,8 @@ novos e alterações anteriores preservadas). Sem staging/commit/push/publicaç�
 Fechamento: ambos os patches passaram git apply --check --reverse; git diff
 --check, UTF-8 estrito dos9 arquivos, links locais, fences Markdown e validate
 final aprovados. Inventário de processos sem runner UI/Next de fixture ativo.
+
+## REG-SUCCESS-UI-001 — conclusão do cadastro, 30/10/2026
+
+Largura e alinhamento do sucesso reutilizam o cadastro; foco sem contorno de
+campo e links com indicador preservado. [Contrato, capturas e verificações](registration-success-layout.md).

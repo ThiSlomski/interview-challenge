@@ -481,3 +481,9 @@ para schemas compartilhados com Zod direto. [Pedido campos](prompts/2026-10-30-r
 [auditoria/migração Zod](prompts/2026-10-30-zod-validation-audit.txt),
 [autorizações posteriores](prompts/2026-10-30-required-profile-fields-authorizations.txt)
 e [evidência](harness/evidence/required-profile-fields.md).
+
+## REG-SUCCESS-UI-001 — largura da conclusão, 30/10/2026
+
+Reutilizar o contêiner do cadastro na conclusão e tratar o foco do título sem
+remover acessibilidade. [Pedido integral](prompts/2026-10-30-registration-success-layout.txt)
+e [evidência](harness/evidence/registration-success-layout.md).

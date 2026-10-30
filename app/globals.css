@@ -371,6 +371,11 @@ button.secondary:disabled {
 .registration-content .page-heading > p:last-child {
   margin-bottom: 0;
 }
+/* A programmatic heading focus announces completion without a field-like ring.
+   Interactive controls keep the shared visible focus indicator. */
+.registration-content .page-heading > h1[tabindex="-1"]:focus {
+  outline: none;
+}
 .registration-content .form-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }

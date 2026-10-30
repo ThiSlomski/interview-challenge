@@ -11,6 +11,7 @@ import { weatherBrowserTests } from '../weather/browser.mjs';
 import { inspectFooterMatrix } from './footer.mjs';
 import { loginLayoutTests } from './login.mjs';
 import { registrationLayoutTests } from './registration-layout.mjs';
+import { registrationSuccessLayoutTests } from './registration-success-layout.mjs';
 
 const expect = baseExpect.configure({ timeout: 15000 });
 
@@ -116,6 +117,8 @@ export function uiBrowserTests(t, config, admin) {
         await weatherBrowserTests(t, browser, origin);
         return;
       }
+      await registrationSuccessLayoutTests(t, browser, origin);
+      if (process.env.UI_SUCCESS_BASELINE === 'true') return;
       await registrationLayoutTests(t, browser, origin);
       if (process.env.UI_REGISTRATION_BASELINE === 'true') return;
       await loginLayoutTests(t, browser, origin);

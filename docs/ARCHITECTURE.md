@@ -1000,3 +1000,12 @@ Migration aditiva3, preflight0 incompatíveis, aplicada por autorização explí
 somente local; quatro NOTNULL/CHECKnonblank, sem reescrever registros. README/CI
 ficam para outra rodada; fixture/count do smoke Compose mantidos por autorização,
 sem nova execução de containers. [Decisão, auditoria e verificações](harness/evidence/required-profile-fields.md).
+
+## REG-SUCCESS-UI-001 — conclusão alinhada ao cadastro, 30/10/2026
+
+Etapa independente: introdução, resumo e previsão reutilizam registration-content
+(920px/100%/margens auto e shell responsivo existente). Foco programático no título
+preservado com tratamento visual de título; indicadores dos links mantidos.
+Sem alteração de cadastro/Zod/clima/API/auth/sessão/banco/header/footer.
+[Pedido](prompts/2026-10-30-registration-success-layout.txt) e
+[evidência e limites](harness/evidence/registration-success-layout.md).

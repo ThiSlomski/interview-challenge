@@ -1,0 +1,407 @@
+{
+  "base": "75da9731ad7c8a63d163e580eb46c2fbfcb1a7fd",
+  "baseline": {
+    "successBaseline": {
+      "width": 1440,
+      "form": {
+        "x": 260,
+        "y": 411.96875,
+        "width": 920,
+        "height": 961.625
+      },
+      "heading": {
+        "x": 140,
+        "y": 0,
+        "width": 760,
+        "height": 67.1875,
+        "top": 0,
+        "right": 900,
+        "bottom": 67.1875,
+        "left": 140
+      },
+      "intro": {
+        "x": 140,
+        "y": -43,
+        "width": 760,
+        "height": 160.578125,
+        "top": -43,
+        "right": 900,
+        "bottom": 117.578125,
+        "left": 140
+      },
+      "eyebrow": {
+        "x": 140,
+        "y": -43,
+        "width": 760,
+        "height": 19,
+        "top": -43,
+        "right": 900,
+        "bottom": -24,
+        "left": 140
+      },
+      "description": {
+        "x": 140,
+        "y": 91.1875,
+        "width": 760,
+        "height": 26.390625,
+        "top": 91.1875,
+        "right": 900,
+        "bottom": 117.578125,
+        "left": 140
+      },
+      "summary": {
+        "x": 140,
+        "y": 149.578125,
+        "width": 840,
+        "height": 497.328125,
+        "top": 149.578125,
+        "right": 980,
+        "bottom": 646.90625,
+        "left": 140
+      },
+      "weather": {
+        "x": 140,
+        "y": 678.90625,
+        "width": 840,
+        "height": 415.375,
+        "top": 678.90625,
+        "right": 980,
+        "bottom": 1094.28125,
+        "left": 140
+      },
+      "footer": {
+        "x": 0,
+        "y": 1158.28125,
+        "width": 1440,
+        "height": 105,
+        "top": 1158.28125,
+        "right": 1440,
+        "bottom": 1263.28125,
+        "left": 0
+      },
+      "scrollWidth": 1440,
+      "scrollHeight": 1475,
+      "outline": "none"
+    }
+  },
+  "ui": {
+    "command": "UI_UPDATE_CAPTURES=success npm run test:ui",
+    "summary": {
+      "tests": 87,
+      "pass": 87,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "diagnostics": [
+      {
+        "adminPeriodicStability": true,
+        "hiddenMutations": 0,
+        "documents": 0,
+        "sessionCalls": 2,
+        "focusScrollLayoutChanged": false
+      },
+      {
+        "fieldInspection": {
+          "keyboardCases": 12,
+          "nativeAutofill": true,
+          "controlledAutofill": true,
+          "autofillPaint": {
+            "text": "rgb(255, 255, 255)",
+            "caret": "rgb(245, 197, 66)",
+            "shadow": "color(srgb 0.16149 0.13851 0.0699608) 0px 0px 0px 1000px inset"
+          }
+        },
+        "pendingResponse": "simulated-503",
+        "passwordManagerProfile": "not-seeded"
+      },
+      {
+        "weatherScenario": "immediate confirmation, loading, tomorrow, privacy, attribution, desktop/mobile",
+        "diagnostics": {
+          "flushSync": 0,
+          "hydration": 0,
+          "consoleError": 0,
+          "consoleWarning": 0,
+          "pageerror": 0,
+          "preloadHint": 0,
+          "navigations": 3,
+          "documents": 2
+        }
+      },
+      {
+        "weatherScenario": "missing city blocks signup and never requests geocoding or forecast",
+        "diagnostics": {
+          "flushSync": 0,
+          "hydration": 0,
+          "consoleError": 0,
+          "consoleWarning": 0,
+          "pageerror": 0,
+          "preloadHint": 0,
+          "navigations": 2,
+          "documents": 1
+        }
+      },
+      {
+        "weatherScenario": "geocoding HTTP failure preserves summary and retries",
+        "diagnostics": {
+          "flushSync": 0,
+          "hydration": 0,
+          "consoleError": 0,
+          "consoleWarning": 0,
+          "pageerror": 0,
+          "preloadHint": 0,
+          "navigations": 2,
+          "documents": 1
+        }
+      },
+      {
+        "weatherScenario": "no locations preserves summary and retries",
+        "diagnostics": {
+          "flushSync": 0,
+          "hydration": 0,
+          "consoleError": 0,
+          "consoleWarning": 0,
+          "pageerror": 0,
+          "preloadHint": 0,
+          "navigations": 2,
+          "documents": 1
+        }
+      },
+      {
+        "weatherScenario": "invalid geocoding preserves summary and retries",
+        "diagnostics": {
+          "flushSync": 0,
+          "hydration": 0,
+          "consoleError": 0,
+          "consoleWarning": 0,
+          "pageerror": 0,
+          "preloadHint": 0,
+          "navigations": 2,
+          "documents": 1
+        }
+      },
+      {
+        "weatherScenario": "forecast HTTP failure preserves summary and retries",
+        "diagnostics": {
+          "flushSync": 0,
+          "hydration": 0,
+          "consoleError": 0,
+          "consoleWarning": 0,
+          "pageerror": 0,
+          "preloadHint": 0,
+          "navigations": 2,
+          "documents": 1
+        }
+      },
+      {
+        "weatherScenario": "malformed forecast JSON preserves summary and retries",
+        "diagnostics": {
+          "flushSync": 0,
+          "hydration": 0,
+          "consoleError": 0,
+          "consoleWarning": 0,
+          "pageerror": 0,
+          "preloadHint": 0,
+          "navigations": 2,
+          "documents": 1
+        }
+      },
+      {
+        "weatherScenario": "invalid forecast fields preserves summary and retries",
+        "diagnostics": {
+          "flushSync": 0,
+          "hydration": 0,
+          "consoleError": 0,
+          "consoleWarning": 0,
+          "pageerror": 0,
+          "preloadHint": 0,
+          "navigations": 2,
+          "documents": 1
+        }
+      },
+      {
+        "weatherScenario": "network failure is recoverable",
+        "diagnostics": {
+          "flushSync": 0,
+          "hydration": 0,
+          "consoleError": 0,
+          "consoleWarning": 0,
+          "pageerror": 0,
+          "preloadHint": 0,
+          "navigations": 2,
+          "documents": 1
+        }
+      },
+      {
+        "weatherScenario": "unknown WMO and missing rain remain usable",
+        "diagnostics": {
+          "flushSync": 0,
+          "hydration": 0,
+          "consoleError": 0,
+          "consoleWarning": 0,
+          "pageerror": 0,
+          "preloadHint": 0,
+          "navigations": 2,
+          "documents": 1
+        }
+      },
+      {
+        "weatherScenario": "unmount aborts active request",
+        "diagnostics": {
+          "flushSync": 0,
+          "hydration": 0,
+          "consoleError": 0,
+          "consoleWarning": 0,
+          "pageerror": 0,
+          "preloadHint": 0,
+          "navigations": 3,
+          "documents": 1
+        }
+      },
+      {
+        "weatherScenario": "timeout, retry and stale forecast ignoring abort cannot replace current result",
+        "diagnostics": {
+          "flushSync": 0,
+          "hydration": 0,
+          "consoleError": 0,
+          "consoleWarning": 0,
+          "pageerror": 0,
+          "preloadHint": 1,
+          "navigations": 2,
+          "documents": 1
+        }
+      },
+      {
+        "uiBrowserDiagnostics": {
+          "flushSync": 0,
+          "hydration": 0,
+          "consoleError": 0,
+          "consoleWarning": 0,
+          "pageerror": 0,
+          "preloadHint": 2,
+          "navigations": 103,
+          "documents": 51
+        }
+      },
+      {
+        "cleanup": "confirmed",
+        "protectedMetadata": "unchanged",
+        "remainingResources": 0
+      }
+    ]
+  },
+  "harness": {
+    "command": "verify",
+    "scope": "harness-and-product-tests",
+    "partial": true,
+    "readiness": "not-assessed",
+    "ok": true,
+    "checks": [
+      {
+        "name": "validate",
+        "command": "validate",
+        "ok": true,
+        "errors": [],
+        "nativeSemantics": "Run native-probe; these structural checks alone do not prove Codex loading."
+      },
+      {
+        "name": "harness-tests",
+        "ok": true,
+        "code": 0,
+        "diagnostic": {
+          "classification": "success",
+          "code": 0,
+          "termination": "not-needed",
+          "stderr": "withheld",
+          "investigation": null
+        }
+      },
+      {
+        "name": "native-probe",
+        "ok": true,
+        "code": 0,
+        "diagnostic": {
+          "classification": "success",
+          "code": 0,
+          "termination": "not-needed",
+          "stderr": "withheld",
+          "investigation": null
+        }
+      },
+      {
+        "name": "lint",
+        "ok": true,
+        "code": 0,
+        "error": null,
+        "diagnostic": {
+          "classification": "success",
+          "code": 0,
+          "termination": "not-needed",
+          "stderr": "withheld",
+          "investigation": null
+        },
+        "durationMs": 7222
+      },
+      {
+        "name": "typecheck-no-generated-output",
+        "ok": true,
+        "code": 0,
+        "error": null,
+        "diagnostic": {
+          "classification": "success",
+          "code": 0,
+          "termination": "not-needed",
+          "stderr": "withheld",
+          "investigation": null
+        },
+        "durationMs": 3958
+      },
+      {
+        "name": "product-tests",
+        "ok": true,
+        "status": "passed",
+        "execution": "executed",
+        "code": 0,
+        "report": {
+          "proven": true,
+          "tests": 69,
+          "pass": 69,
+          "fail": 0,
+          "skipped": 0,
+          "todo": 0,
+          "source": "node-test-summary-events"
+        },
+        "reason": "Structured per-file runner summaries prove nonzero passing cases in declared scope."
+      },
+      {
+        "name": "build",
+        "status": "not-executed",
+        "reason": "Build is outside this partial verification command."
+      },
+      {
+        "name": "full-product-assessment",
+        "status": "not-executed",
+        "reason": "No end-to-end, remote CI or comprehensive security/readiness assessment in this command."
+      }
+    ],
+    "notExecuted": [
+      {
+        "name": "build",
+        "reason": "Build is outside this partial verification command."
+      },
+      {
+        "name": "full-product-assessment",
+        "reason": "No end-to-end, remote CI or comprehensive security/readiness assessment in this command."
+      }
+    ]
+  },
+  "build": "passed separately: npm run build",
+  "lint": "passed separately: npm run lint",
+  "typecheck": "passed separately: npm run typecheck",
+  "limitations": [
+    "Chromium development fixture; production build only",
+    "Synthetic REST weather; no live provider request",
+    "Human screen reader, physical virtual keyboard, actual zoom, other browsers and remote CI not executed"
+  ]
+}

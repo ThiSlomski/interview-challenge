@@ -121,3 +121,11 @@ Pares02/09 e três vistas em registration-captures atualizados pelos textos/erro
 de obrigatoriedade. Layout preservado;18 PNGs restantes idênticos ao snapshot
 anterior. [Evidência](../required-profile-fields.md) e
 [hashes incrementais](../required-profile-fields-hashes.json).
+
+## REG-SUCCESS-UI-001 — conclusão alinhada, 30/10/2026
+
+Somente par03 atualizado para reutilizar a largura do cadastro. Três vistas novas
+[desktop](../registration-success-captures/desktop.png),
+[tablet](../registration-success-captures/tablet.png) e
+[celular](../registration-success-captures/mobile.png).
+[Evidência e verificações](../registration-success-layout.md).

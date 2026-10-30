@@ -91,7 +91,7 @@ export default function RegistrationForm() {
   }
 
   if (summary) {
-    return <>
+    return <div className="registration-content">
       <div className="page-heading">
         <p className="eyebrow">PRÓXIMO PASSO: ENTRAR</p>
         <h1 ref={success} tabIndex={-1}>Cadastro concluído</h1>
@@ -105,7 +105,7 @@ export default function RegistrationForm() {
         </div>
       </section>
       <Weather city={summary.city} state={summary.state} country={summary.country} />
-    </>;
+    </div>;
   }
 
   return <div className="registration-content">

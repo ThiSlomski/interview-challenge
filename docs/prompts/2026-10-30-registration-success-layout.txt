@@ -1,0 +1,147 @@
+PADRONIZAÇÃO DA TELA DE CADASTRO CONCLUÍDO
+
+A tela “Cadastro concluído” utiliza uma largura diferente das páginas recentemente padronizadas. O resumo e a previsão aparecem mais estreitos que o formulário de cadastro, causando inconsistência visual.
+
+Implemente esta alteração como uma nova etapa independente.
+
+OBJETIVO
+
+Padronizar a largura, o alinhamento e a responsividade da tela de sucesso com a tela de cadastro e com o restante da aplicação.
+
+REQUISITOS DE LAYOUT
+
+1. Identifique o contêiner compartilhado utilizado na tela de cadastro.
+
+2. Reutilize na tela “Cadastro concluído” exatamente os mesmos padrões de:
+   - largura;
+   - `max-width`;
+   - margens automáticas;
+   - espaçamento lateral;
+   - alinhamento horizontal;
+   - breakpoints responsivos.
+
+3. Não crie um novo padrão de largura exclusivo para essa página.
+
+4. O conjunto abaixo deve ocupar o mesmo contêiner:
+   - marcador “PRÓXIMO PASSO: ENTRAR”;
+   - título “Cadastro concluído”;
+   - texto de confirmação;
+   - cartão com o resumo;
+   - cartão com a previsão.
+
+5. O cartão de resumo deve:
+   - ocupar 100% da largura disponível;
+   - alinhar suas extremidades com o título;
+   - preservar a organização interna dos dados.
+
+6. O cartão “Previsão para amanhã” deve:
+   - possuir exatamente a mesma largura externa do resumo;
+   - usar o mesmo alinhamento;
+   - preservar ícone, localização e informações meteorológicas.
+
+7. No desktop, utilizar a mesma largura ampla do cadastro, aproximadamente entre 880 e 960 px, conforme o padrão real já existente no projeto.
+
+RESPONSIVIDADE
+
+8. Desktop:
+   - título, descrição e cartões alinhados;
+   - cartões com largura idêntica;
+   - conteúdo centralizado horizontalmente.
+
+9. Tablet:
+   - reduzir as margens progressivamente;
+   - evitar largura fixa ou conteúdo comprimido;
+   - preservar o alinhamento entre todas as seções.
+
+10. Celular:
+    - ocupar toda a largura disponível com margens seguras;
+    - reorganizar os dados em uma coluna quando necessário;
+    - evitar cortes e rolagem horizontal;
+    - manter os botões e a previsão legíveis.
+
+FOCO DO TÍTULO
+
+11. Investigue o contorno amarelo ao redor do título “Cadastro concluído”.
+
+12. Caso seja resultado do foco programático após o cadastro:
+    - preservar o anúncio acessível da conclusão;
+    - manter o gerenciamento correto de foco;
+    - aplicar tratamento visual consistente com os demais títulos;
+    - evitar que o título pareça um campo de formulário;
+    - não remover acessibilidade somente para eliminar o contorno.
+
+ESTRUTURA DA PÁGINA
+
+13. Preservar:
+    - cabeçalho compartilhado;
+    - conteúdo principal flexível;
+    - rodapé compartilhado;
+    - rodapé no final da tela em páginas curtas;
+    - fluxo natural quando houver rolagem.
+
+14. Não utilizar:
+    - posicionamento absoluto;
+    - largura fixa;
+    - cálculo de largura por JavaScript;
+    - duplicação desnecessária de CSS;
+    - alteração específica que contradiga o contêiner compartilhado.
+
+PRESERVAÇÕES FUNCIONAIS
+
+15. Não alterar:
+    - criação do cadastro;
+    - resumo dos dados;
+    - proteção contra exposição da senha;
+    - navegação para login;
+    - retorno ao início;
+    - consulta meteorológica;
+    - geocodificação;
+    - ícones do clima;
+    - timeout;
+    - cancelamento;
+    - retry;
+    - CSP;
+    - autenticação;
+    - sessão;
+    - banco de dados;
+    - migrations;
+    - validação com Zod ou sua implementação em andamento.
+
+TESTES
+
+16. Validar:
+
+   - tela de cadastro e tela de sucesso com a mesma largura principal;
+   - resumo e previsão com larguras externas idênticas;
+   - alinhamento entre título, descrição e cartões;
+   - desktop, tablet e celular;
+   - ausência de rolagem horizontal;
+   - foco acessível após o cadastro;
+   - resumo sem senha;
+   - previsão preservada;
+   - rodapé corretamente posicionado;
+   - nenhuma regressão funcional.
+
+17. Executar:
+   - testes de interface relacionados;
+   - lint;
+   - typecheck;
+   - build;
+   - Harness aplicável;
+   - git diff --check.
+
+18. Atualizar somente testes, capturas, evidências e documentação diretamente relacionados a esta alteração.
+
+19. Não executar commit, push ou publicação.
+
+ENTREGA
+
+Ao finalizar, informar:
+
+- causa da diferença de largura;
+- padrão reutilizado;
+- arquivos alterados;
+- testes executados;
+- resultados;
+- pendências;
+- sugestão de commit.

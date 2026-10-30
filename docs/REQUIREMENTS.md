@@ -346,3 +346,12 @@ mensagens específicas, resumo e foco no primeiro erro. Campos opcionais preserv
 Migration3 aplicada localmente após preflight0, sem reescrita de dados. Node69/69,
 HTTP/PG74/74, UI78/78, perfil41/41, exclusão45/45. Harness parcial; revisão humana
 e CI remoto pendentes. [Pedidos, auditoria, prova e limites](harness/evidence/required-profile-fields.md).
+
+## REG-SUCCESS-UI-001 — conclusão alinhada ao cadastro, 30/10/2026
+
+Etapa independente: introdução, resumo e previsão reutilizam registration-content
+(920px/100%/margens auto e shell responsivo existente). Foco programático no título
+preservado com tratamento visual de título; indicadores dos links mantidos.
+Sem alteração de cadastro/Zod/clima/API/auth/sessão/banco/header/footer.
+[Pedido](prompts/2026-10-30-registration-success-layout.txt) e
+[evidência e limites](harness/evidence/registration-success-layout.md).

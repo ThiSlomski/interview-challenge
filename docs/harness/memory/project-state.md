@@ -1,3 +1,16 @@
+## REG-SUCCESS-UI-001 — conclusão alinhada, 30/10/2026
+
+Base main/75da973 inicialmente limpa; etapa independente concluída. Sucesso usa
+registration-content existente920px/100%/margens auto e shell responsivo; título,
+descrição/resumo/previsão alinhados. Foco h1/ref/tabIndex preservado, sem contorno
+de campo; links mantêm foco visível. Nenhuma lógica/Zod/API/clima/auth/banco alterada.
+UI87/87 (nove novos), Node69/69, lint/tipos/build/doctor/validate/verify aprovados.
+Harness parcial/readiness:not-assessed; cleanup0/metadados protegidos iguais.
+Somente par03 atualizado/26 PNGs preservados; três capturas novas inspecionadas.
+[Contrato, resultados e limites](../evidence/registration-success-layout.md).
+Autorrevisão sequencial; humana/leitor de tela/zoom real/teclado virtual físico/
+CI remoto pendentes. Sem commit/push/publicação, nenhuma próxima etapa iniciada.
+
 ## REG-ESSENTIAL-001 — Zod e dados essenciais, 30/10/2026
 
 Pedido atual implementado sobre REG-UI-001 pendente preservado. Zod4.6.7 direto,
