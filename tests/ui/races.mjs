@@ -517,6 +517,10 @@ async function extendedRaces(t, browser, origin, admin, sourceId) {
     await expect(page.getByText(email, { exact: true })).toBeVisible();
     const [old, fresh] = await hold('/api/users/' + id, 2);
     await focus(); await bounded(old.captured.promise);
+    // The area now refreshes actual field values, not only identity. Advance
+    // the disposable record with the props so the next real API reply is new;
+    // keep the already-produced old reply to exercise the original race.
+    await admin.query("UPDATE imobilead.users SET name='Contexto atualizado',profile_version=profile_version+1 WHERE id=$1", [id]);
     await page.getByRole('button', { name: 'Atualizar contexto', exact: true }).click();
     await bounded(fresh.captured.promise);
     await page.evaluate(() => {

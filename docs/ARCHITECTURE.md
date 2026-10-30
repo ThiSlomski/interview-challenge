@@ -1,5 +1,69 @@
 # Arquitetura da solução
 
+## PROFILE-001 — edição própria, 30/10/2026
+
+Contexto: extensão solicitada além da criação/consulta exigidas pelo README.
+Implementação limitada ao perfil; exclusão/containerização fora desta etapa.
+[Contrato e responsabilidades](harness/evidence/profile-plan.md),
+[evidências e limites](harness/evidence/profile.md).
+
+Decisão: GET/PATCH /api/profile sempre derivam o alvo da sessão central. A leitura
+retorna a projeção pública já existente e profileVersion numérico em metadado
+separado; os GETs de usuários mantêm exatamente a projeção anterior. PATCH parcial
+aceita expectedVersion e somente name/address/city/state/country/postalCode/message.
+E-mail, senha, papel, UUID, datas e campos desconhecidos são recusados. O validador
+de textos foi extraído do cadastro para ser compartilhado, sem mudar suas regras
+ou criar limites novos. Corpo de16KiB/5s, origem exata/Fetch Metadata, JSON UTF-8,
+no-store/nosniff e orçamento local de20 escritas/minuto/duas ativas preservam os
+controles adotados no cadastro/auth. Sem CORS entre origens.
+
+Migration aditiva introduz profile_version integer NOT NULL DEFAULT1 com CHECK
+positivo; limite2147483647 tratado como conflito sem overflow ou reset. A versão
+é número em JSON. PATCH exige expectedVersion e If-Match na forma
+`"profile:<uuid>:<versão>"`; ETag é precondição de recurso, não credencial nem
+autorização. Um formulário da identidade A não escreve na identidade B após
+troca de cookie, mesmo se ambas estiverem na versão1. Não se transporta token,
+hash de sessão ou segredo na precondição.
+
+Transação usa Pool.connect e um único cliente: BEGIN, lock_timeout5s, usuário
+FOR UPDATE por UUID da sessão, sessão FOR SHARE por digest/usuário/não revogada/
+expiração, papel user/admin fresco, comparação de versão, UPDATE com mapa fixo
+de colunas, incremento e updated_at monotônico. Confere expiração novamente após
+UPDATE; falha implica rollback, inclusive se prazo venceu durante a instrução.
+Logout concorrente aguarda o lock de sessão ou é observado antes da escrita.
+Uma sessão revogada antes de obter o lock não pode escrever. COMMIT precede200;
+falhas/recusas fazem rollback e release. Nenhuma renovação de sessão.
+
+Grants users: SELECT, INSERT anterior (sem role nem profile_version), UPDATE
+apenas campos editáveis/updated_at/profile_version. DELETE/TRUNCATE/DDL, UPDATE
+email/password_hash/role/id/created_at e grant option continuam negados. Checker
+verifica14 colunas e privilégios efetivos/PUBLIC; novas ACLs são aplicadas pelo
+fluxo administrativo versionado existente, não pela API nem automaticamente.
+Reinício após migration/grants; guarda falha fechada em instalação não preparada.
+
+UI mantém gate síncrono, gerações, TTL, abortos e validação inicial/final da sessão.
+Perfil é carregado ao abrir editor, sem acrescentar dependência ao gate inicial.
+Polling incorpora campos frescos na leitura sem substituir draft. A mutação
+invalida leituras pendentes; resposta antiga não desfaz um save. Editor somente
+em memória, e-mail readonly, estados/erros associados/foco,409 exige recarga
+explícita; hidden/logout/troca de contexto descartam editor. Admin edita a própria
+conta inclusive fora da página atual da listagem, sem duplicar detalhes próprios.
+
+Alternativas descartadas: alteração de e-mail/senha, versão bigint/string,
+last-write-wins, limites distintos do cadastro e UPDATE irrestrito de tabela.
+Sem nova dependência nem alteração de README/workflow/guardas de destino.
+
+Limites: runtime compartilhado autoriza escrita por coluna, não isolamento por
+linha no PostgreSQL; autorização de identidade permanece na API. Limitador em
+memória não coordena múltiplas instâncias. Commit pode ocorrer e a resposta se
+perder; conferir versão atual antes de tentar novamente. Não se promete cancelar
+requisições já confirmadas após logout. HTTP/PG/UI usam fixtures descartáveis;
+CI remoto, HTTPS de produção e revisão humana não são comprovados por testes locais.
+
+Plano posterior ADMIN-DELETE-001: somente user, nunca admin; bloquear/revalidar
+ator/alvo na transação. Removidos do plano anterior contagem do último admin,
+trava consultiva global e coordenação com futuros rebaixamentos. Não implementado.
+
 ## CI-001 — pipeline bloqueante, 30/10/2026
 
 Decisão vigente para CI; referências abaixo a Node20/report-only/integração

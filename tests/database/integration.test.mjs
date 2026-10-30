@@ -11,6 +11,8 @@ import { registrationHttpTests } from '../registration/http-postgres.mjs';
 import { authorizationHttpTests } from '../authorization/http-postgres.mjs';
 import { uiBrowserTests } from '../ui/browser.mjs';
 import { uiRaceTests } from '../ui/races.mjs';
+import { profileHttpTests } from '../profile/http-postgres.mjs';
+import { profileBrowserTests } from '../profile/browser.mjs';
 
 // Explicitly separate from npm test. No mocks and no fallback to imobilead.
 // Requires explicit authorization of its disposable local destination.
@@ -46,12 +48,14 @@ test('PostgreSQL migrations, constraints, sessions and runtime permissions', asy
     await dbAdmin.query(`ALTER ROLE ${roleIdentifier(appRole)} PASSWORD '${password}'`);
     await dbAdmin.query('COMMIT'); rolesCreated = true;
     const migrationConfig = { ...base, database, user: migrationRole, password };
-    assert.equal((await migrate(migrationConfig)).length, 1);
+    assert.equal((await migrate(migrationConfig)).length, 2);
     assert.equal((await migrate(migrationConfig)).length, 0);
     await dbAdmin.query(runtimeGrantsSql(appRole));
     app = new pg.Client({ ...base, database, user: appRole, password }); await app.connect();
     const runtime = roleIdentifier(appRole);
-    if (process.env.UI_RACE_TEST === 'true') {
+    if (process.env.PROFILE_BROWSER_TEST === 'true') {
+      await profileBrowserTests(t, { ...base, database, user: appRole, password }, dbAdmin);
+    } else if (process.env.UI_RACE_TEST === 'true') {
       await uiRaceTests(t, { ...base, database, user: appRole, password }, dbAdmin);
     } else if (process.env.UI_BROWSER_TEST === 'true') {
       await uiBrowserTests(t, { ...base, database, user: appRole, password }, dbAdmin);
@@ -59,6 +63,7 @@ test('PostgreSQL migrations, constraints, sessions and runtime permissions', asy
       await authenticationHttpTests(t, { ...base, database, user: appRole, password }, dbAdmin);
       await authorizationHttpTests(t, { ...base, database, user: appRole, password }, dbAdmin, { ...base, database });
       await registrationHttpTests(t, { ...base, database, user: appRole, password }, dbAdmin);
+      await profileHttpTests(t, { ...base, database, user: appRole, password }, dbAdmin);
     }
     await t.test('expected effective contract accepts column INSERT without whole-table INSERT', async () => {
       await verifyRuntimePrivileges(app);
@@ -91,7 +96,7 @@ test('PostgreSQL migrations, constraints, sessions and runtime permissions', asy
       "SELECT has_column_privilege(current_user,'imobilead.users','role','UPDATE') AS allowed");
     await rejectDrift('reject whole-table UPDATE',
       [`GRANT UPDATE ON imobilead.users TO ${runtime}`],
-      [`REVOKE UPDATE ON imobilead.users FROM ${runtime}`]);
+      [`REVOKE UPDATE ON imobilead.users FROM ${runtime}`, runtimeGrantsSql(appRole)]);
     await rejectDrift('reject column INSERT(role)',
       [`GRANT INSERT(role) ON imobilead.users TO ${runtime}`],
       [`REVOKE INSERT(role) ON imobilead.users FROM ${runtime}`]);
@@ -114,6 +119,17 @@ test('PostgreSQL migrations, constraints, sessions and runtime permissions', asy
     await rejectDrift('reject missing required INSERT email column',
       [`REVOKE INSERT(email) ON imobilead.users FROM ${runtime}`],
       [`GRANT INSERT(email) ON imobilead.users TO ${runtime}`]);
+    await rejectDrift('reject missing required UPDATE name column',
+      [`REVOKE UPDATE(name) ON imobilead.users FROM ${runtime}`],
+      [`GRANT UPDATE(name) ON imobilead.users TO ${runtime}`]);
+    for (const column of ['email','password_hash','id','created_at']) {
+      await rejectDrift(`reject protected column UPDATE ${column}`,
+        [`GRANT UPDATE(${column}) ON imobilead.users TO ${runtime}`],
+        [`REVOKE UPDATE(${column}) ON imobilead.users FROM ${runtime}`]);
+    }
+    await rejectDrift('reject INSERT profile_version',
+      [`GRANT INSERT(profile_version) ON imobilead.users TO ${runtime}`],
+      [`REVOKE INSERT(profile_version) ON imobilead.users FROM ${runtime}`]);
     await rejectDrift('reject history schema and table access',
       [`GRANT USAGE ON SCHEMA imobilead_meta TO ${runtime}`, `GRANT SELECT ON imobilead_meta.pgmigrations TO ${runtime}`],
       [`REVOKE SELECT ON imobilead_meta.pgmigrations FROM ${runtime}`, `REVOKE USAGE ON SCHEMA imobilead_meta FROM ${runtime}`]);
@@ -133,6 +149,8 @@ test('PostgreSQL migrations, constraints, sessions and runtime permissions', asy
       [`REVOKE TRUNCATE ON imobilead.sessions FROM ${runtime}`]);
     const insert = (email, name = 'Fixture') => app.query('INSERT INTO imobilead.users(name,email,password_hash) VALUES($1,$2,$3) RETURNING id,role', [name,email,'$fixture-not-a-real-password-hash']);
     const { rows: [user] } = await insert('fixture@example.test');
+    assert.equal((await app.query('SELECT profile_version FROM imobilead.users WHERE id=$1', [user.id])).rows[0].profile_version, 1);
+    await assert.rejects(dbAdmin.query('UPDATE imobilead.users SET profile_version=0 WHERE id=$1', [user.id]), { code: '23514' });
     assert.equal(user.role, 'user');
     await assert.rejects(insert(' Fixture@Example.test '), { code: '23514' });
     await assert.rejects(insert('invalid-email'), { code: '23514' });

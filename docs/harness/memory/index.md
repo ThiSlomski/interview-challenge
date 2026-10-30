@@ -1,5 +1,11 @@
 # Índice da memória
 
+Atualização vigente PROFILE-001,30/10/2026: edição própria implementada localmente;
+comece pelos checkpoints em handoff/estado e pela [evidência](../evidence/profile.md).
+Perfil é a única etapa executada; exclusão/containerização não iniciadas. Banco
+persistente ainda exige migration/grants/reinício conforme SOLUTION. CI remoto
+do diff e revisão humana pendentes; nenhum commit/push.
+
 Atualização documental, 29/10/2026: [índice de prompts](../../AI_PROMPTS.md) e
 [organização/verificações](../evidence/prompt-organization.md). Implementação e
 fase funcional preservadas; revisão humana pendente.

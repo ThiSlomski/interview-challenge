@@ -1,3 +1,24 @@
+## PROFILE-001 — evolução adicional autorizada, 30/10/2026
+
+O README permanece enunciado original. Esta evolução acrescenta edição própria,
+não transforma PATCH ou DELETE em obrigações do desafio. As atualizações vigentes
+e o código prevalecem sobre as linhas históricas de pendência mantidas abaixo.
+
+| ID | Requisito e aceite | Implementação/evidência |
+| --- | --- | --- |
+| PROFILE-1 | user/admin editam só o próprio cadastro; e-mail/senha/papel/ID imutáveis | GET/PATCH /api/profile; sessão/identidade servidor; allowlists de entrada, SQL e saída |
+| PROFILE-2 | Mesmas regras/limites do cadastro no cliente e servidor | validateProfileFields compartilhado; sem limites arbitrários novos; corpo16KiB |
+| PROFILE-3 | Sem perda silenciosa por concorrência | profile_version integer NOT NULL DEFAULT1; expectedVersion número; If-Match vinculado ao UUID/versão;409 conflitante |
+| PROFILE-4 | Sessão/papel revalidados na transação, origem estrita, falha fechada | Lock usuário/sessão, rollback, grants por coluna, release, erros sanitizados |
+| PROFILE-5 | Minha área atualiza dados confirmados e preserva rascunho no polling | Editor acessível, cancelar/recarregar, gerações, descarte de respostas antigas e ocultação |
+| PROFILE-6 | Testes reais e evidências discriminadas | [Contrato](harness/evidence/profile-plan.md), [resultados](harness/evidence/profile.md); revisão humana/CI remoto do diff pendentes |
+
+Próxima entrega planejada: ADMIN-DELETE-001 somente alvos user; qualquer admin
+recusado, inclusive conta atual. Ator/alvo bloqueados e revalidados na transação,
+sem contagem do último administrador/trava global/coordenação com rebaixamentos.
+Não iniciada nem autorizada para execução nesta etapa. Containerização também
+não iniciada; cinco opcionais PLUS-1–5 permanecem opcionais.
+
 ## CI-001 — atualização vigente, 30/10/2026
 
 Prevalece sobre descrições históricas do CI abaixo. Fase1 local sobre main/b98c2f4,

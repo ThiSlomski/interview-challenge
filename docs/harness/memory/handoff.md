@@ -1,3 +1,27 @@
+## PROFILE-001 — edição própria, 30/10/2026
+
+Base main/5ff4fc5, árvore inicialmente limpa. Pedido atual autorizou somente
+perfil: GET/PATCH /api/profile, e-mail imutável, campos de texto com regras
+compartilhadas do cadastro e profile_version integer/default1 transportado como
+número. Transação revalida sessão/papel após lock, compara versão/If-Match e
+atualiza colunas fixas; rollback/release/TTL preservados. UI integra editor às
+gerações/gate existentes, atualiza dados frescos e mantém draft no polling.
+
+QA local final: Node61/61; HTTP/PG52/52; perfil UI31/31; UI existente49/49;
+corridas56/56; zero falhas/skips. Lint/tipos/build e doctor/validate/verify
+aprovados; Harness parcial/readiness not-assessed. Cleanup0 e metadados/ACLs
+protegidos iguais. Falhas intermediárias/correções e revisão Backend independente
+sem achados materiais na [evidência](../evidence/profile.md). Revisão humana e
+CI remoto do diff pendentes. README/workflow/dependências/lock preservados.
+
+Migration/grants preparados e testados apenas no descartável; banco persistente
+não migrado/não recebeu grants. Antes de usar o novo runtime, seguir SOLUTION
+para aplicar migration/grants/check e reiniciar, sem repetir provisionamento.
+Nenhum commit/push/publicação. Dois commits funcionais planejados, primeiro
+perfil; segundo exclusão somente user, nunca admin, com bloqueio/revalidação
+ator/alvo e sem contagem/trava global. Exclusão/containerização não iniciadas;
+não avançar para elas sem novo pedido. Histórico anterior abaixo preservado.
+
 ## CI-001 — pipeline obrigatório, 30/10/2026
 
 Fase1 autorizada sobre main/b98c2f4042a014fc57bfdfdd8ecdfe742e9fb716, árvore

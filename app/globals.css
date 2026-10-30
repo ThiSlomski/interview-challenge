@@ -398,6 +398,15 @@ input[aria-invalid='true'], textarea[aria-invalid='true'] {
   margin-bottom: 0;
   color: var(--muted);
 }
+.profile-actions, .profile-email {
+  margin-bottom: var(--space-5);
+}
+.profile-form {
+  margin-bottom: var(--space-6);
+}
+.profile-edit-action {
+  margin-top: var(--space-5);
+}
 .record-badge {
   display: inline-block;
   max-width: 100%;

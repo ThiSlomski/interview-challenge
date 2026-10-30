@@ -38,18 +38,20 @@ export async function verifyRuntimePrivileges(client) {
     sessions_table AS (SELECT oid FROM objects WHERE nspname='imobilead' AND relname='sessions'),
     history_table AS (SELECT oid FROM objects WHERE nspname='imobilead_meta' AND relname='pgmigrations')
     SELECT has_schema_privilege(current_user,'imobilead','USAGE') AS app_schema_usage,
-      (SELECT count(*)=13 AND bool_and(
+      (SELECT count(*)=14 AND bool_and(
         a.attname::text=ANY(ARRAY['id','name','email','password_hash','address','city','state',
-          'country','postal_code','message','role','created_at','updated_at'])
+          'country','postal_code','message','role','created_at','updated_at','profile_version'])
         AND has_column_privilege(current_user,u.oid,a.attnum,'SELECT')
-        AND has_column_privilege(current_user,u.oid,a.attnum,'INSERT')=(a.attname<>'role')
-        AND NOT has_column_privilege(current_user,u.oid,a.attnum,'UPDATE,REFERENCES'))
+        AND has_column_privilege(current_user,u.oid,a.attnum,'INSERT')=(a.attname NOT IN ('role','profile_version'))
+        AND has_column_privilege(current_user,u.oid,a.attnum,'UPDATE')=(a.attname::text=ANY(ARRAY[
+          'name','address','city','state','country','postal_code','message','updated_at','profile_version']))
+        AND NOT has_column_privilege(current_user,u.oid,a.attnum,'REFERENCES'))
         FROM pg_attribute a WHERE a.attrelid=u.oid AND a.attnum>0 AND NOT a.attisdropped)
         AS users_columns,
       (NOT has_table_privilege(current_user,u.oid,'UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER,MAINTAIN')
-        AND NOT has_any_column_privilege(current_user,u.oid,'UPDATE,REFERENCES')
+        AND NOT has_any_column_privilege(current_user,u.oid,'REFERENCES')
         AND NOT has_any_column_privilege(current_user,u.oid,
-          'SELECT WITH GRANT OPTION,INSERT WITH GRANT OPTION')) AS users_tables,
+          'SELECT WITH GRANT OPTION,INSERT WITH GRANT OPTION,UPDATE WITH GRANT OPTION')) AS users_tables,
       (SELECT count(*)=5 AND bool_and(
         a.attname::text=ANY(ARRAY['token_hash','user_id','created_at','expires_at','revoked_at'])
         AND has_column_privilege(current_user,s.oid,a.attnum,'SELECT')

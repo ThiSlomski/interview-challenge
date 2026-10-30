@@ -1,5 +1,13 @@
 # Índice de decisões
 
+## PROFILE-001 — 30/10/2026
+
+Edição própria via sessão, e-mail imutável, validação de textos compartilhada com
+cadastro, versão integer/número e precondição de recurso/versão. Transação e ACL
+por coluna; UI integra revalidação e draft. [Decisão](../../ARCHITECTURE.md#profile-001--edição-própria-30102026),
+[evidência](../evidence/profile.md). Exclusão futura só user, nunca admin, sem
+contagem de admins/trava global; não iniciada. README preservado, sem commit/push.
+
 ## CI-001 — 30/10/2026
 
 Três jobs bloqueantes, Node22.13.1/npm ci/cache, PostgreSQL18 efêmero,

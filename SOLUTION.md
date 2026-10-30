@@ -1,5 +1,44 @@
 # Executar a solução local
 
+## Edição do próprio perfil — PROFILE-001
+
+Evolução adicional ao enunciado; README preservado. Usuários e administradores
+podem editar somente o próprio nome/endereço/cidade/estado/país/CEP/mensagem em
+`/area` pelo botão **Editar meu cadastro**. E-mail permanece identificador imutável;
+senha/papel não são editáveis. Cadastro e edição compartilham as mesmas regras
+de texto, inclusive nome vazio, Unicode até150 e campos opcionais sem novos
+limites por campo. O limite HTTP continua16KiB, igual ao cadastro.
+
+Após revisão da entrega, um banco existente exige **nova migration e novos
+grants**, sem repetir provisionamento: `npm run db:migrate`, depois
+`npm run db:grant` e `npm run db:check`, com as credenciais administrativas/de
+migração/runtime locais já documentadas. Reinicie a aplicação após atualizar
+schema/grants. Esses comandos **não foram aplicados ao banco persistente pelo
+agente nesta etapa**; testes usam exclusivamente bancos/papéis descartáveis.
+Sem essa preparação a nova guarda de schema/ACL recusa o runtime.
+
+`GET /api/profile` retorna `{user,profileVersion}` e ETag;
+`PATCH /api/profile` exige JSON com `expectedVersion` numérico, pelo menos um
+campo editável e `If-Match` igual à ETag recebida. Campos omitidos são preservados.
+A versão integer começa em1, incrementa em cada edição confirmada e impede
+sobrescrita silenciosa entre abas. HTTP409 exige recarga explícita; o rascunho
+fica em memória e nunca em armazenamento Web. Se a resposta se perder, confira
+os dados atuais antes de repetir, pois a transação pode ter sido confirmada.
+
+Testes adicionais: `npm run test:profile:server` e `npm run test:profile:ui`.
+`npm test` já inclui validação e launcher servidor do perfil; a integração
+HTTP/PG do perfil faz parte de `npm run test:db:integration`, usado no CI.
+O teste UI usa os mesmos pré-requisitos locais descartáveis/Chromium da suíte
+existente; não está incluído no workflow remoto. Não execute testes mutáveis no
+banco persistente. [Contrato](docs/harness/evidence/profile-plan.md),
+[decisão](docs/ARCHITECTURE.md#profile-001--edição-própria-30102026),
+[verificações e limites](docs/harness/evidence/profile.md).
+
+Exclusão e containerização não foram iniciadas. O segundo commit funcional
+planejado permitirá excluir somente contas user; contas admin serão recusadas,
+com ator/alvo bloqueados e revalidados na transação, sem contagem de admins,
+trava global ou coordenação com rebaixamentos futuros. Nenhum commit/push criado.
+
 ## Avaliar o frontend
 
 Roteiro vigente único do frontend UI-001, incluindo a correção histórica UI-001-P1.

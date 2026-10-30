@@ -1,3 +1,25 @@
+## PROFILE-001 — edição própria, 30/10/2026
+
+Estado vigente: implementação local do perfil sobre main/5ff4fc5 inicialmente
+limpo; sem commit/push. User/admin editam somente próprios textos, com e-mail
+imutável; mesmas regras do cadastro, versão integer/número e conflito explícito.
+API usa cliente transacional único, locks usuário/sessão, papel fresco e UPDATE
+restrito. UI mantém gate/gerações e atualiza campos sem sobrescrever draft.
+
+Node61/61, HTTP/PG52/52, perfil UI31/31, regressão UI49/49 e corridas56/56;
+zero falhas/skips nos resultados finais. Lint/tipos/build/doctor/validate/verify
+passaram; Harness parcial/readiness not-assessed. Cleanup0, metadados/ACLs
+protegidos iguais. Revisão Backend independente sem achados materiais; humana
+e CI remoto do diff pendentes. [Evidência e falhas intermediárias](../evidence/profile.md).
+README byte-preservado; workflow/lock/dependências intactos.
+
+Migration e grants do perfil ainda não aplicados ao banco persistente; testes
+usaram somente recursos descartáveis. Uso real exige preparação/reinício descritos
+em SOLUTION. Próxima entrega apenas planejada: exclusão só user (admin proibido),
+ator/alvo bloqueados/revalidados, sem contagem de admins/trava global/rebaixamentos.
+Não iniciada, assim como containerização. Pedido atual não autoriza avançar.
+Histórico anterior preservado abaixo.
+
 ## CI-001 — pipeline obrigatório, 30/10/2026
 
 Fase1 autorizada sobre main/b98c2f4042a014fc57bfdfdd8ecdfe742e9fb716, árvore

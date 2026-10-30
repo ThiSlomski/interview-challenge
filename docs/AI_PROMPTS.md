@@ -1,5 +1,14 @@
 # Log de prompts de AI
 
+## PROFILE-001 — 30/10/2026
+
+[Pedido integral](prompts/2026-10-30-profile.md): plano ajustado e edição do
+próprio cadastro. Codex aceitou o recorte exclusivo de perfil, reutilizou regras
+do cadastro e versão integer/número, mantendo e-mail imutável. Descartou limites
+novos e o mecanismo anterior de proteção administrativa; exclusão só planejada,
+sem implementação/commit/push. [Evidência e avaliação crítica](harness/evidence/profile.md),
+com resultados locais separados de CI/revisão humana.
+
 `docs/prompts/` é a fonte principal dos textos integrais, por data e assunto.
 Este índice cronológico reúne objetivo, link, resultado e limitações. Evidências
 detalhadas, verificações, falhas e correções ficam em `docs/harness/evidence/`.

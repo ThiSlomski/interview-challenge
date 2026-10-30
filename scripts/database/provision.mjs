@@ -24,6 +24,8 @@ export function runtimeGrantsSql(appRole = 'imobilead_app') {
 GRANT SELECT ON imobilead.users TO ${app};
 GRANT INSERT (id, name, email, password_hash, address, city, state, country, postal_code, message, created_at, updated_at)
   ON imobilead.users TO ${app};
+GRANT UPDATE (name, address, city, state, country, postal_code, message, updated_at, profile_version)
+  ON imobilead.users TO ${app};
 GRANT SELECT, INSERT, UPDATE, DELETE ON imobilead.sessions TO ${app};
 `;
 }
