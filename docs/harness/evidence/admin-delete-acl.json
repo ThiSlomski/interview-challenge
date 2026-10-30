@@ -1,0 +1,376 @@
+{
+  "date": "2026-10-30",
+  "scope": "ADMIN-DELETE-001-L1",
+  "before": {
+    "identity": {
+      "database": "imobilead",
+      "host": "127.0.0.1",
+      "port": 5432,
+      "role": "imobilead_app"
+    },
+    "readOnly": true,
+    "tables": [
+      {
+        "table": "imobilead.sessions",
+        "select": true,
+        "insert": true,
+        "update": true,
+        "delete": true,
+        "truncate": false,
+        "tableDelegation": false,
+        "columnDelegation": false
+      },
+      {
+        "table": "imobilead.users",
+        "select": true,
+        "insert": false,
+        "update": false,
+        "delete": false,
+        "truncate": false,
+        "tableDelegation": false,
+        "columnDelegation": false
+      }
+    ],
+    "columns": [
+      {
+        "table": "sessions",
+        "column": "token_hash",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "sessions",
+        "column": "user_id",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "sessions",
+        "column": "created_at",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "sessions",
+        "column": "expires_at",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "sessions",
+        "column": "revoked_at",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "users",
+        "column": "id",
+        "select": true,
+        "insert": true,
+        "update": false
+      },
+      {
+        "table": "users",
+        "column": "name",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "users",
+        "column": "email",
+        "select": true,
+        "insert": true,
+        "update": false
+      },
+      {
+        "table": "users",
+        "column": "password_hash",
+        "select": true,
+        "insert": true,
+        "update": false
+      },
+      {
+        "table": "users",
+        "column": "address",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "users",
+        "column": "city",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "users",
+        "column": "state",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "users",
+        "column": "country",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "users",
+        "column": "postal_code",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "users",
+        "column": "message",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "users",
+        "column": "role",
+        "select": true,
+        "insert": false,
+        "update": false
+      },
+      {
+        "table": "users",
+        "column": "created_at",
+        "select": true,
+        "insert": true,
+        "update": false
+      },
+      {
+        "table": "users",
+        "column": "updated_at",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "users",
+        "column": "profile_version",
+        "select": true,
+        "insert": false,
+        "update": true
+      }
+    ],
+    "schemas": {
+      "appUsage": true,
+      "appCreate": false,
+      "publicCreate": false,
+      "historyAccess": false
+    },
+    "role": {
+      "rolsuper": false,
+      "rolcreatedb": false,
+      "rolcreaterole": false,
+      "rolreplication": false,
+      "rolbypassrls": false,
+      "memberships": false
+    }
+  },
+  "after": {
+    "identity": {
+      "database": "imobilead",
+      "host": "127.0.0.1",
+      "port": 5432,
+      "role": "imobilead_app"
+    },
+    "readOnly": true,
+    "tables": [
+      {
+        "table": "imobilead.sessions",
+        "select": true,
+        "insert": true,
+        "update": true,
+        "delete": false,
+        "truncate": false,
+        "tableDelegation": false,
+        "columnDelegation": false
+      },
+      {
+        "table": "imobilead.users",
+        "select": true,
+        "insert": false,
+        "update": false,
+        "delete": true,
+        "truncate": false,
+        "tableDelegation": false,
+        "columnDelegation": false
+      }
+    ],
+    "columns": [
+      {
+        "table": "sessions",
+        "column": "token_hash",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "sessions",
+        "column": "user_id",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "sessions",
+        "column": "created_at",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "sessions",
+        "column": "expires_at",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "sessions",
+        "column": "revoked_at",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "users",
+        "column": "id",
+        "select": true,
+        "insert": true,
+        "update": false
+      },
+      {
+        "table": "users",
+        "column": "name",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "users",
+        "column": "email",
+        "select": true,
+        "insert": true,
+        "update": false
+      },
+      {
+        "table": "users",
+        "column": "password_hash",
+        "select": true,
+        "insert": true,
+        "update": false
+      },
+      {
+        "table": "users",
+        "column": "address",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "users",
+        "column": "city",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "users",
+        "column": "state",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "users",
+        "column": "country",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "users",
+        "column": "postal_code",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "users",
+        "column": "message",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "users",
+        "column": "role",
+        "select": true,
+        "insert": false,
+        "update": false
+      },
+      {
+        "table": "users",
+        "column": "created_at",
+        "select": true,
+        "insert": true,
+        "update": false
+      },
+      {
+        "table": "users",
+        "column": "updated_at",
+        "select": true,
+        "insert": true,
+        "update": true
+      },
+      {
+        "table": "users",
+        "column": "profile_version",
+        "select": true,
+        "insert": false,
+        "update": true
+      }
+    ],
+    "schemas": {
+      "appUsage": true,
+      "appCreate": false,
+      "publicCreate": false,
+      "historyAccess": false
+    },
+    "role": {
+      "rolsuper": false,
+      "rolcreatedb": false,
+      "rolcreaterole": false,
+      "rolreplication": false,
+      "rolbypassrls": false,
+      "memberships": false
+    }
+  },
+  "canonicalCommands": [
+    "npm run db:inspect",
+    "npm run db:grant",
+    "npm run db:check",
+    "npm run db:inspect",
+    "npm run dev"
+  ],
+  "onlyChanges": [
+    "DELETE imobilead.users false -> true",
+    "DELETE imobilead.sessions true -> false"
+  ],
+  "noUserOrSessionDeletionExecuted": true
+}

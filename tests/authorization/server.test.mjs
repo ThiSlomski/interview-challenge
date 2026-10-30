@@ -48,9 +48,10 @@ test('own projection allowlist, no-store, parameterized SQL and rejected identit
   assert.equal((await f.get(own,'?id='+other)).status,400);
 });
 test('admin pagination, invalid identifiers and missing resources',async()=>{
-  const f=fixture({actor:{id:own,role:'admin'},records:Array.from({length:101},()=>({id:own}))});
+  const f=fixture({actor:{id:own,role:'admin'},records:Array.from({length:101},()=>({id:own,role:'user',password_hash:'secret',token_hash:'secret'}))});
   const response=await f.get(undefined,'?after='+other), body=await response.json();
   assert.equal(response.status,200);assert.equal(body.users.length,100);assert.equal(body.nextCursor,own);
+  assert.equal(body.users[0].role,'user');assert.equal('password_hash' in body.users[0],false);assert.equal('token_hash' in body.users[0],false);
   assert.deepEqual(f.calls.at(-1).values,[other]);
   for (const query of ['?role=admin','?after=bad','?after='+own+'&after='+other]) assert.equal((await f.get(undefined,query)).status,400);
   assert.equal((await f.get('bad')).status,400);

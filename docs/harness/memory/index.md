@@ -1,5 +1,23 @@
 # Índice da memória
 
+Atualização vigente ADMIN-DELETE-UI-001,30/10/2026: contraste danger corrigido
+somente no CSS, API/fluxo preservados. [Evidência e cores](../evidence/admin-delete-visual.md),
+capturas06/10, hashes dos demais16 PNGs/3 referências preservados. UI36/36,
+lint/tipos/Harness aprovados, sem commit/push/alteração persistente.
+
+Atualização vigente ADMIN-DELETE-001-L1,30/10/2026: grants persistentes explicitamente
+autorizados/aplicados e app reiniciada, destino127.0.0.1:5432/imobilead conferido.
+ACLs READ ONLY autorizadas comparam somente as duas mudanças DELETE e preservação
+dos demais direitos. [Evidência](../evidence/admin-delete.md#admin-delete-001-l1--preparação-persistente-autorizada).
+Nenhum usuário/sessão excluído ou cadastro alterado pelo agente; teste humano de
+exclusão ainda depende de autorização explícita para conta sintética.
+
+Atualização vigente ADMIN-DELETE-001,30/10/2026: exclusão admin de user implementada
+e testada apenas no descartável; comece pelos checkpoints handoff/estado e pela
+[evidência](../evidence/admin-delete.md). Perfil/CI-base publicados/verdes antes
+de iniciar, sem novo commit/push. Grants/cadastros persistentes intactos; aplicação
+futura e teste humano sintético dependem de autorização. Revisão humana/CI novo pendentes.
+
 Atualização vigente PROFILE-001,30/10/2026: edição própria implementada localmente;
 comece pelos checkpoints em handoff/estado e pela [evidência](../evidence/profile.md).
 Perfil é a única etapa executada; exclusão/containerização não iniciadas. Banco

@@ -13,6 +13,8 @@ import { uiBrowserTests } from '../ui/browser.mjs';
 import { uiRaceTests } from '../ui/races.mjs';
 import { profileHttpTests } from '../profile/http-postgres.mjs';
 import { profileBrowserTests } from '../profile/browser.mjs';
+import { adminDeleteHttpTests } from '../admin-delete/http-postgres.mjs';
+import { adminDeleteBrowserTests } from '../admin-delete/browser.mjs';
 
 // Explicitly separate from npm test. No mocks and no fallback to imobilead.
 // Requires explicit authorization of its disposable local destination.
@@ -53,7 +55,9 @@ test('PostgreSQL migrations, constraints, sessions and runtime permissions', asy
     await dbAdmin.query(runtimeGrantsSql(appRole));
     app = new pg.Client({ ...base, database, user: appRole, password }); await app.connect();
     const runtime = roleIdentifier(appRole);
-    if (process.env.PROFILE_BROWSER_TEST === 'true') {
+    if (process.env.ADMIN_DELETE_BROWSER_TEST === 'true') {
+      await adminDeleteBrowserTests(t, { ...base, database, user: appRole, password }, dbAdmin);
+    } else if (process.env.PROFILE_BROWSER_TEST === 'true') {
       await profileBrowserTests(t, { ...base, database, user: appRole, password }, dbAdmin);
     } else if (process.env.UI_RACE_TEST === 'true') {
       await uiRaceTests(t, { ...base, database, user: appRole, password }, dbAdmin);
@@ -64,6 +68,7 @@ test('PostgreSQL migrations, constraints, sessions and runtime permissions', asy
       await authorizationHttpTests(t, { ...base, database, user: appRole, password }, dbAdmin, { ...base, database });
       await registrationHttpTests(t, { ...base, database, user: appRole, password }, dbAdmin);
       await profileHttpTests(t, { ...base, database, user: appRole, password }, dbAdmin);
+      await adminDeleteHttpTests(t, { ...base, database, user: appRole, password }, dbAdmin);
     }
     await t.test('expected effective contract accepts column INSERT without whole-table INSERT', async () => {
       await verifyRuntimePrivileges(app);
@@ -104,9 +109,15 @@ test('PostgreSQL migrations, constraints, sessions and runtime permissions', asy
       [`GRANT INSERT ON imobilead.users TO ${runtime}`],
       // PostgreSQL also revokes column INSERT grants when revoking table INSERT.
       [`REVOKE INSERT ON imobilead.users FROM ${runtime}`, runtimeGrantsSql(appRole)]);
-    await rejectDrift('reject DELETE users',
-      [`GRANT DELETE ON imobilead.users TO ${runtime}`],
-      [`REVOKE DELETE ON imobilead.users FROM ${runtime}`]);
+    await rejectDrift('reject missing required DELETE users',
+      [`REVOKE DELETE ON imobilead.users FROM ${runtime}`],
+      [`GRANT DELETE ON imobilead.users TO ${runtime}`]);
+    await rejectDrift('reject DELETE users with grant option',
+      [`GRANT DELETE ON imobilead.users TO ${runtime} WITH GRANT OPTION`],
+      [`REVOKE GRANT OPTION FOR DELETE ON imobilead.users FROM ${runtime}`]);
+    await rejectDrift('reject direct DELETE sessions',
+      [`GRANT DELETE ON imobilead.sessions TO ${runtime}`],
+      [`REVOKE DELETE ON imobilead.sessions FROM ${runtime}`]);
     await rejectDrift('reject TRUNCATE users',
       [`GRANT TRUNCATE ON imobilead.users TO ${runtime}`],
       [`REVOKE TRUNCATE ON imobilead.users FROM ${runtime}`]);
@@ -141,9 +152,9 @@ test('PostgreSQL migrations, constraints, sessions and runtime permissions', asy
       ['REVOKE UPDATE(role) ON imobilead.users FROM PUBLIC'],
       "SELECT has_column_privilege(current_user,'imobilead.users','role','UPDATE') AS allowed");
     await rejectDrift('reject effective DELETE via PUBLIC in disposable database',
-      ['GRANT DELETE ON imobilead.users TO PUBLIC'],
-      ['REVOKE DELETE ON imobilead.users FROM PUBLIC'],
-      "SELECT has_table_privilege(current_user,'imobilead.users','DELETE') AS allowed");
+      ['GRANT DELETE ON imobilead.sessions TO PUBLIC'],
+      ['REVOKE DELETE ON imobilead.sessions FROM PUBLIC'],
+      "SELECT has_table_privilege(current_user,'imobilead.sessions','DELETE') AS allowed");
     await rejectDrift('reject excess TRUNCATE sessions',
       [`GRANT TRUNCATE ON imobilead.sessions TO ${runtime}`],
       [`REVOKE TRUNCATE ON imobilead.sessions FROM ${runtime}`]);
@@ -178,8 +189,8 @@ test('PostgreSQL migrations, constraints, sessions and runtime permissions', asy
     await assert.rejects(app.query('SELECT * FROM imobilead_meta.pgmigrations'), { code: '42501' });
     const { rows: [permissions] } = await app.query("SELECT has_schema_privilege(current_user,'public','CREATE') AS public_create");
     assert.equal(permissions.public_create, false);
-    await assert.rejects(app.query('DELETE FROM imobilead.users WHERE id=$1',[user.id]), { code: '42501' });
-    await dbAdmin.query('DELETE FROM imobilead.users WHERE id=$1',[user.id]);
+    await assert.rejects(app.query('DELETE FROM imobilead.sessions WHERE user_id=$1',[user.id]), { code: '42501' });
+    assert.equal((await app.query('DELETE FROM imobilead.users WHERE id=$1',[user.id])).rowCount, 1);
     assert.equal((await app.query('SELECT count(*)::integer AS count FROM imobilead.sessions')).rows[0].count,0);
   } catch (error) {
     // Never expose pg's row/detail/SQL in node:test failure reports.

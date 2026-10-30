@@ -1,3 +1,58 @@
+## ADMIN-DELETE-UI-001 — contraste visual isolado, 30/10/2026
+
+Somente estilos button.danger no produto; textos/componentes/API/fluxos/banco
+inalterados versus snapshot dirty anterior. Normal/foco15.57:1, hover8.97:1,
+active12.10:1 e disabled7.49:1 em ambos botões. Cancelar/foco inicial preservados,
+contorno amarelo3px. UI36/36 desktop/mobile Chromium, mouse/teclado, zero skips;
+lint/tipos/doctor/validate/verify aprovados, Harness parcial Node62/62. Cleanup0 e
+metadados protegidos iguais, sem interação com usuários persistentes. Capturas06
+atualizadas/par10 acrescentado; demais16 PNGs+3 referências iguais por SHA256.
+[Evidência e baseline incremental](../evidence/admin-delete-visual.md),
+[manifesto](../evidence/admin-delete-visual-hashes.json). Alterações anteriores
+preservadas; sem commit/push. Revisão humana/CI remoto do diff pendentes.
+
+## ADMIN-DELETE-001-L1 — grants persistentes autorizados, 30/10/2026
+
+Pedido posterior autorizou db:inspect→db:grant→db:check→db:inspect→restart,
+exclusivamente127.0.0.1:5432/imobilead, sem exclusões ou DML cadastral. Destino
+confirmado antes/depois; todos comandos saíram0. Consulta adicional de ACLs foi
+explicitamente autorizada (db:inspect não as mostra), READ ONLY antes/depois:
+DELETE users false→true, DELETE sessions true→false;19 colunas/schemas/atributos
+de papel idênticos, TRUNCATE/delegação/CREATE negados. [Evidência/snapshots](../evidence/admin-delete.md#admin-delete-001-l1--preparação-persistente-autorizada).
+App Next deste checkout reiniciada em localhost:3000, Ready, sem erro de boot;
+aviso React18 preexistente. Acréscimo automático AGENTS restaurado ao snapshot.
+Sem migration/DDL destrutivo/fixtures/exclusão de usuários ou sessões/alteração
+cadastral, commit/push. Teste humano sintético de exclusão ainda exige autorização
+explícita. Pendência de aplicar grants/restart abaixo está superada só neste local;
+demais limites de CI/revisão humana permanecem históricos e separados.
+
+## ADMIN-DELETE-001 — implementação local, 30/10/2026
+
+Base main/0dfc215 inicialmente limpa, perfil publicado em origin/main e CI remoto
+da base41016344730 success confirmado. Pedido atual autorizou DELETE somente
+user por admin; superou pausas históricas de exclusão, sem autorizar persistente.
+Único cliente/transação, autorização antes do alvo, locks UUID ordenados/sessão,
+papéis/TTL frescos, cascade,204 após commit; admin/self409, ausente404. GET admin
+inclui role; próprio/perfil preservados. UI confirmação acessível/Escape inclusive
+pending, sem remoção otimista, refetch/cursor/gerações; logout/perfil preservados.
+
+Novo contrato runtime: DELETE users permitido e DELETE sessions revogado,
+demais direitos por coluna e proibições preservados. Sem migration artificial,
+sem grants/exclusões no persistente. Antes de usar versão nova, aplicar db:grant/
+db:check/restart somente após autorização; checker novo recusa ACL antiga.
+Teste humano futuro somente com cadastro sintético e autorização explícita para
+excluir; nenhum cadastro persistente existente foi usado pelo agente.
+
+QA final Node62/62; HTTP/PG65/65; exclusão UI35/35; perfil UI33/33; UI completa51/51;
+corridas58/58. Zero falhas/skips/cancelamentos finais, cleanup0/metadados/ACLs
+protegidos iguais. Lint/tipos/build/audit0/doctor/validate/verify passaram, Harness
+parcial/readiness not-assessed. [Evidência/falhas/revisão](../evidence/admin-delete.md),
+[contrato](../evidence/admin-delete-plan.md). Revisão Backend independente sem
+achados materiais; humana/CI remoto do novo diff pendentes.25 hashes preservados,
+nenhuma captura/README/CI/lock alterados; diff exclusivo fora do repo na evidência.
+Sem commit/push/publicação, soft delete, alterações de papel ou containerização.
+Histórico abaixo preservado.
+
 ## PROFILE-001-L1 — aplicação local autorizada, 30/10/2026
 
 Pedido posterior autorizou somente nova migration/grants/checagens e restart.

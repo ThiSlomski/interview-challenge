@@ -48,7 +48,9 @@ export async function verifyRuntimePrivileges(client) {
         AND NOT has_column_privilege(current_user,u.oid,a.attnum,'REFERENCES'))
         FROM pg_attribute a WHERE a.attrelid=u.oid AND a.attnum>0 AND NOT a.attisdropped)
         AS users_columns,
-      (NOT has_table_privilege(current_user,u.oid,'UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER,MAINTAIN')
+      (has_table_privilege(current_user,u.oid,'DELETE')
+        AND NOT has_table_privilege(current_user,u.oid,'UPDATE,TRUNCATE,REFERENCES,TRIGGER,MAINTAIN')
+        AND NOT has_table_privilege(current_user,u.oid,'DELETE WITH GRANT OPTION')
         AND NOT has_any_column_privilege(current_user,u.oid,'REFERENCES')
         AND NOT has_any_column_privilege(current_user,u.oid,
           'SELECT WITH GRANT OPTION,INSERT WITH GRANT OPTION,UPDATE WITH GRANT OPTION')) AS users_tables,
@@ -59,8 +61,7 @@ export async function verifyRuntimePrivileges(client) {
         AND has_column_privilege(current_user,s.oid,a.attnum,'UPDATE'))
         FROM pg_attribute a WHERE a.attrelid=s.oid AND a.attnum>0 AND NOT a.attisdropped)
         AS sessions_columns,
-      (has_table_privilege(current_user,s.oid,'DELETE')
-        AND NOT has_table_privilege(current_user,s.oid,'TRUNCATE,REFERENCES,TRIGGER,MAINTAIN')
+      (NOT has_table_privilege(current_user,s.oid,'DELETE,TRUNCATE,REFERENCES,TRIGGER,MAINTAIN')
         AND NOT has_any_column_privilege(current_user,s.oid,'REFERENCES')
         AND NOT has_table_privilege(current_user,s.oid,'DELETE WITH GRANT OPTION')
         AND NOT has_any_column_privilege(current_user,s.oid,

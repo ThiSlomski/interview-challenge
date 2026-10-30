@@ -2,6 +2,17 @@
 
 Dados sintéticos. Desktop: 1280 × 900; celular: 390 × 844
 
+## Contraste da exclusão administrativa — 30/10/2026
+
+ADMIN-DELETE-UI-001 atualiza somente o par06 e acrescenta o par10, com confirmação
+aberta por teclado e foco inicial em Cancelar. Texto claro/vermelho escuro nos
+botões de exclusão, contraste normal15.57:1; estados hover/active/disabled/foco
+validados em Chromium. A captura da listagem é estado normal após recarga real,
+sem ocultar avisos da aplicação. A confirmação usa viewport; a lista usa página
+integral. Dados sintéticos de fixture descartável, nunca cadastros persistentes.
+Os demais16 PNGs e3 referências permanecem iguais por SHA256. [Cores, hashes e
+verificações](../admin-delete-visual.md). Inspeção visual pelo agente; revisão humana pendente.
+
 ## Previsão no cadastro concluído — 30/10/2026
 
 WEATHER-001 atualiza somente o par 03, em página integral. Confirmação, resumo
@@ -19,7 +30,7 @@ modificar os PNGs ou o JSON oficial. Este README recebeu atualização documenta
 
 As dimensões acima são as janelas do navegador. Capturas de página integral
 podem ter altura maior; o par administrativo atual também usa página integral.
-São 18 imagens da aplicação com identidade Slomski Solutions, em nove pares.
+São 20 imagens da aplicação com identidade Slomski Solutions, em dez pares.
 As [referências do site oficial](../ui-reference/reference.json) ficam separadas
 deste conjunto. [Entrega principal](../ui.md) e [inventário](../ui-organization.md).
 
@@ -32,6 +43,7 @@ deste conjunto. [Entrega principal](../ui.md) e [inventário](../ui-organization
 | Cadastro concluído | Resumo sem senha, login necessário e previsão de amanhã | [Desktop](03-cadastro-sucesso-desktop.png) | [Celular](03-cadastro-sucesso-mobile.png) |
 | Área user | Cadastro próprio, sem controles administrativos | [Desktop](04-area-user-desktop.png) | [Celular](04-area-user-mobile.png) |
 | Área admin | Título e registros autorizados; sem capturar os 100 itens | [Desktop](06-area-admin-desktop.png) | [Celular](06-area-admin-mobile.png) |
+| Confirmar exclusão | Diálogo aberto por teclado, Cancelar focado e botão danger legível | [Desktop](10-exclusao-confirmacao-desktop.png) | [Celular](10-exclusao-confirmacao-mobile.png) |
 | Indisponibilidade | Falha segura, sem dados e com recuperação | [Desktop](07-area-indisponivel-desktop.png) | [Celular](07-area-indisponivel-mobile.png) |
 | Login | Foco e autofill controlado no e-mail, com indisponibilidade503 simulada | [Desktop](08-login-desktop.png) | [Celular](08-login-mobile.png) |
 

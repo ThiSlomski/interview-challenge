@@ -4,7 +4,7 @@ import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { resolve } from 'node:path';
 
-test('auth server suite under react-server condition (11 controlled cases)', async () => {
+test('auth server suite under react-server condition (12 controlled cases)', async () => {
   const child = spawn(process.execPath, ['--conditions=react-server', '--test', '--test-reporter=tap', resolve('tests/auth/server.test.mjs')], {
     windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'], timeout: 20000,
     env: { ...process.env, NODE_TEST_CONTEXT: undefined },
@@ -15,6 +15,6 @@ test('auth server suite under react-server condition (11 controlled cases)', asy
   });
   const [code, signal] = await once(child, 'exit');
   assert.equal(signal, null, 'AUTH_SUITE_TERMINATED'); assert.equal(code, 0, 'AUTH_SUITE_FAILED');
-  for (const [field, value] of [['tests', 11], ['pass', 11], ['fail', 0], ['skipped', 0], ['cancelled', 0], ['todo', 0]])
+  for (const [field, value] of [['tests', 12], ['pass', 12], ['fail', 0], ['skipped', 0], ['cancelled', 0], ['todo', 0]])
     assert.equal(new RegExp(`^# ${field} ${value}$`, 'm').test(output), true, 'AUTH_SUITE_INCOMPLETE');
 });

@@ -1,5 +1,6 @@
 export type UserRecord = {
   id?: string;
+  role?: 'user' | 'admin';
   name: string;
   email: string;
   address: string | null;

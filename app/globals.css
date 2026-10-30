@@ -407,6 +407,39 @@ input[aria-invalid='true'], textarea[aria-invalid='true'] {
 .profile-edit-action {
   margin-top: var(--space-5);
 }
+.delete-user-action { margin-top: var(--space-5); }
+button.danger {
+  border-color: var(--danger-border);
+  background: var(--danger-bg);
+  color: var(--ink);
+}
+button.danger:hover:not(:disabled) {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger-bg), var(--danger-border) 40%);
+  color: var(--ink);
+}
+button.danger:active:not(:disabled) {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger-bg), var(--danger-border) 20%);
+  color: var(--ink);
+}
+button.danger:disabled {
+  border-color: var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+.delete-dialog {
+  width: min(36rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  overflow: auto;
+  margin: auto;
+  color: var(--ink);
+  background: var(--surface);
+  overflow-wrap: anywhere;
+}
+.delete-dialog::backdrop { background: rgb(0 0 0 / .75); }
+.delete-dialog-actions { flex-wrap: wrap; }
 .record-badge {
   display: inline-block;
   max-width: 100%;

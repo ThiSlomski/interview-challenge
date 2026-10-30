@@ -1,5 +1,45 @@
 # Executar a solução local
 
+## Exclusão administrativa — ADMIN-DELETE-001
+
+Aplicação local posterior autorizada e concluída: db:inspect antes/depois,
+db:grant e db:check aprovados em127.0.0.1:5432/imobilead, com restart em localhost:3000.
+Leitura de ACLs adicional explicitamente autorizada comprovou somente DELETE users
+false→true e DELETE sessions true→false; direitos por coluna/schema/papel idênticos.
+[Evidência L1](docs/harness/evidence/admin-delete.md#admin-delete-001-l1--preparação-persistente-autorizada).
+Nenhum usuário/sessão foi excluído pelo agente; o teste humano continua pendente.
+As instruções abaixo descrevem implantação em outros ambientes e o histórico
+da implementação; não repetir efeitos já aplicados sem motivo/autorização.
+
+Extensão do desafio: admin exclui definitivamente somente contas user pela
+listagem; contas admin, inclusive a própria, não têm ação de exclusão e são
+recusadas no servidor. A confirmação informa nome/e-mail e encerramento das
+sessões, com foco em Cancelar, Escape e teclado/mobile. Só há confirmação de
+sucesso após204 e nova consulta. Resultado incerto exige conferir a listagem.
+
+API DELETE /api/users/[id] não recebe corpo:401 sem sessão,403 sem papel admin
+antes de consultar o alvo,400 UUID inválido após autorização,409 autoexclusão/
+alvo admin,404 inexistente/já excluído,204 sem corpo após commit. Sessões saem
+pelo ON DELETE CASCADE existente, dentro da mesma transação. GET administrativo
+inclui role apenas para apresentação; o endpoint continua autoridade final.
+
+Não há nova migration. Após revisão e autorização separada para o banco
+persistente, usar somente `npm run db:inspect`, `npm run db:grant`,
+`npm run db:check`, `npm run db:inspect` e reiniciar a aplicação. Não repetir
+provisionamento ou migrations por essa mudança. O grant canônico passa a conceder
+DELETE users e revogar DELETE direto em sessions; SELECT/INSERT/UPDATE por colunas
+e demais proibições são preservados. O checker novo falha fechado com ACL antiga;
+não usar essa versão no persistente sem aplicar o novo contrato autorizado.
+**Nenhum grant ou exclusão no banco persistente foi executado nesta etapa.**
+
+Testes: `npm run test:admin-delete:server`, `npm run test:admin-delete:ui`;
+Node e HTTP/PG também integram npm test/test:db:integration existentes. UI usa
+Chromium/Next/PG descartáveis com as guardas locais anteriores; não há fixture
+contra o persistente. [Contrato](docs/harness/evidence/admin-delete-plan.md),
+[evidências, limites e roteiro manual sintético](docs/harness/evidence/admin-delete.md).
+No teste humano futuro, criar conta sintética exclusiva e solicitar autorização
+explícita antes de excluí-la; nunca usar qualquer cadastro persistente existente.
+
 ## Edição do próprio perfil — PROFILE-001
 
 Aplicação local autorizada posteriormente: migration do perfil applied:1,

@@ -1,3 +1,22 @@
+## ADMIN-DELETE-001 — evolução adicional autorizada, 30/10/2026
+
+README preservado como enunciado. Exclusão é extensão solicitada, não requisito
+original. Perfil e CI-base publicados/verdes antes de iniciar, árvore limpa.
+
+| ID | Aceite | Implementação/evidência |
+| --- | --- | --- |
+| DELETE-1 | Sessão válida/admin obrigatório;403 antes de alvo/UUID | Handler com cliente único, autorização inicial e revalidação transacional |
+| DELETE-2 | Somente alvo user, sem autoexclusão/admin/lote |409 SELF_DELETE_FORBIDDEN/ADMIN_DELETE_FORBIDDEN;404 USER_NOT_FOUND |
+| DELETE-3 | DELETE exatamente1+sessões atomicamente;204 após commit | Locks UUID ordenados, sessão FOR SHARE, papel/TTL frescos e cascade existente |
+| DELETE-4 | Login concorrente não cria sessão órfã utilizável | FK preservada e401 genérico se exclusão vence INSERT |
+| DELETE-5 | Menor privilégio, sem migration artificial | DELETE users permitido; DELETE sessions revogado; checker efetivo/PUBLIC; sem aplicação persistente |
+| DELETE-6 | Confirmação acessível e lista/paginação coerentes | Dialog nome/email/Cancelar/Escape/teclado/mobile, refetch/cursor/primeira página e gerações |
+| DELETE-7 | Testes de authz,rollback,concorrência,UI e regressão | [Contrato](harness/evidence/admin-delete-plan.md), [resultados](harness/evidence/admin-delete.md); revisão humana/CI do diff separados |
+
+As restrições de não iniciar exclusão em checkpoints anteriores pertenciam à
+etapa de perfil. Este pedido autoriza implementar/testar apenas no descartável,
+sem grants/exclusão no persistente, commit/push/publicação ou containerização.
+
 ## PROFILE-001 — evolução adicional autorizada, 30/10/2026
 
 O README permanece enunciado original. Esta evolução acrescenta edição própria,

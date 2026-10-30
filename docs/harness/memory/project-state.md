@@ -1,3 +1,49 @@
+## ADMIN-DELETE-UI-001 — apresentação danger, 30/10/2026
+
+Ajuste isolado CSS, sem alteração funcional: texto claro/vermelho escuro, hover/
+active/disabled legíveis, foco amarelo e Cancelar inicial preservados. Contraste
+normal15.57,hover8.97,active12.10,disabled7.49:1, em ambos botões/desktop/mobile.
+UI36/36, Node62 via Harness, lint/tipos/doctor/validate/verify aprovados; cleanup0
+e metadados/ACLs protegidos iguais. Capturas06+novo10, demais16 PNGs/3 referências
+inalterados por hash. [Evidência](../evidence/admin-delete-visual.md). Sem banco
+persistente/commit/push; alterações anteriores preservadas, humana/CI pendentes.
+
+## ADMIN-DELETE-001-L1 — preparação persistente aplicada, 30/10/2026
+
+Com autorização específica, executados db:inspect/grant/check/inspect e restart
+em127.0.0.1:5432/imobilead. Resultado0 e destino confirmado antes/depois. ACLs
+READ ONLY autorizadas comprovam só DELETE users false→true e DELETE sessions
+true→false; grants19 colunas/schema/papel preservados, sem TRUNCATE/delegação/CREATE.
+Runtime imobilead_app aprovado por db:check; aplicação Ready em localhost:3000.
+[Evidência/snapshots](../evidence/admin-delete.md#admin-delete-001-l1--preparação-persistente-autorizada).
+Sem usuário/sessão excluído pelo agente, alteração cadastral, migration, fixture,
+DROP/TRUNCATE, commit/push. Teste humano futuro de exclusão somente com conta
+sintética e autorização explícita. Pendências de grants/restart abaixo são
+históricas para esse destino; não inferir autorização para excluir qualquer conta.
+
+## ADMIN-DELETE-001 — estado vigente, 30/10/2026
+
+Implementação/testes locais sobre main/0dfc215 limpo inicial, perfil publicado e
+CI-base success confirmado. DELETE /api/users/[id] somente admin→user, sem self/
+admin, transação única/locks determinísticos/sessão revalidada/cascade. UI modal
+acessível, sem remoção otimista e com refetch/paginação/gerações. Perfil preservado.
+Sem schema novo: mecanismo canônico concede DELETE users/revoga DELETE sessions,
+checker mínimo atualizado, sem aplicar esse contrato ao persistente.
+
+Node62/62, HTTP/PG65/65, exclusão UI35/35, perfil UI33/33, UI completa51/51,
+corridas58/58; zero falhas/skips/cancelamentos finais. Cleanup0/metadados protegidos
+iguais. Lint/tipos/build/audit0/doctor/validate/verify aprovados, Harness parcial.
+Revisão Backend independente sem achados materiais, humana e CI do novo diff
+pendentes. [Evidência](../evidence/admin-delete.md) contém falhas/correções,
+hashes preservados25/25, inventário, diff e roteiro humano sintético.
+
+Nenhum cadastro persistente excluído ou grant aplicado; aplicação futura exige
+nova autorização para db:grant/db:check/restart. Checker novo recusa ACL antiga.
+Teste humano somente conta sintética com autorização explícita de exclusão.
+README/CI/lock/capturas inalterados; sem commit/push/publicação/containerização.
+Restrições anteriores de não iniciar exclusão eram da etapa do perfil; histórico
+mantido abaixo, sem autorizar alterações persistentes nesta etapa.
+
 ## PROFILE-001-L1 — persistente local, 30/10/2026
 
 Migration/grants/check/restart explicitamente autorizados e executados pelo

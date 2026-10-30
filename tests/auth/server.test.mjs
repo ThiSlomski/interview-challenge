@@ -16,7 +16,8 @@ function fixture({ found = true, fail, clock = () => 10000000, value = config } 
   const sessions = new Map(), calls = [], diagnostics = [];
   const database = async () => ({ query: async (sql, values) => {
     calls.push({ sql, values });
-    if (fail?.(sql)) throw new Error('private connection/SQL/password detail');
+    const failed = fail?.(sql);
+    if (failed) throw typeof failed === 'object' ? failed : new Error('private connection/SQL/password detail');
     if (sql.startsWith('SELECT id,password_hash')) return { rows: found ? [{ ...user, password_hash: hash, secret: 'omit' }] : [] };
     if (sql.startsWith('INSERT')) {
       sessions.set(values[0].toString('hex'), { id: user.id, expires_at: values[3], revoked_at: null, created_at: values[2] });
@@ -29,6 +30,13 @@ function fixture({ found = true, fail, clock = () => 10000000, value = config } 
   return { ...createAuthHandlers({ database, config: value, now: clock, diagnostic: code => diagnostics.push(code) }), sessions, calls, database, diagnostics };
 }
 const cookie = response => response.headers.get('set-cookie').split(';')[0];
+
+test('account deletion racing session INSERT is a generic credential failure without a cookie', async () => {
+  const f = fixture({ fail: sql => sql.startsWith('INSERT') ? Object.assign(new Error('private FK row'), { code: '23503', constraint: 'sessions_user_id_fkey' }) : false });
+  const response = await f.login(request());
+  assert.equal(response.status, 401); assert.deepEqual(await response.json(), { error: 'INVALID_CREDENTIALS' });
+  assert.equal(response.headers.get('set-cookie'), null); assert.equal(f.sessions.size, 0); assert.deepEqual(f.diagnostics, []);
+});
 
 test('valid login uses normalized parameterized lookup, digest-only persistence and minimal response', async () => {
   const f = fixture();

@@ -103,8 +103,15 @@ export function createAuthHandlers({ database, config: configuration, now = Date
         const verified = await verifyPassword(user?.password_hash ?? DUMMY_HASH, input.password);
         if (!user || !verified) return reply(401, { error: 'INVALID_CREDENTIALS' });
         const token = newSessionToken(), created = now();
-        await db.query(`INSERT INTO imobilead.sessions(token_hash,user_id,created_at,expires_at)
-          VALUES($1,$2,$3,$4)`, [tokenDigest(token), user.id, new Date(created), new Date(created + SESSION_SECONDS * 1000)]);
+        try {
+          await db.query(`INSERT INTO imobilead.sessions(token_hash,user_id,created_at,expires_at)
+            VALUES($1,$2,$3,$4)`, [tokenDigest(token), user.id, new Date(created), new Date(created + SESSION_SECONDS * 1000)]);
+        } catch (error) {
+          // A successful password check can race account deletion. The FK
+          // prevents an orphan session; preserve the generic credential error.
+          if (error?.code === '23503' && error?.constraint === 'sessions_user_id_fkey') return reply(401, { error: 'INVALID_CREDENTIALS' });
+          throw error;
+        }
         return reply(200, { user: { id: user.id } }, { 'Set-Cookie': sessionCookie(token, config) });
       }
       if (action === 'session') {

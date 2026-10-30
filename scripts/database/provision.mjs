@@ -26,6 +26,8 @@ GRANT INSERT (id, name, email, password_hash, address, city, state, country, pos
   ON imobilead.users TO ${app};
 GRANT UPDATE (name, address, city, state, country, postal_code, message, updated_at, profile_version)
   ON imobilead.users TO ${app};
-GRANT SELECT, INSERT, UPDATE, DELETE ON imobilead.sessions TO ${app};
+GRANT DELETE ON imobilead.users TO ${app};
+GRANT SELECT, INSERT, UPDATE ON imobilead.sessions TO ${app};
+REVOKE DELETE ON imobilead.sessions FROM ${app};
 `;
 }

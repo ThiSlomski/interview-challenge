@@ -11,10 +11,11 @@ export const fieldMessages: Record<string, string> = {
   message: 'Revise a mensagem informada.',
 };
 
-export function requestMessage(status: number, action: 'registration' | 'login' | 'logout' | 'profile') {
+export function requestMessage(status: number, action: 'registration' | 'login' | 'logout' | 'profile' | 'delete') {
   if (status === 429) return 'Muitas tentativas. Aguarde um momento antes de tentar novamente.';
   if (status === 409 && action === 'registration') return 'Não foi possível cadastrar este e-mail. Se já tem cadastro, entre com sua conta.';
   if (status === 409 && action === 'profile') return 'Este cadastro foi alterado em outra operação. Confira a versão atual antes de salvar novamente.';
+  if (status === 409 && action === 'delete') return 'Esta conta não pode ser excluída. Contas administrativas e a própria conta são protegidas.';
   if (status === 401 && action === 'login') return 'E-mail ou senha incorretos.';
   if (status === 413) return 'O conteúdo é muito longo. Reduza os textos e tente novamente.';
   if (status === 400) return 'Revise os dados informados e tente novamente.';

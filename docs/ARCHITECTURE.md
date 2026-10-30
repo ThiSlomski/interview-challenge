@@ -1,5 +1,63 @@
 # Arquitetura da solução
 
+## ADMIN-DELETE-001 — exclusão somente user, 30/10/2026
+
+Extensão autorizada além do README, que permanece preservado. DELETE de conta
+user por admin autenticado; sem autoexclusão, admin, soft delete/restauração,
+alteração de papel, lote ou auditoria persistente. [Contrato](harness/evidence/admin-delete-plan.md),
+[evidência](harness/evidence/admin-delete.md). Nenhum efeito no banco persistente.
+
+Um cliente emprestado do pool atende autenticação/autorização inicial e transação.
+Papel admin fresco é exigido antes de validar UUID ou consultar/bloquear alvo;
+user recebe403 uniforme mesmo para UUID malformado/inexistente. Origem exata e
+Fetch Metadata reutilizam controle do perfil; DELETE não recebe corpo/query.
+Como Next expõe stream mesmo vazio, lê somente até EOF/primeiro byte com prazo5s,
+aceita apenas EOF e cancela conteúdo recusado sem acumulá-lo. Tamanho máximo16KiB para cabeçalho de
+comprimento,20 operações/minuto/duas ativas, lock_timeout5s e statement_timeout
+do runtime10s preservam orçamento limitado. Respostas no-store/nosniff.
+
+BEGIN e locks SELECT id,role WHERE id=ANY(...) ORDER BY id FOR UPDATE adquirem
+users por ordem UUID. Sessão do ator é lida por digest/UUID com FOR SHARE e
+expiração/revogação conferidas depois das esperas. Revalida ator admin, proíbe
+autoexclusão, exige alvo user e DELETE parametrizado WHERE id/role=user RETURNING
+id com cardinalidade exatamente1. Checa TTL novamente; erro/recusa faz rollback,
+COMMIT antecede204 sem corpo. Cliente sempre liberado. Sem count de admins,
+trava consultiva/global ou coordenação com futuros rebaixamentos.
+
+FK sessions.user_id ON DELETE CASCADE remove todas sessões na mesma transação;
+nenhum DELETE explícito em sessions é executado. Se login perde o usuário entre
+verificação da senha e INSERT da sessão, a FK recusa e retorna401 genérico sem
+cookie. Se login vence, DELETE subsequente remove sessão; cookie já emitido não
+autentica após cascade. Demais falhas continuam sanitizadas, sem detalhes SQL.
+
+Schema e índices inalterados, sem migration artificial de ACL. runtimeGrantsSql
+concede DELETE users e revoga DELETE sessions; checker exige esse contrato
+efetivo incluindo PUBLIC e nega grant option, TRUNCATE/DDL, alterações de
+credenciais/papel/identidade/datas de criação e acesso ao histórico. ACL do perfil
+por coluna preservada. Antes de aplicar o novo contrato, runtime com guarda nova
+recusa ACL antiga: implantação futura precisa grants/check/restart autorizados.
+DELETE SQL é privilégio de tabela; autorização por linha/role permanece na API.
+
+GET listagem admin acrescenta role à allowlist pública; consulta individual e
+perfil mantêm projeções anteriores. UI não mostra ação para admin, mas isso não
+concede autorização. Confirma identidade/efeitos com Cancelar inicial, teclado,
+Escape e retorno de foco. Escape pendente fecha apenas o diálogo, mantendo
+processamento e logout disponíveis; não cancela/sugere rollback do HTTP.
+Requisição pendente não remove otimisticamente;204/404
+reconsultam página/cursor e vazio com cursor retorna à primeira. Rede/timeout
+causam reconciliação sem alegar falha definitiva. Novas composições válidas são
+aceitas e respostas de gerações anteriores não reapresentam usuário removido.
+Logout/identidade/TTL/histórico/gate e edição de perfil permanecem protegidos.
+
+Alternativas descartadas: exclusão admin, contador do último admin, trava global,
+soft delete e DELETE manual de sessões. Triggers/barreiras usados para testar
+corridas existem apenas nas fixtures descartáveis, nunca no produto/persistente.
+
+Limites: leitura já produzida pode continuar em trânsito; a UI invalida respostas
+anteriores à mutação, não se promete cancelar retroativamente HTTP confirmado.
+Limitador em memória não coordena réplicas. Revisão humana/CI remoto do diff e
+HTTPS/múltiplos navegadores não são inferidos de verificações locais.
+
 ## PROFILE-001 — edição própria, 30/10/2026
 
 Contexto: extensão solicitada além da criação/consulta exigidas pelo README.

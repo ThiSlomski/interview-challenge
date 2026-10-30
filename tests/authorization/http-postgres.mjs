@@ -15,7 +15,10 @@ export function authorizationHttpTests(t, config, admin, adminConfig) {
       assert.deepEqual(await response.json(),{error:status===401?'UNAUTHENTICATED':'FORBIDDEN'});
     };
     const fields=['id','name','email','address','city','state','country','postalCode','message'].sort();
-    const projection=row=>assert.deepEqual(Object.keys(row).sort(),fields);
+    const projection=(row,listed=false)=>{
+      assert.deepEqual(Object.keys(row).sort(),listed?[...fields,'role'].sort():fields);
+      if(listed) assert.ok(['user','admin'].includes(row.role));
+    };
     await t.test('authorization HTTP/PG: public signup, two users and admin via explicit provisioner',async()=>{
       for(let n=0;n<3;n++) {
         const response=await fetch(origin+'/api/users',{method:'POST',headers:{origin,'content-type':'application/json'},body:JSON.stringify({name:'Authorization Fixture '+n,email:`authz${n}@example.test`,password,passwordConfirmation:password,city:'Fixture City',message:'<script>fixture</script>'})});
@@ -69,7 +72,7 @@ export function authorizationHttpTests(t, config, admin, adminConfig) {
       do {
         const response=await get(undefined,cookies[2],cursor?'?after='+cursor:'');assert.equal(response.status,200);
         assert.equal(response.headers.get('cache-control'),'no-store');const body=await response.json();
-        assert.ok(body.users.length<=100);for(const row of body.users){projection(row);assert.ok(!seen.has(row.id));seen.add(row.id);}
+        assert.ok(body.users.length<=100);for(const row of body.users){projection(row,true);assert.ok(!seen.has(row.id));seen.add(row.id);}
         cursor=body.nextCursor;pages++;
       } while(cursor && pages<5);
       assert.equal(cursor,null);assert.equal(pages,2);for(const id of ids) assert.ok(seen.has(id));assert.equal(seen.size,104);

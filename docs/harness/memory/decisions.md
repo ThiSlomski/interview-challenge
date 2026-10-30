@@ -1,5 +1,13 @@
 # Índice de decisões
 
+## ADMIN-DELETE-001 — 30/10/2026
+
+Somente admin→user, sem autoexclusão/admin/lote/soft delete; locks determinísticos
+e sessão revalidada, cascade e204 após commit. Runtime DELETE users, sem DELETE
+sessions; sem schema/migration nova. Confirmação acessível/Escape, refetch/cursor
+e gerações preservadas. [Decisão](../../ARCHITECTURE.md#admin-delete-001--exclusão-somente-user-30102026),
+[evidência](../evidence/admin-delete.md). Nenhum efeito persistente/commit/push.
+
 ## PROFILE-001 — 30/10/2026
 
 Edição própria via sessão, e-mail imutável, validação de textos compartilhada com

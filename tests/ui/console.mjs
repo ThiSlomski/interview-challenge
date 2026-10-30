@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 
 // Keep only categories/counters: React diagnostic arguments can contain private
 // render data. Nothing here stores/prints raw browser messages, URLs or stacks.
-export function watchBrowserErrors(page, origin, weatherFailuresExpected = false) {
+export function watchBrowserErrors(page, origin, weatherFailuresExpected = false, expectedApiNotFound = false) {
   const counts = { flushSync: 0, hydration: 0, consoleError: 0, consoleWarning: 0, pageerror: 0, preloadHint: 0, navigations: 0, documents: 0 };
   function consoleMessage(message) {
     const type = message.type();
@@ -20,6 +20,9 @@ export function watchBrowserErrors(page, origin, weatherFailuresExpected = false
     // These suites deliberately exercise failed/denied API requests. Allow only
     // Chromium's resource diagnostic at the API URL, never arbitrary app errors.
     const api = message.location().url.startsWith(origin + '/api/');
+    // Opt-in only for the new DELETE404 scenario; legacy suites retain their
+    // existing diagnostics contract. Never suppress React or page exceptions.
+    if (api && expectedApiNotFound && /^Failed to load resource:/.test(text) && /status of 404\b/.test(text)) return;
     const weather = weatherFailuresExpected && /^https:\/\/(?:geocoding-api|api)\.open-meteo\.com\/v1\/(?:search|forecast)\?/.test(message.location().url);
     if (weather && /^Failed to load resource:/.test(text) && /(?:status of 503\b|net::ERR_FAILED|net::ERR_ABORTED)/.test(text)) return;
     if (api && /^Failed to load resource:/.test(text)

@@ -1,5 +1,33 @@
 # Log de prompts de AI
 
+## ADMIN-DELETE-UI-001 — contraste visual, 30/10/2026
+
+[Pedido integral](prompts/2026-10-30-admin-delete-visual.md): correção isolada dos
+botões danger, sem mudança funcional. Codex reproduziu contraste1.05:1, corrigiu
+cascata com paleta existente e validou cinco estados/mouse/teclado em desktop e
+celular emulado. Capturas06 atualizadas, par10 incluído, demais16 PNGs/3 referências
+preservados. [Evidência/cores/testes/hashes](harness/evidence/admin-delete-visual.md).
+Sem commit/push; revisão humana pendente.
+
+## ADMIN-DELETE-001-L1 — preparação persistente, 30/10/2026
+
+[Autorização integral](prompts/2026-10-30-admin-delete.md#autorização-posterior--preparação-do-banco-persistente):
+Codex executou inspect/grant/check/inspect e restart no destino local autorizado.
+Expôs a limitação de db:inspect e obteve autorização adicional para ACLs READ ONLY;
+comparação confirmou só as duas mudanças DELETE, com grants por coluna preservados.
+Sem exclusões/DML cadastral/migration/fixtures/commit/push.
+[Evidência](harness/evidence/admin-delete.md#admin-delete-001-l1--preparação-persistente-autorizada).
+
+## ADMIN-DELETE-001 — 30/10/2026
+
+[Pedido integral](prompts/2026-10-30-admin-delete.md): excluir somente user por
+admin, com transação/cascade, concorrência, confirmação acessível e paginação.
+Codex aceitou as exclusões de escopo e a separação entre implementação/fixtures
+e aplicação persistente. Ajustou projeção admin para role e retirou DELETE direto
+de sessions; não criou migration artificial. [Contrato](harness/evidence/admin-delete-plan.md),
+[evidência e avaliação crítica](harness/evidence/admin-delete.md). Sem commit/push,
+grants/exclusão no persistente; CI/revisão humana do diff não presumidos.
+
 ## PROFILE-001-L1 — aplicação persistente local, 30/10/2026
 
 [Autorização integral](prompts/2026-10-30-profile.md#autorização-posterior-de-aplicação-persistente--texto-integral):
