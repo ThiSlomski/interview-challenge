@@ -1,0 +1,186 @@
+AJUSTE FUNCIONAL — TORNAR OBRIGATÓRIOS OS DADOS ESSENCIAIS DO CADASTRO
+
+O cadastro atualmente exige apenas e-mail, senha e confirmação de senha. Isso permite criar uma conta sem nome e sem localização, prejudicando:
+
+- a identificação do usuário;
+- a apresentação dos dados na área protegida;
+- a previsão do tempo para o dia seguinte;
+- a consistência geral do cadastro.
+
+Torne obrigatórios os seguintes campos:
+
+- Nome
+- E-mail
+- Senha
+- Confirmação de senha
+- Cidade
+- Estado
+- País
+
+Mantenha opcionais:
+
+- Endereço
+- CEP
+- Mensagem
+
+REGRAS DE VALIDAÇÃO
+
+1. Nome:
+   - obrigatório;
+   - rejeitar valor vazio ou composto somente por espaços;
+   - remover espaços externos;
+   - preservar o limite atual de até 150 caracteres.
+
+2. E-mail:
+   - manter todas as validações atuais;
+   - obrigatório;
+   - preservar normalização, limite e prevenção de duplicidade.
+
+3. Senha:
+   - manter as regras atuais;
+   - obrigatória;
+   - preservar confirmação, hashing e proteções existentes.
+
+4. Confirmação de senha:
+   - obrigatória;
+   - deve permanecer idêntica à senha;
+   - nunca deve ser persistida.
+
+5. Cidade:
+   - obrigatória;
+   - rejeitar valor vazio ou composto somente por espaços;
+   - remover espaços externos;
+   - preservar os limites existentes.
+
+6. Estado:
+   - obrigatório;
+   - rejeitar valor vazio ou composto somente por espaços;
+   - remover espaços externos;
+   - preservar normalização e limites existentes.
+
+7. País:
+   - obrigatório;
+   - rejeitar valor vazio ou composto somente por espaços;
+   - remover espaços externos;
+   - preservar normalização e limites existentes.
+
+8. Não considerar espaços em branco como valores válidos para nenhum campo obrigatório.
+
+CLIENTE E SERVIDOR
+
+9. Aplicar exatamente as mesmas regras:
+   - na validação do formulário;
+   - na API de cadastro;
+   - nos módulos compartilhados de validação;
+   - nos testes automatizados.
+
+10. A validação do servidor continua sendo a autoridade. Não confiar apenas nos atributos HTML do navegador.
+
+11. Marcar visual e semanticamente os campos obrigatórios:
+   - usar o atributo `required` quando apropriado;
+   - preservar rótulos acessíveis;
+   - indicar claramente quais campos são obrigatórios;
+   - não depender apenas de cor ou asterisco para transmitir a informação.
+
+TEXTOS DA INTERFACE
+
+12. Substituir o texto atual:
+
+“E-mail, senha e confirmação de senha são obrigatórios. Os demais campos podem ficar em branco.”
+
+Por:
+
+“Nome, e-mail, senha, confirmação de senha, cidade, estado e país são obrigatórios. Endereço, CEP e mensagem são opcionais.”
+
+13. Exibir mensagens específicas próximas aos campos:
+
+- “Informe seu nome.”
+- “Informe uma cidade.”
+- “Informe um estado.”
+- “Informe um país.”
+
+14. Incluir todos os erros no resumo superior e manter os links/foco apontando para os respectivos campos.
+
+15. Após uma tentativa inválida:
+   - focar o primeiro campo com erro;
+   - preservar os demais valores permitidos;
+   - não limpar a senha desnecessariamente, salvo se isso já fizer parte da política atual de segurança;
+   - não enviar requisição quando a validação do cliente detectar erros.
+
+EDIÇÃO DE PERFIL
+
+16. Aplicar a mesma consistência na edição do próprio perfil:
+   - nome, cidade, estado e país não podem ser apagados;
+   - usuário comum e administrador seguem as mesmas regras;
+   - impedir que um perfil válido volte a ficar sem os dados essenciais;
+   - preservar o e-mail imutável e as demais regras existentes.
+
+17. Reutilizar o mesmo módulo de validação entre cadastro e edição, evitando regras divergentes.
+
+PREVISÃO DO TEMPO
+
+18. A previsão deve continuar usando:
+   - cidade;
+   - estado;
+   - país.
+
+19. Não tornar o CEP obrigatório apenas para obter a previsão.
+
+20. Mesmo com os campos preenchidos, preservar os estados existentes para:
+   - localização não encontrada;
+   - indisponibilidade da API;
+   - timeout;
+   - resposta inválida;
+   - nova tentativa.
+
+BANCO DE DADOS
+
+21. Conferir se nome, cidade, estado e país ainda aceitam `NULL` ou string vazia no banco.
+
+22. Se for necessário reforçar a integridade no banco:
+   - criar migration versionada;
+   - não editar migrations já aplicadas;
+   - não inventar valores para registros antigos;
+   - executar uma verificação prévia de registros incompatíveis;
+   - documentar qualquer registro legado que impeça a restrição;
+   - aplicar `NOT NULL` e/ou `CHECK` contra valores vazios somente após confirmar compatibilidade;
+   - preservar IDs, e-mails, senhas, papéis, sessões e versões existentes.
+
+23. Se o banco já possuir as restrições necessárias, não criar migration desnecessária; registrar essa confirmação na evidência.
+
+TESTES OBRIGATÓRIOS
+
+Adicionar ou atualizar testes para comprovar:
+
+- cadastro sem nome é rejeitado;
+- cadastro com nome composto somente por espaços é rejeitado;
+- cadastro sem cidade é rejeitado;
+- cadastro sem estado é rejeitado;
+- cadastro sem país é rejeitado;
+- cadastro sem endereço continua permitido;
+- cadastro sem CEP continua permitido;
+- cadastro sem mensagem continua permitido;
+- cadastro completo continua funcionando;
+- cliente e servidor retornam regras equivalentes;
+- tentativa direta pela API também é rejeitada;
+- edição não permite apagar nome, cidade, estado ou país;
+- usuário comum e administrador seguem a mesma validação;
+- previsão continua recebendo cidade, estado e país;
+- nenhuma senha aparece em respostas, logs ou resumo;
+- nenhuma regressão ocorre em login, sessão, autorização ou tela de sucesso.
+
+RESTRIÇÕES
+
+Não alterar:
+
+- autenticação;
+- autorização;
+- modelo de sessão;
+- papéis;
+- e-mail imutável;
+- hashing de senha;
+- API meteorológica;
+- contratos não relacionados;
+- layout recentemente padronizado.
+
+Atualizar somente implementação, testes, documentação, capturas e evidências diretamente relacionados a esta alteração.

@@ -21,7 +21,7 @@ export function authorizationHttpTests(t, config, admin, adminConfig) {
     };
     await t.test('authorization HTTP/PG: public signup, two users and admin via explicit provisioner',async()=>{
       for(let n=0;n<3;n++) {
-        const response=await fetch(origin+'/api/users',{method:'POST',headers:{origin,'content-type':'application/json'},body:JSON.stringify({name:'Authorization Fixture '+n,email:`authz${n}@example.test`,password,passwordConfirmation:password,city:'Fixture City',message:'<script>fixture</script>'})});
+        const response=await fetch(origin+'/api/users',{method:'POST',headers:{origin,'content-type':'application/json'},body:JSON.stringify({name:'Authorization Fixture '+n,email:`authz${n}@example.test`,password,passwordConfirmation:password,city:'Fixture City',state:'Region',country:'Country',message:'<script>fixture</script>'})});
         assert.equal(response.status,201);assert.equal(response.headers.get('set-cookie'),null);ids.push((await response.json()).user.id);
         const login=await fetch(origin+'/api/auth/login',{method:'POST',headers:{origin,'content-type':'application/json'},body:JSON.stringify({email:`authz${n}@example.test`,password})});
         assert.equal(login.status,200);cookies.push(login.headers.get('set-cookie').split(';')[0]);
@@ -67,7 +67,7 @@ export function authorizationHttpTests(t, config, admin, adminConfig) {
       assert.equal((await get(ids[0],cookies[0],'?userId='+ids[1])).status,400);
     });
     await t.test('authorization HTTP/PG: admin all pages, individual projection, invalid and absent',async()=>{
-      await admin.query("INSERT INTO imobilead.users(name,email,password_hash) SELECT 'Page Fixture','authz-page-'||n||'@example.test','$fixture' FROM generate_series(1,101) n");
+      await admin.query("INSERT INTO imobilead.users(name,email,password_hash,city,state,country) SELECT 'Page Fixture','authz-page-'||n||'@example.test','$fixture','Fixture City','Region','Country' FROM generate_series(1,101) n");
       const seen=new Set();let cursor=null,pages=0;
       do {
         const response=await get(undefined,cookies[2],cursor?'?after='+cursor:'');assert.equal(response.status,200);

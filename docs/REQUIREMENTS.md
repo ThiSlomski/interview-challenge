@@ -330,3 +330,19 @@ fluxo e estados acessíveis preservados. Sem alteração funcional de autentica�
 [Pedido integral](prompts/2026-10-30-login-refinement.txt),
 [matriz e resultados](harness/evidence/login-refinement.md).
 Teclado virtual físico, revisão humana e CI remoto do diff permanecem pendentes.
+## REG-UI-001 — refinamento do cadastro, 30/10/2026
+
+Introdução e cartão centralizados com a mesma largura, duas colunas confortáveis
+em desktop/tablet e uma em celular, sem rolagem horizontal ou sobreposição do
+rodapé. Preservar validações, foco, busy, duplicação e sucesso/clima existentes.
+[Pedido integral](prompts/2026-10-30-registration-refinement.txt) e
+[verificações e limites](harness/evidence/registration-refinement.md).
+## REG-ESSENTIAL-001 — cadastro/perfil e Zod, 30/10/2026
+
+Pedido novo supera a opcionalidade histórica de nome/localização:7 obrigatórios
+no cadastro; nome/cidade/estado/país não podem ser apagados no perfil user/admin.
+Zod4.6.7 direto, schemas compartilhados strict e adaptador seguro; required,
+mensagens específicas, resumo e foco no primeiro erro. Campos opcionais preservados.
+Migration3 aplicada localmente após preflight0, sem reescrita de dados. Node69/69,
+HTTP/PG74/74, UI78/78, perfil41/41, exclusão45/45. Harness parcial; revisão humana
+e CI remoto pendentes. [Pedidos, auditoria, prova e limites](harness/evidence/required-profile-fields.md).

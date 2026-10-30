@@ -30,7 +30,8 @@ export async function weatherBrowserTests(t, browser, origin) {
         await page.locator('#message').fill('Mensagem privada sintética');
         for (const key of ['city', 'state', 'country']) await page.locator('#' + key).fill(input[key] ?? '');
         await page.getByRole('button', { name: 'Criar cadastro', exact: true }).click();
-        await confirmed();
+        if (input.city?.trim()) await confirmed();
+        else await expect(page.locator('#city')).toHaveAttribute('aria-invalid', 'true');
       }
       async function confirmed() {
         await expect(page.getByRole('heading', { name: 'Cadastro concluído', exact: true })).toBeVisible();
@@ -116,9 +117,11 @@ export async function weatherBrowserTests(t, browser, origin) {
     await page.reload(); await expect(page.locator('#city')).toBeVisible();
     await expect(section).toHaveCount(0);
   });
-  await scenario('missing city never requests geocoding or forecast', async ({ requests, signup, section }) => {
+  await scenario('missing city blocks signup and never requests geocoding or forecast', async ({ page, requests, signup, section }) => {
     await signup({ city: '', state: 'Paraná', country: 'Brasil' });
-    await expect(section).toContainText('Previsão indisponível porque a cidade não foi informada.');
+    await expect(page.locator('#city')).toBeFocused();
+    await expect(section).toHaveCount(0);
+    assert.equal(requests.some(request => request.url().endsWith('/api/users')), false);
     assert.equal(requests.some(request => request.url().includes('open-meteo.com')), false);
   });
   for (const [name, pattern, response, message] of [

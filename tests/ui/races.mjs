@@ -26,7 +26,7 @@ export function uiRaceTests(t, config, admin) {
     try {
       const password = 'RaceFixture123';
       const signup = await context.request.post(origin + '/api/users', {
-        headers: { origin }, data: { name: 'Pessoa Sintética Corrida', email, password, passwordConfirmation: password },
+        headers: { origin }, data: { name: 'Pessoa Sintética Corrida', email, password, passwordConfirmation: password, city: 'Curitiba', state: 'Paraná', country: 'Brasil' },
       });
       assert.equal(signup.status(), 201);
       id = (await signup.json()).user.id;
@@ -232,7 +232,7 @@ async function extendedRaces(t, browser, origin, admin, sourceId) {
         };
       });
       async function account(address) {
-        const { rows: [row] } = await admin.query('INSERT INTO imobilead.users(name,email,password_hash) SELECT name,$1,password_hash FROM imobilead.users WHERE id=$2 RETURNING id', [address, sourceId]);
+        const { rows: [row] } = await admin.query('INSERT INTO imobilead.users(name,email,password_hash,city,state,country) SELECT name,$1,password_hash,city,state,country FROM imobilead.users WHERE id=$2 RETURNING id', [address, sourceId]);
         ids.push(row.id);
         const response = await context.request.post(origin + '/api/auth/login', { headers: { origin }, data: { email: address, password } });
         assert.equal(response.status(), 200);

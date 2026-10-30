@@ -975,3 +975,28 @@ o conteúdo cresce no fluxo quando a altura disponível é pequena. Ações empi
 até480px, com alvos de toque de pelo menos48px. LoginForm e contratos de segurança
 permanecem intactos. [Pedido](prompts/2026-10-30-login-refinement.txt) e
 [evidência](harness/evidence/login-refinement.md). Revisão humana pendente.
+## REG-UI-001 — contêiner do cadastro, 30/10/2026
+
+Wrapper exclusivo do estado de formulário centraliza introdução/cartão em920px,
+reutilizando shell, espaçamentos, campos e ações compartilhados. Grade com duas
+colunas iguais acima720px; uma coluna abaixo/igual720px, botão total até640px.
+Fluxo vertical natural e rodapé compartilhado preservados. Sucesso/resumo/clima
+permanecem fora do wrapper. Nenhuma alteração nos contratos funcionais.
+[Pedido](prompts/2026-10-30-registration-refinement.txt) e
+[evidência](harness/evidence/registration-refinement.md). Revisão humana pendente.
+## REG-ESSENTIAL-001 — schemas Zod e essenciais, 30/10/2026
+
+Zod4.6.7, antes somente transitivo dev do ESLint, passa a direto runtime.
+shared/schemas.mjs centraliza registrationSchema/profilePatchSchema e textos
+comuns strict. Wrappers usados por UI/API convertem safeParse em códigos públicos
+controlados; nenhuma issue/input/stack é retornada. Regras manuais concorrentes
+removidas. Nome/cidade/estado/país obrigatórios com trim; PATCH omitido preservado,
+endereço/CEP/mensagem opcionais. EmailASCII/limites, senha8–35/confirm/hash,
+transação/versão/auth/layout/clima preservados. Refinamentos when agregam erros
+independentes apesar de outro tipo inválido. Original item3 exige validação
+cliente/servidor sem mencionar Zod nominalmente; biblioteca foi pedido adicional.
+
+Migration aditiva3, preflight0 incompatíveis, aplicada por autorização explícita
+somente local; quatro NOTNULL/CHECKnonblank, sem reescrever registros. README/CI
+ficam para outra rodada; fixture/count do smoke Compose mantidos por autorização,
+sem nova execução de containers. [Decisão, auditoria e verificações](harness/evidence/required-profile-fields.md).

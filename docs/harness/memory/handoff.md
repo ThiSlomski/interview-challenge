@@ -1,3 +1,31 @@
+## REG-ESSENTIAL-001 — Zod e dados essenciais, 30/10/2026
+
+Sobre REG-UI-001 dirty preservado: Zod4.6.7 agora direto runtime (antes transitivo
+dev sem uso na app); shared/schemas.mjs strict centraliza cadastro/PATCH/adaptador.
+Essenciais nome/cidade/estado/país trim/não vazios; required7/4, mensagens e foco
+primeiro erro. Layout/credenciais/auth/clima preservados. Migration3 aplicada
+após autorização explícita:preflight0, applied1, quatro NOTNULL/CHECK e checkACL
+aprovados, sem reescrita cadastral/grants. [Evidência e auditoria](../evidence/required-profile-fields.md).
+Node69/69, HTTP/PG74/74, UI78/78, perfil41/41, exclusão45/45; cleanup0/metadados
+protegidos iguais nos runners. Build/lint/tipos/audit0/Harness aprovados, parcial.
+Revisões Banco/Backend independentes concluídas, duas agregações Zod corrigidas.
+Somente7 capturas de cadastro atualizadas/18 PNGs iguais; CSS anterior idêntico.
+SmokeCompose fixture/count3 mantidos por autorização, sem nova execução Docker.
+README/CI ficam para outra rodada; humana/CI remoto/teclado virtual real pendentes.
+Sem commit/push/deploy. Não repetir migration persistente por este checkpoint.
+
+## REG-UI-001 — cadastro centralizado, 30/10/2026
+
+Base main/c10747a inicialmente limpa. Wrapper exclusivo do formulário e CSS
+escopado:920px centralizado, introdução/cartão alinhados, duas colunas acima720px,
+uma abaixo/igual720px, botão total até640px. Sucesso/resumo/clima e lógica intactos.
+UI72/72 final; Node62/62/Harness/lint/tipos/build aprovados. Rodadas intermediárias
+e correção de captura caret/hydration na [evidência](../evidence/registration-refinement.md).
+Cleanup0/metadados protegidos iguais; somente pares02/09 alterados,18 PNGs iguais
+por SHA256; três capturas normais novas. Autorrevisão; revisão humana, teclado
+virtual físico/zoom real e CI remoto pendentes. Harness parcial/readiness:not-assessed.
+Sem commit/push/deploy ou contas persistentes. Nenhuma próxima etapa iniciada.
+
 ## LOGIN-UI-001 — centralização do login, 30/10/2026
 
 Base main/37a7b8f inicialmente limpa. Apenas página login e CSS específico no

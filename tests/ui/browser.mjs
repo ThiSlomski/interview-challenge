@@ -10,6 +10,7 @@ import { geocoding, weather } from '../weather/fixtures.mjs';
 import { weatherBrowserTests } from '../weather/browser.mjs';
 import { inspectFooterMatrix } from './footer.mjs';
 import { loginLayoutTests } from './login.mjs';
+import { registrationLayoutTests } from './registration-layout.mjs';
 
 const expect = baseExpect.configure({ timeout: 15000 });
 
@@ -36,6 +37,8 @@ export function uiBrowserTests(t, config, admin) {
         if (name !== '04-area-user') return;
       } else if (process.env.UI_UPDATE_CAPTURES === 'login') {
         if (name !== '08-login') return;
+      } else if (process.env.UI_UPDATE_CAPTURES === 'registration') {
+        if (!['02-cadastro-erros', '09-cadastro'].includes(name)) return;
       } else
       // This requirement only changes the signup success pair. Other evidence
       // stays byte-identical while the full functional suite still executes.
@@ -66,7 +69,10 @@ export function uiBrowserTests(t, config, admin) {
           assert(spacing >= 24, 'SUCCESS_ACTIONS_SPACING');
         }
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
-        await page.screenshot({ path: resolve(screenshots, name + '-' + device + '.png'), fullPage: true, style: 'nextjs-portal { visibility: hidden !important; }' });
+        // Signup may still be hydrating: Playwright's default caret hiding
+        // mutates inline input styles and causes a React hydration mismatch.
+        await page.screenshot({ path: resolve(screenshots, name + '-' + device + '.png'), fullPage: true,
+          caret: name === '09-cadastro' ? 'initial' : 'hide', style: 'nextjs-portal { visibility: hidden !important; }' });
       }
       await page.setViewportSize(original);
     }
@@ -86,6 +92,7 @@ export function uiBrowserTests(t, config, admin) {
       });
     }
     async function signup() {
+      for (const [key, value] of Object.entries({ city: 'Cidade Sintética', state: 'Paraná', country: 'Brasil' })) await page.locator('#' + key).fill(value);
       await page.getByLabel(/^Nome(?: \*)?$/).fill('Pessoa Sintética UI');
       await page.getByLabel(/^E-mail(?: \*)?$/).fill(email);
       await page.getByLabel(/^Senha(?: \*)?$/).fill(password);
@@ -109,6 +116,8 @@ export function uiBrowserTests(t, config, admin) {
         await weatherBrowserTests(t, browser, origin);
         return;
       }
+      await registrationLayoutTests(t, browser, origin);
+      if (process.env.UI_REGISTRATION_BASELINE === 'true') return;
       await loginLayoutTests(t, browser, origin);
       if (process.env.UI_LOGIN_BASELINE === 'true') return;
       // Verify the icon resource rather than ignoring unrelated console 404s.
@@ -140,7 +149,7 @@ export function uiBrowserTests(t, config, admin) {
         await page.goto(origin + '/cadastro');
         await page.getByRole('button', { name: 'Criar cadastro', exact: true }).click();
         await expect(page.locator('[aria-invalid="true"]').first()).toBeVisible();
-        await expect(page.locator('main [role="alert"]')).toBeFocused();
+        await expect(page.locator('#name')).toBeFocused();
         assert.equal(await page.locator('[aria-invalid="true"]').first().getAttribute('aria-describedby') !== null, true);
         await signup();
         await page.getByLabel(/^Confirmação de senha(?: \*)?$/).fill('Divergente123');
@@ -281,7 +290,7 @@ export function uiBrowserTests(t, config, admin) {
       });
       await scenario('client navigation snapshot stays hidden after revocation while away', async () => {
         const address = 'ui-snapshot@example.test';
-        const { rows: [snapshot] } = await admin.query('INSERT INTO imobilead.users(name,email,password_hash) SELECT name,$1,password_hash FROM imobilead.users WHERE id=$2 RETURNING id', [address,id]);
+        const { rows: [snapshot] } = await admin.query('INSERT INTO imobilead.users(name,email,password_hash,city,state,country) SELECT name,$1,password_hash,city,state,country FROM imobilead.users WHERE id=$2 RETURNING id', [address,id]);
         await login(address);
         await expect(page.getByText(address, { exact: true })).toBeVisible();
         await page.getByRole('link', { name: 'Cadastro', exact: true }).click();
@@ -381,7 +390,7 @@ export function uiBrowserTests(t, config, admin) {
       });
       await scenario('admin fresh role and real cursor pagination; user cannot get listing', async () => {
         await admin.query("UPDATE imobilead.users SET role='admin' WHERE id=$1", [id]);
-        await admin.query("INSERT INTO imobilead.users(name,email,password_hash) SELECT 'Pessoa Sintética '||n,'ui-page-'||n||'@example.test',password_hash FROM imobilead.users CROSS JOIN generate_series(1,101) n WHERE id=$1", [id]);
+        await admin.query("INSERT INTO imobilead.users(name,email,password_hash,city,state,country) SELECT 'Pessoa Sintética '||n,'ui-page-'||n||'@example.test',password_hash,city,state,country FROM imobilead.users CROSS JOIN generate_series(1,101) n WHERE id=$1", [id]);
         await login();
         await expect(page.getByRole('heading', { name: 'Usuários cadastrados' })).toBeVisible();
         await expect(page.getByRole('link', { name: 'Primeira página', exact: true })).toHaveCount(0);

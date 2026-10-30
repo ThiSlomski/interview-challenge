@@ -1,0 +1,175 @@
+REFINAMENTO VISUAL — PADRONIZAR E CENTRALIZAR A TELA DE CADASTRO
+
+A tela de cadastro está alinhada excessivamente à esquerda e utiliza apenas parte da largura disponível, deixando uma grande área vazia à direita. Padronize-a com as demais telas refinadas, preservando integralmente o funcionamento existente.
+
+OBJETIVO
+
+Criar uma tela de cadastro equilibrada, profissional, responsiva e consistente com:
+
+- tela de login;
+- área do usuário;
+- painel administrativo;
+- cabeçalho e rodapé compartilhados;
+- identidade visual da Slomski Solutions.
+
+DIREÇÃO DE LAYOUT
+
+1. Centralizar horizontalmente todo o conteúdo da página.
+
+2. Não centralizar verticalmente, pois o formulário é extenso. O conteúdo deve começar após o cabeçalho, com espaçamento superior consistente.
+
+3. Utilizar um contêiner principal centralizado:
+   - `width: 100%`;
+   - largura máxima confortável, aproximadamente entre 880 e 960 px;
+   - margens laterais automáticas;
+   - espaçamento lateral seguro em telas menores.
+
+4. O bloco introdutório e o formulário devem possuir:
+   - o mesmo alinhamento horizontal;
+   - a mesma largura externa;
+   - continuidade visual;
+   - ausência de deslocamento entre título e cartão.
+
+5. Preservar a estrutura:
+   - marcador “COMECE AQUI”;
+   - título “Crie seu cadastro”;
+   - descrição;
+   - chamada “Já tem uma conta? Entrar”;
+   - formulário.
+
+CARTÃO DO FORMULÁRIO
+
+6. O cartão deve ocupar toda a largura do contêiner principal, sem ficar estreito ou preso à lateral esquerda.
+
+7. Preservar uma grade de duas colunas no desktop:
+
+   - Nome | E-mail
+   - Senha | Confirmação de senha
+   - Endereço ocupando a largura completa
+   - Cidade | Estado
+   - País | CEP
+   - Mensagem ocupando a largura completa
+
+8. Melhorar o equilíbrio das colunas:
+   - larguras iguais;
+   - espaçamento consistente;
+   - campos alinhados vertical e horizontalmente;
+   - rótulos e textos auxiliares com distâncias padronizadas.
+
+9. Manter o texto sobre os campos obrigatórios no início do cartão, com boa separação visual dos campos.
+
+10. O botão “Criar cadastro” deve:
+    - permanecer como ação principal;
+    - manter o destaque amarelo;
+    - possuir área de clique adequada;
+    - ficar alinhado com os campos;
+    - apresentar estado de carregamento e bloqueio contra envio duplicado.
+
+RESPONSIVIDADE
+
+11. Desktop:
+    - conteúdo centralizado;
+    - formulário com largura ampla;
+    - grade de duas colunas;
+    - nenhuma área vazia desproporcional em apenas um lado.
+
+12. Tablet:
+    - manter duas colunas apenas quando houver espaço confortável;
+    - evitar campos comprimidos;
+    - reduzir as margens externas progressivamente.
+
+13. Celular:
+    - converter todos os campos para uma única coluna;
+    - cartão ocupando toda a largura disponível;
+    - manter margens laterais seguras;
+    - botão com largura confortável ou total;
+    - evitar rolagem horizontal;
+    - preservar acesso aos campos com o teclado virtual aberto.
+
+ALTURA E RODAPÉ
+
+14. Manter a estrutura geral da aplicação:
+    - cabeçalho;
+    - conteúdo principal flexível;
+    - rodapé compartilhado.
+
+15. O rodapé deve:
+    - permanecer no final da tela quando o conteúdo for curto;
+    - aparecer naturalmente após o formulário quando o conteúdo ultrapassar a altura da tela;
+    - nunca ser fixo;
+    - nunca sobrepor campos ou botões.
+
+16. Evitar alturas mínimas artificiais que criem um espaço vazio exagerado entre o formulário e o rodapé.
+
+VALIDAÇÃO E ESTADOS
+
+17. Preservar todos os estados atuais:
+    - campos obrigatórios;
+    - validações no cliente e servidor;
+    - erros por campo;
+    - erro geral;
+    - e-mail já cadastrado;
+    - senha inválida;
+    - confirmação divergente;
+    - carregamento;
+    - sucesso;
+    - prevenção contra envio duplicado.
+
+18. As mensagens de validação:
+    - devem aparecer próximas aos campos correspondentes;
+    - não podem alterar a largura do cartão;
+    - não podem causar deslocamento horizontal;
+    - devem permanecer acessíveis a leitores de tela.
+
+19. Ao receber erros, preservar os valores permitidos no formulário e direcionar o foco de forma adequada.
+
+ACESSIBILIDADE
+
+20. Preservar:
+    - associação entre rótulos e campos;
+    - foco visível;
+    - navegação por teclado;
+    - envio pelo Enter quando apropriado;
+    - contraste;
+    - mensagens acessíveis;
+    - preenchimento automático correto;
+    - ordem lógica de tabulação.
+
+RESTRIÇÕES
+
+21. Não alterar:
+    - API de cadastro;
+    - banco de dados;
+    - migrations;
+    - grants;
+    - validações de negócio;
+    - hashing de senha;
+    - proteção contra injeção e XSS;
+    - contratos de resposta;
+    - tela de sucesso;
+    - resumo do cadastro;
+    - previsão do tempo;
+    - autenticação ou autorização.
+
+22. Não adicionar bibliotecas, dependências, imagens externas, animações desnecessárias ou novas consultas.
+
+23. Reutilizar os mesmos padrões de contêiner, espaçamento, campos, botões e rodapé adotados nas demais telas, evitando CSS específico duplicado.
+
+TESTES
+
+Validar:
+
+- alinhamento e largura no desktop;
+- comportamento no tablet;
+- coluna única no celular;
+- ausência de rolagem horizontal;
+- rodapé após o conteúdo;
+- todos os campos e validações;
+- erros por campo e erro geral;
+- envio válido;
+- bloqueio de envio duplicado;
+- navegação por teclado;
+- foco;
+- nenhuma regressão na tela de sucesso e previsão do tempo.
+
+Atualizar somente os testes, capturas e documentação diretamente relacionados a esse refinamento visual.

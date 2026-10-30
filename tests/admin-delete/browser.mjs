@@ -37,8 +37,8 @@ export function adminDeleteBrowserTests(t, config, admin) {
     const article = target => page.getByRole('article', { name: 'Cadastro de ' + target.name, exact: true });
     async function account(role = 'user', id) {
       const suffix = ++sequence, name = 'Alvo Sintético ' + suffix, email = `delete-ui-${suffix}@example.test`;
-      const { rows: [row] } = await admin.query(`INSERT INTO imobilead.users(id,name,email,password_hash,role)
-        SELECT COALESCE($1::uuid,gen_random_uuid()),$2,$3,password_hash,$4 FROM imobilead.users WHERE id=$5 RETURNING id`, [id ?? null, name, email, role, actor]);
+      const { rows: [row] } = await admin.query(`INSERT INTO imobilead.users(id,name,email,password_hash,role,city,state,country)
+        SELECT COALESCE($1::uuid,gen_random_uuid()),$2,$3,password_hash,$4,city,state,country FROM imobilead.users WHERE id=$5 RETURNING id`, [id ?? null, name, email, role, actor]);
       ids.push(row.id); return { id: row.id, name, email };
     }
     async function load(url = '/area') {
@@ -82,7 +82,7 @@ export function adminDeleteBrowserTests(t, config, admin) {
       if (failed) throw new Error('ADMIN_DELETE_SUITE_STOPPED_AFTER_FAILURE');
     }
     try {
-      const signup = await context.request.post(origin + '/api/users', { headers: { origin }, data: { name: 'Administrador Sintético', email, password, passwordConfirmation: password } });
+      const signup = await context.request.post(origin + '/api/users', { headers: { origin }, data: { name: 'Administrador Sintético', email, password, passwordConfirmation: password, city: 'Curitiba', state: 'Paraná', country: 'Brasil' } });
       assert.equal(signup.status(), 201); actor = (await signup.json()).user.id; ids.push(actor);
       await admin.query("UPDATE imobilead.users SET role='admin' WHERE id=$1", [actor]);
       const login = await context.request.post(origin + '/api/auth/login', { headers: { origin }, data: { email, password } }); assert.equal(login.status(), 200);
@@ -130,7 +130,7 @@ export function adminDeleteBrowserTests(t, config, admin) {
         await page.evaluate(() => window.__deletePolls.at(-1)());
         await expect(own.getByText('Cidade revalidada', { exact:true })).toBeVisible();
         await expect(page.getByText(email, { exact:true })).toHaveCount(1);
-        await admin.query('UPDATE imobilead.users SET city=NULL WHERE id=$1', [actor]);
+        await admin.query("UPDATE imobilead.users SET city='Curitiba' WHERE id=$1", [actor]);
         await load();
       });
       await scenario('danger buttons maintain contrast, pointer and keyboard states on desktop and mobile', async () => {

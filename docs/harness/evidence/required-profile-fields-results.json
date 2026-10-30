@@ -1,0 +1,116 @@
+{
+  "baseline": {
+    "head": "c10747ae160dd8734656272fc503f3ba426b3b3c",
+    "dirty": "REG-UI-001 preserved",
+    "snapshot": "C:\\Users\\thiag\\AppData\\Local\\Temp\\required-profile-fields-before"
+  },
+  "audit": {
+    "solutionBefore": "manual shared validation; Zod4.6.7 dev transitive, Ajv6.15.0 dev transitive; neither used by app",
+    "originalRequirement": "Valida??o no servidor e no cliente, seguindo boas pr?ticas.",
+    "source": "https://github.com/imobilead-app/interview-challenge#o-desafio",
+    "noNominalZodRequirement": true,
+    "solutionAfter": "Zod4.6.7 pinned direct runtime; strict shared schemas and controlled public adapter"
+  },
+  "results": [
+    {
+      "name": "ui",
+      "tests": 78,
+      "pass": 78,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "cleanup": [
+        {
+          "cleanup": "confirmed",
+          "protectedMetadata": "unchanged",
+          "remainingResources": 0
+        }
+      ],
+      "diagnostics": [
+        {
+          "flushSync": 0,
+          "hydration": 0,
+          "consoleError": 0,
+          "consoleWarning": 0,
+          "pageerror": 0,
+          "preloadHint": 3,
+          "navigations": 103,
+          "documents": 51
+        }
+      ]
+    },
+    {
+      "name": "profile-ui",
+      "tests": 41,
+      "pass": 41,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "cleanup": [
+        {
+          "cleanup": "confirmed",
+          "protectedMetadata": "unchanged",
+          "remainingResources": 0
+        }
+      ],
+      "diagnostics": []
+    },
+    {
+      "name": "admin-ui-intermediate",
+      "tests": 6,
+      "pass": 4,
+      "fail": 2,
+      "skipped": 0,
+      "cancelled": 0,
+      "cleanup": [
+        {
+          "cleanup": "confirmed",
+          "protectedMetadata": "unchanged",
+          "remainingResources": 0
+        }
+      ],
+      "diagnostics": []
+    },
+    {
+      "name": "admin-ui-final",
+      "tests": 45,
+      "pass": 45,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "cleanup": [
+        {
+          "cleanup": "confirmed",
+          "protectedMetadata": "unchanged",
+          "remainingResources": 0
+        }
+      ],
+      "diagnostics": []
+    }
+  ],
+  "harness": {
+    "ok": true,
+    "partial": true,
+    "readiness": "not-assessed",
+    "node": {
+      "proven": true,
+      "tests": 69,
+      "pass": 69,
+      "fail": 0,
+      "skipped": 0,
+      "todo": 0,
+      "source": "node-test-summary-events"
+    }
+  },
+  "dependencyAudit": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "build": "passed",
+  "composeSmoke": "fixture and migration count updated, not executed",
+  "readmeAndCI": "deferred by user"
+}

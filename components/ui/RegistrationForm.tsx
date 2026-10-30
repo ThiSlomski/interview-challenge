@@ -1,9 +1,9 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { registrationFields, validateRegistration } from '@/shared/registration.mjs';
+import { registrationFields, requiredRegistrationFields, validateRegistration } from '@/shared/registration.mjs';
 import UserDetails, { type UserRecord } from './Record';
-import { fieldMessages, requestMessage } from './messages';
+import { fieldMessage, fieldMessages, requestMessage } from './messages';
 import Weather from './Weather';
 
 const fields = [
@@ -31,12 +31,12 @@ export default function RegistrationForm() {
 
   useEffect(() => {
     if (summary) success.current?.focus();
-    else if (message) feedback.current?.focus();
+    else if (message) {
+      const first = registrationFields.find(field => Object.hasOwn(errors, field));
+      if (first) (form.current?.elements.namedItem(first) as HTMLElement | null)?.focus();
+      else feedback.current?.focus();
+    }
   }, [summary, message, errors]);
-
-  function focusFeedback() {
-    requestAnimationFrame(() => feedback.current?.focus());
-  }
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -49,7 +49,6 @@ export default function RegistrationForm() {
     if (!checked.ok) {
       setErrors(checked.errors as Record<string, string>);
       setMessage('Confira os campos indicados abaixo.');
-      focusFeedback();
       return;
     }
     sending.current = true;
@@ -68,11 +67,10 @@ export default function RegistrationForm() {
           if (body?.fields && typeof body.fields === 'object') {
             setErrors(Object.fromEntries(Object.keys(body.fields)
               .filter(key => registrationFields.includes(key))
-              .map(key => [key, 'invalid'])));
+              .map(key => [key, body.fields[key] === 'REQUIRED_' + key.toUpperCase() ? body.fields[key] : 'invalid'])));
           }
         }
         setMessage(requestMessage(response.status, 'registration'));
-        focusFeedback();
         return;
       }
       // Only the confirmed submission's public fields survive this flow, in memory.
@@ -86,7 +84,6 @@ export default function RegistrationForm() {
       requestAnimationFrame(() => success.current?.focus());
     } catch {
       setMessage('Não foi possível confirmar o cadastro. O resultado pode ter sido recebido pelo servidor. Confira se já consegue entrar antes de enviar novamente.');
-      focusFeedback();
     } finally {
       sending.current = false;
       setBusy(false);
@@ -111,7 +108,7 @@ export default function RegistrationForm() {
     </>;
   }
 
-  return <>
+  return <div className="registration-content">
     <div className="page-heading">
       <p className="eyebrow">COMECE AQUI</p>
       <h1>Crie seu cadastro</h1>
@@ -119,7 +116,7 @@ export default function RegistrationForm() {
       <p>Já tem uma conta? <Link href="/login">Entrar</Link></p>
     </div>
     <form ref={form} className="card form-card" onSubmit={submit} noValidate aria-busy={busy}>
-      <p className="required-note">E-mail, senha e confirmação de senha são obrigatórios. Os demais campos podem ficar em branco.</p>
+      <p className="required-note">Nome, e-mail, senha, confirmação de senha, cidade, estado e país são obrigatórios. Endereço, CEP e mensagem são opcionais.</p>
       {message && <div ref={feedback} tabIndex={-1} role="alert" className="notice error">
         {message}
         {Object.keys(errors).length > 0 && <ul>
@@ -127,7 +124,7 @@ export default function RegistrationForm() {
             <a href={'#' + key} onClick={event => {
               event.preventDefault();
               (form.current?.elements.namedItem(key) as HTMLElement | null)?.focus();
-            }}>{fieldMessages[key]}</a>
+            }}>{fieldMessage(key, errors[key])}</a>
           </li>)}
         </ul>}
       </div>}
@@ -142,13 +139,13 @@ export default function RegistrationForm() {
             'aria-invalid': error || undefined,
             'aria-describedby': [hint ? name + '-hint' : '', error ? name + '-error' : ''].filter(Boolean).join(' ') || undefined,
             disabled: busy,
-            required: ['email', 'password', 'passwordConfirmation'].includes(name),
+            required: requiredRegistrationFields.includes(name),
           };
           return <div className={'field ' + (['address', 'message'].includes(name) ? 'wide' : '')} key={name}>
             <label htmlFor={name}>{label}</label>
             {type === 'textarea' ? <textarea {...props} /> : <input {...props} type={type} />}
             {hint && <span className="hint" id={name + '-hint'}>{hint}</span>}
-            {error && <p className="field-error" id={name + '-error'}>{fieldMessages[name]}</p>}
+            {error && <p className="field-error" id={name + '-error'}>{fieldMessage(name, errors[name])}</p>}
           </div>;
         })}
       </div>
@@ -156,5 +153,5 @@ export default function RegistrationForm() {
         <button disabled={busy} type="submit">{busy ? 'Cadastrando…' : 'Criar cadastro'}</button>
       </div>
     </form>
-  </>;
+  </div>;
 }

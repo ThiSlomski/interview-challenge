@@ -59,7 +59,7 @@ async function matrix(t, browser, origin, mode) {
     for (const authenticated of [false, true]) {
       if (authenticated) {
         const registration = await context.request.post(origin + '/api/users', {
-          headers: { origin }, data: { name: 'Home Synthetic', email: `home-${mode}@example.test`, password: 'HomeFixture123', passwordConfirmation: 'HomeFixture123' },
+          headers: { origin }, data: { name: 'Home Synthetic', email: `home-${mode}@example.test`, password: 'HomeFixture123', passwordConfirmation: 'HomeFixture123', city: 'Curitiba', state: 'Paraná', country: 'Brasil' },
         });
         assert.equal(registration.status(), 201);
         const login = await context.request.post(origin + '/api/auth/login', {

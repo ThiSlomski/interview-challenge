@@ -9,7 +9,7 @@ const token = newSessionToken(), origin = 'http://localhost:3000';
 const config = () => ({ origin, ttl: '3600', production: false });
 function fixture({ authenticated = true, role = 'user', version = 1, revoked = false, fail, expires = false, expireAfterUpdate = false } = {}) {
   const calls = [], diagnostics = []; let released = 0, time = Date.now();
-  const row = { id: own, name: 'Fixture', email: 'fixture@example.test', address: null, city: null, state: null, country: null, postalCode: null, message: null, role, profileVersion: version, password_hash: 'withheld', token_hash: 'withheld' };
+  const row = { id: own, name: 'Fixture', email: 'fixture@example.test', address: null, city: 'City', state: 'State', country: 'Country', postalCode: null, message: null, role, profileVersion: version, password_hash: 'withheld', token_hash: 'withheld' };
   const query = async (sql, values) => {
     calls.push({ sql, values });
     if (fail && sql.includes(fail)) throw new Error('private SQL credentials');
@@ -55,6 +55,18 @@ test('mass assignment, invalid bodies and query identities never reach UPDATE', 
     const f = fixture(); assert.equal((await f.patch(body)).status, 400); assert.equal(f.calls.some(c => c.sql.startsWith('UPDATE')), false);
   }
   const f = fixture(); assert.equal((await f.patch(undefined, {}, '?userId=' + other)).status, 400); assert.equal((await f.get(undefined, '?role=admin')).status, 400);
+});
+
+test('user and admin cannot clear essential profile data, and no UPDATE is attempted', async () => {
+  for (const role of ['user', 'admin']) for (const field of ['name','city','state','country']) {
+    for (const value of [null, '', ' \t\n\u00a0 ']) {
+      const f = fixture({ role });
+      const response = await f.patch({ expectedVersion: 1, [field]: value });
+      assert.equal(response.status, 400);
+      assert.deepEqual(await response.json(), { error: 'INVALID_INPUT', fields: { [field]: 'REQUIRED_' + field.toUpperCase() } });
+      assert.equal(f.calls.some(c => c.sql.startsWith('UPDATE') || c.sql === 'BEGIN'), false);
+    }
+  }
 });
 test('wire limits match signup; media type and compression rejected', async () => {
   for (const [body, headers, status] of [['x'.repeat(16385), {}, 413], ['{}', { 'content-type': 'text/plain' }, 415], ['{}', { 'content-encoding': 'gzip' }, 415], ['{}', { 'content-length': '16385' }, 413]]) {

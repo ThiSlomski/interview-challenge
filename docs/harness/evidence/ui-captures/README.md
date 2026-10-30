@@ -109,3 +109,15 @@ permanecem idênticas por SHA256. [Evidência](../home-refinement.md) e
 [manifesto antes/depois](../home-refinement-hashes.json). Capturas em Chromium
 com build de produção e HTTPS local; inspecionadas pelo agente. Revisão humana
 pendente. Nenhum fluxo funcional alterado.
+## REG-UI-001 — cadastro centralizado, 30/10/2026
+
+Somente pares02 (erros) e09 (formulário) atualizados pelo refinamento visual.
+Sucesso/resumo/clima preservados. [Evidência](../registration-refinement.md) e
+[captura normal desktop](../registration-captures/desktop.png),
+[tablet](../registration-captures/tablet.png), [celular](../registration-captures/mobile.png).
+## REG-ESSENTIAL-001 — dados essenciais e Zod, 30/10/2026
+
+Pares02/09 e três vistas em registration-captures atualizados pelos textos/erros
+de obrigatoriedade. Layout preservado;18 PNGs restantes idênticos ao snapshot
+anterior. [Evidência](../required-profile-fields.md) e
+[hashes incrementais](../required-profile-fields-hashes.json).

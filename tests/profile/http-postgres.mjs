@@ -3,8 +3,8 @@ import { createHash } from 'node:crypto';
 import { registrationHttpTests } from '../registration/http-postgres.mjs';
 import { roleIdentifier } from '../../scripts/database/provision.mjs';
 
-export function profileHttpTests(t, config, admin) {
-  return registrationHttpTests(t, config, admin, 'profile', async origin => {
+export async function profileHttpTests(t, config, admin) {
+  await registrationHttpTests(t, config, admin, 'profile', async origin => {
     const ids = [], cookies = [], password = 'Profile123';
     const get = (index = 0) => fetch(origin + '/api/profile', { headers: { cookie: cookies[index] }, signal: AbortSignal.timeout(15000) });
     const patch = (index, input, etag, headers = {}) => fetch(origin + '/api/profile', {
@@ -15,7 +15,7 @@ export function profileHttpTests(t, config, admin) {
     await t.test('profile HTTP/PG: signup, sessions, own projection and admin can edit only self', async () => {
       for (let n = 0; n < 2; n++) {
         const email = `profile-${n}@example.test`;
-        const signup = await fetch(origin + '/api/users', { method: 'POST', headers: { origin, 'content-type': 'application/json' }, body: JSON.stringify({ name: 'Profile Fixture', email, password, passwordConfirmation: password, address: 'Original', city: 'Original City' }) });
+        const signup = await fetch(origin + '/api/users', { method: 'POST', headers: { origin, 'content-type': 'application/json' }, body: JSON.stringify({ name: 'Profile Fixture', email, password, passwordConfirmation: password, address: 'Original', city: 'Original City', state: 'Region', country: 'Country' }) });
         assert.equal(signup.status, 201); ids.push((await signup.json()).user.id);
         const login = await fetch(origin + '/api/auth/login', { method: 'POST', headers: { origin, 'content-type': 'application/json' }, body: JSON.stringify({ email, password }) });
         assert.equal(login.status, 200); cookies.push(login.headers.get('set-cookie').split(';')[0]);
@@ -91,5 +91,46 @@ export function profileHttpTests(t, config, admin) {
       assert.equal((await get()).status, 401);
     });
     await admin.query('DELETE FROM imobilead.users WHERE id=ANY($1::uuid[])', [ids]);
+  });
+  await profileEssentialHttpTests(t, config, admin);
+}
+
+async function profileEssentialHttpTests(t, config, admin) {
+  await registrationHttpTests(t, config, admin, 'profile-essential', async origin => {
+    const ids = [], cookies = [], password = 'Profile123';
+    const headers = { origin, 'content-type': 'application/json' };
+    const get = index => fetch(origin + '/api/profile', { headers: { cookie: cookies[index] }, signal: AbortSignal.timeout(15000) });
+    try {
+      for (const index of [0, 1]) {
+        const email = `profile-essential-${index}@example.test`;
+        const signup = await fetch(origin + '/api/users', { method: 'POST', headers, body: JSON.stringify({ name: 'Profile Essential', email, password, passwordConfirmation: password, city: 'City', state: 'State', country: 'Country' }) });
+        assert.equal(signup.status, 201); ids.push((await signup.json()).user.id);
+        const login = await fetch(origin + '/api/auth/login', { method: 'POST', headers, body: JSON.stringify({ email, password }) });
+        assert.equal(login.status, 200); cookies.push(login.headers.get('set-cookie').split(';')[0]);
+      }
+      await admin.query("UPDATE imobilead.users SET role='admin' WHERE id=$1", [ids[1]]);
+      await t.test('profile HTTP/PG: user and admin reject clearing each essential and retain version/data', async () => {
+        for (const index of [0, 1]) {
+          const current = await get(index), etag = current.headers.get('etag'), before = await current.json();
+          for (const field of ['name','city','state','country']) for (const value of ['', ' \t\u00a0\n ']) {
+            const response = await fetch(origin + '/api/profile', { method: 'PATCH', headers: { ...headers, cookie: cookies[index], 'if-match': etag }, body: JSON.stringify({ expectedVersion: 1, [field]: value }) });
+            assert.equal(response.status, 400);
+            assert.deepEqual(await response.json(), { error: 'INVALID_INPUT', fields: { [field]: 'REQUIRED_' + field.toUpperCase() } });
+          }
+          assert.deepEqual(await (await get(index)).json(), before);
+        }
+      });
+      await t.test('profile HTTP/PG: both roles persist trimmed essentials and optional clears without exposing credentials', async () => {
+        for (const index of [0, 1]) {
+          const current = await get(index), etag = current.headers.get('etag');
+          const response = await fetch(origin + '/api/profile', { method: 'PATCH', headers: { ...headers, cookie: cookies[index], 'if-match': etag }, body: JSON.stringify({ expectedVersion: 1, name: ' Nome ', city: ' Cidade ', state: ' Estado ', country: ' País ', address: null, postalCode: '', message: null }) });
+          assert.equal(response.status, 200); const body = await response.json();
+          assert.equal(body.profileVersion, 2);
+          for (const [field, value] of Object.entries({ name: 'Nome', city: 'Cidade', state: 'Estado', country: 'País', address: null, postalCode: '', message: null })) assert.equal(body.user[field], value);
+          assert.equal(JSON.stringify(body).includes(password), false);
+          for (const field of ['password','password_hash','passwordConfirmation','token_hash','role']) assert.equal(Object.hasOwn(body.user, field), false);
+        }
+      });
+    } finally { await admin.query('DELETE FROM imobilead.users WHERE id=ANY($1::uuid[])', [ids]); }
   });
 }

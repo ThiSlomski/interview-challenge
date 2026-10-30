@@ -1,0 +1,301 @@
+AUDITORIA E IMPLEMENTAÇÃO — VALIDAÇÃO COM ZOD OU BIBLIOTECA EQUIVALENTE
+
+Antes de implementar os novos campos obrigatórios, verifique exatamente como a aplicação realiza validações atualmente e confronte isso com o requisito original do desafio.
+
+OBJETIVO
+
+Confirmar se o projeto utiliza Zod ou uma biblioteca equivalente. Caso utilize somente validações manuais, migrar para Zod, criando uma fonte única de validação compartilhada entre cliente e servidor.
+
+ETAPA 1 — AUDITORIA
+
+1. Leia integralmente:
+   - README original do desafio;
+   - package.json;
+   - package-lock.json;
+   - módulos atuais de validação;
+   - formulário de cadastro;
+   - API de cadastro;
+   - formulário e API de edição de perfil;
+   - testes relacionados.
+
+2. Identifique e registre:
+   - o texto exato do requisito relacionado a Zod ou biblioteca similar;
+   - qual solução de validação está sendo utilizada;
+   - se existe Zod, Yup, Joi, Valibot, Ajv ou equivalente;
+   - se a dependência é direta ou apenas transitiva;
+   - se as regras atuais são manuais;
+   - se cliente e servidor realmente compartilham a mesma fonte de regras;
+   - possíveis divergências entre cadastro e edição.
+
+3. Não presuma que funções manuais são automaticamente equivalentes a uma biblioteca de schemas. Explique objetivamente a conclusão.
+
+ETAPA 2 — DECISÃO
+
+4. Se o projeto já utilizar uma biblioteca de schemas equivalente:
+   - não instalar Zod de forma redundante;
+   - manter a biblioteca existente;
+   - corrigir apenas inconsistências encontradas;
+   - documentar por que ela atende ao requisito.
+
+5. Se o projeto utilizar somente validações manuais:
+   - adicionar Zod como dependência direta;
+   - atualizar package.json e package-lock.json;
+   - criar schemas compartilhados;
+   - substituir as validações manuais equivalentes;
+   - evitar manter duas fontes concorrentes de regras.
+
+6. Não deixar Zod apenas instalado sem uso efetivo.
+
+ETAPA 3 — SCHEMAS COMPARTILHADOS
+
+7. Criar uma estrutura compartilhada para validação e normalização, reutilizada pelo cliente e pelo servidor.
+
+8. Separar adequadamente os contratos:
+
+   Cadastro:
+   - nome;
+   - e-mail;
+   - senha;
+   - confirmação de senha;
+   - endereço;
+   - cidade;
+   - estado;
+   - país;
+   - CEP;
+   - mensagem.
+
+   Edição de perfil:
+   - nome;
+   - endereço;
+   - cidade;
+   - estado;
+   - país;
+   - CEP;
+   - mensagem;
+   - versão do perfil, quando aplicável.
+
+9. Não aceitar no schema público campos internos como:
+   - id;
+   - role;
+   - passwordHash;
+   - createdAt;
+   - updatedAt;
+   - sessionId;
+   - privilégios;
+   - qualquer campo administrativo não permitido.
+
+10. Rejeitar campos desconhecidos quando isso for compatível com o contrato atual, especialmente nas APIs, preservando a proteção contra alteração de propriedades internas.
+
+NOVOS CAMPOS OBRIGATÓRIOS
+
+11. No cadastro, tornar obrigatórios:
+
+   - Nome
+   - E-mail
+   - Senha
+   - Confirmação de senha
+   - Cidade
+   - Estado
+   - País
+
+12. Manter opcionais:
+
+   - Endereço
+   - CEP
+   - Mensagem
+
+13. Na edição de perfil, impedir que usuário comum ou administrador apague:
+
+   - Nome
+   - Cidade
+   - Estado
+   - País
+
+14. O e-mail continua imutável na edição.
+
+NORMALIZAÇÃO E REGRAS
+
+15. Para nome, cidade, estado e país:
+   - remover espaços externos;
+   - rejeitar valor vazio;
+   - rejeitar valor composto somente por espaços;
+   - preservar os limites existentes;
+   - não inventar valores padrão.
+
+16. Para o e-mail:
+   - manter normalização atual;
+   - manter limite atual;
+   - manter validação de formato;
+   - manter prevenção de duplicidade;
+   - não causar enumeração de usuários.
+
+17. Para senha:
+   - manter a regra atual de 8 a 35 letras e números;
+   - rejeitar espaços e símbolos, conforme contrato vigente;
+   - preservar hashing e descarte seguro do valor;
+   - validar igualdade com a confirmação;
+   - nunca persistir a confirmação.
+
+18. Campos opcionais devem continuar aceitando ausência ou valor vazio conforme o contrato atual, com normalização consistente.
+
+19. Não permitir que transformações do Zod alterem silenciosamente o significado dos dados.
+
+INTEGRAÇÃO NO CLIENTE
+
+20. Utilizar o schema compartilhado no cadastro e na edição de perfil.
+
+21. Converter os erros do schema para o formato visual já utilizado:
+   - resumo superior;
+   - mensagem próxima ao campo;
+   - destaque do campo inválido;
+   - foco no primeiro erro;
+   - associação acessível entre erro e campo.
+
+22. Atualizar o texto do cadastro para:
+
+“Nome, e-mail, senha, confirmação de senha, cidade, estado e país são obrigatórios. Endereço, CEP e mensagem são opcionais.”
+
+23. Preservar os valores válidos após erro e impedir envio duplicado.
+
+24. Não confiar somente no atributo HTML `required`.
+
+INTEGRAÇÃO NO SERVIDOR
+
+25. Validar novamente todos os dados recebidos pela API usando o schema compartilhado.
+
+26. O servidor continua sendo a autoridade final.
+
+27. Preservar:
+   - códigos HTTP;
+   - formato das respostas;
+   - mensagens públicas seguras;
+   - rate limiting;
+   - proteção contra enumeração;
+   - autorização;
+   - transações;
+   - controle de concorrência;
+   - logs sem dados sensíveis.
+
+28. Não retornar detalhes internos do Zod, stack trace ou conteúdo sensível diretamente ao cliente.
+
+29. Criar um adaptador controlado entre os erros do Zod e o contrato público atual da API.
+
+PREVISÃO DO TEMPO
+
+30. Garantir que a tela de sucesso receba cidade, estado e país válidos para consultar a previsão do dia seguinte.
+
+31. Não tornar CEP ou endereço obrigatórios para o clima.
+
+32. Preservar os tratamentos atuais de:
+   - localização não encontrada;
+   - erro de rede;
+   - timeout;
+   - cancelamento;
+   - resposta inválida;
+   - nova tentativa.
+
+BANCO DE DADOS
+
+33. Inspecionar se nome, cidade, estado e país aceitam `NULL` ou string vazia.
+
+34. Não alterar migrations já aplicadas.
+
+35. Caso seja necessário reforçar a integridade no banco:
+   - criar migration aditiva e versionada;
+   - executar verificação prévia dos registros existentes;
+   - não fabricar dados para registros antigos;
+   - não aplicar `NOT NULL` ou `CHECK` se houver registros incompatíveis sem antes relatar;
+   - preservar IDs, e-mails, hashes, papéis, sessões e versões.
+
+36. Se a validação de aplicação for suficiente para esta etapa ou o banco já estiver protegido, não criar migration desnecessária. Documentar a decisão.
+
+TESTES OBRIGATÓRIOS
+
+37. Adicionar ou atualizar testes para comprovar:
+
+   - schema aceita cadastro completo;
+   - schema rejeita ausência de nome;
+   - schema rejeita nome somente com espaços;
+   - schema rejeita ausência de cidade;
+   - schema rejeita ausência de estado;
+   - schema rejeita ausência de país;
+   - endereço continua opcional;
+   - CEP continua opcional;
+   - mensagem continua opcional;
+   - e-mail inválido é rejeitado;
+   - senha inválida é rejeitada;
+   - confirmação diferente é rejeitada;
+   - campos internos ou desconhecidos são rejeitados conforme o contrato;
+   - cliente e servidor aplicam as mesmas regras;
+   - chamada direta à API não contorna a validação;
+   - edição não permite apagar os campos essenciais;
+   - e-mail continua imutável;
+   - usuário comum e administrador seguem a mesma regra;
+   - nenhum dado sensível aparece nas respostas ou logs;
+   - previsão continua funcionando;
+   - login, sessão, autorização e exclusão não sofrem regressão.
+
+38. Executar:
+   - testes unitários;
+   - testes das APIs;
+   - testes PostgreSQL;
+   - testes de interface relacionados;
+   - lint;
+   - typecheck;
+   - build;
+   - audit de dependências;
+   - Harness aplicável;
+   - git diff --check.
+
+39. Confirmar que a nova dependência não introduziu vulnerabilidades conhecidas.
+
+DOCUMENTAÇÃO
+
+40. Atualizar:
+   - README, se a tecnologia de validação estiver descrita;
+   - arquitetura;
+   - requisitos;
+   - solução;
+   - evidências;
+   - documentação do uso de IA conforme o padrão do projeto.
+
+41. Registrar claramente:
+   - o que era usado antes;
+   - por que foi mantido ou substituído;
+   - onde o schema é compartilhado;
+   - quais campos passaram a ser obrigatórios;
+   - impacto ou ausência de impacto no banco.
+
+RESTRIÇÕES
+
+42. Não alterar:
+   - autenticação;
+   - autorização;
+   - sessão;
+   - papéis;
+   - hashing;
+   - contratos não relacionados;
+   - layout recém-padronizado;
+   - integração meteorológica além da validação dos dados de entrada.
+
+43. Não executar commit, push, publicação ou alteração no banco persistente sem autorização explícita.
+
+ENTREGA
+
+Ao finalizar, apresentar:
+
+- conclusão da auditoria;
+- requisito exato encontrado;
+- solução anterior;
+- solução final;
+- arquivos alterados;
+- dependência e versão utilizadas;
+- schemas criados;
+- impacto no banco;
+- testes executados e resultados;
+- pendências;
+- sugestão de commit.
+
+Sugestão de commit, caso ocorra a migração para Zod:
+
+`refactor(validation): centraliza regras com Zod e exige dados essenciais`

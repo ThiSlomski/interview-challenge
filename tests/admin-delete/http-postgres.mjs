@@ -28,8 +28,8 @@ async function fixture(t, config, admin, label, run) {
     };
     const account = async (role = 'user', sessionCount = 1) => {
       const id = randomUUID(), email = `delete-${label}-${++sequence}@example.test`;
-      const inserted = await admin.query(`INSERT INTO imobilead.users(id,name,email,password_hash,role)
-        SELECT $1,$2,$3,password_hash,$4 FROM imobilead.users WHERE id=$5 RETURNING id`, [id, 'Delete Fixture', email, role, seed]);
+      const inserted = await admin.query(`INSERT INTO imobilead.users(id,name,email,password_hash,role,city,state,country)
+        SELECT $1,$2,$3,password_hash,$4,city,state,country FROM imobilead.users WHERE id=$5 RETURNING id`, [id, 'Delete Fixture', email, role, seed]);
       assert.equal(inserted.rowCount, 1); ids.push(id);
       const cookies = [];
       for (let n = 0; n < sessionCount; n++) {
@@ -71,7 +71,7 @@ async function fixture(t, config, admin, label, run) {
     }
     try {
       const response = await fetch(origin + '/api/users', { method: 'POST', headers: { origin, 'content-type': 'application/json' },
-        body: JSON.stringify({ name: 'Delete Seed Fixture', email: `delete-seed-${label}@example.test`, password, passwordConfirmation: password }), signal: AbortSignal.timeout(15000) });
+        body: JSON.stringify({ name: 'Delete Seed Fixture', email: `delete-seed-${label}@example.test`, password, passwordConfirmation: password, city: 'Fixture City', state: 'Region', country: 'Country' }), signal: AbortSignal.timeout(15000) });
       assert.equal(response.status, 201); seed = (await response.json()).user.id; ids.push(seed);
       await run({ origin, seed, account, accounts, login, del, getSession, check, counts, waitForLock, whileTargetLocked });
     } finally {

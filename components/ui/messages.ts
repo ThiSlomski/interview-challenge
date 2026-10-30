@@ -11,6 +11,15 @@ export const fieldMessages: Record<string, string> = {
   message: 'Revise a mensagem informada.',
 };
 
+const requiredMessages: Record<string, string> = {
+  name: 'Informe seu nome.', city: 'Informe uma cidade.',
+  state: 'Informe um estado.', country: 'Informe um país.',
+};
+export function fieldMessage(field: string, code?: string) {
+  return code === 'REQUIRED_' + field.toUpperCase() && requiredMessages[field]
+    ? requiredMessages[field] : fieldMessages[field];
+}
+
 export function requestMessage(status: number, action: 'registration' | 'login' | 'logout' | 'profile' | 'delete') {
   if (status === 429) return 'Muitas tentativas. Aguarde um momento antes de tentar novamente.';
   if (status === 409 && action === 'registration') return 'Não foi possível cadastrar este e-mail. Se já tem cadastro, entre com sua conta.';

@@ -53,7 +53,7 @@ export async function inspectFields(page, context, origin, capture) {
     await page.locator('#message').selectText();
     assert.equal(await page.locator('#message').evaluate(element => element.selectionEnd > element.selectionStart), true);
     await page.getByRole('button', { name: 'Criar cadastro', exact: true }).click();
-    await expect(page.locator('main [role="alert"]')).toBeFocused();
+    await expect(page.locator('#email')).toBeFocused();
     await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
     await keyboard('#password');
     await expect(page.locator('#password')).toHaveAttribute('aria-invalid', 'true');
@@ -102,6 +102,7 @@ export async function inspectFields(page, context, origin, capture) {
   await capture('08-login');
   await page.goto(origin + '/cadastro');
   await page.locator('#name').fill('Pessoa Sintética');
+  for (const [key, value] of Object.entries({ city: 'Curitiba', state: 'Paraná', country: 'Brasil' })) await page.locator('#' + key).fill(value);
   await page.locator('#email').fill('pending-visual@example.test');
   await page.locator('#password').fill('VisualFixture123');
   await page.locator('#passwordConfirmation').fill('VisualFixture123');

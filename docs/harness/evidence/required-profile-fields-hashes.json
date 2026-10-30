@@ -1,0 +1,158 @@
+{
+  "base": "working tree after REG-UI-001",
+  "cssPreserved": true,
+  "changed": 7,
+  "unchanged": 18,
+  "entries": [
+    {
+      "file": "docs/harness/evidence/registration-captures/desktop.png",
+      "before": "fe2e562fe68ed494c1a23900745977fc718785dba582743f2bf3c996d8578fa6",
+      "after": "f24549f4a6ddcf957bd625636e916439e7d64bcfedf84449d580728a922cbe1e",
+      "unchanged": false
+    },
+    {
+      "file": "docs/harness/evidence/registration-captures/mobile.png",
+      "before": "8deb9df3fc52bfb2b5d799653c036519e6104b54128686532bed2cfa51d16c86",
+      "after": "97649e9c1fa73ad9a3447562573bf40c65be151ebd21583a27a2c7b251cf2c27",
+      "unchanged": false
+    },
+    {
+      "file": "docs/harness/evidence/registration-captures/tablet.png",
+      "before": "ab6af3b5d33e66c5577b3733dae11d00e78fcd65ebca92a6ea94a265d8d5af56",
+      "after": "84ec84dba3f9694f95fd4a9d82fc141833813052fc0ea13ef70d17b0674d2a49",
+      "unchanged": false
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/01-home-focus-desktop.png",
+      "before": "56367b974b55318c634e3aac805b599fac27735eb0bcbc2820b4c190028ee88e",
+      "after": "56367b974b55318c634e3aac805b599fac27735eb0bcbc2820b4c190028ee88e",
+      "unchanged": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/01-home-focus-mobile.png",
+      "before": "0d60a48828e94203c0dc703c0caf2cfd5e75899609de5982e5b859ab3764042d",
+      "after": "0d60a48828e94203c0dc703c0caf2cfd5e75899609de5982e5b859ab3764042d",
+      "unchanged": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/01-home-normal-desktop.png",
+      "before": "cd702d716dd9a20f94b430d344f8851e122abbbf3ba08133ea78045f3a8559e6",
+      "after": "cd702d716dd9a20f94b430d344f8851e122abbbf3ba08133ea78045f3a8559e6",
+      "unchanged": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/01-home-normal-mobile.png",
+      "before": "b4f75cfc0317f535d9bf4594c088c52cb7393f3810796749df96847f6cbaf543",
+      "after": "b4f75cfc0317f535d9bf4594c088c52cb7393f3810796749df96847f6cbaf543",
+      "unchanged": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/02-cadastro-erros-desktop.png",
+      "before": "8c4b992efdd2ca7d4f6e740a3f886c8d661b00ccd78ca784714e8f86097ee838",
+      "after": "c4a2ac00e1f41d69f3873cfbf17bd574cc8dc53fd524be2f59f51df431ac10d0",
+      "unchanged": false
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/02-cadastro-erros-mobile.png",
+      "before": "cbc228dd16c6404ebccde7e520654fc9e5e3e29d4f9dbc286fb34ae56df1d168",
+      "after": "74b01628ef6f3f6a19059c7f1e5ad458a768d0b492ff66ce029b7e0244456038",
+      "unchanged": false
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/03-cadastro-sucesso-desktop.png",
+      "before": "dacc69690699349371081862439bdf0350bfc77c77ff1c13d8801331e7fca575",
+      "after": "dacc69690699349371081862439bdf0350bfc77c77ff1c13d8801331e7fca575",
+      "unchanged": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/03-cadastro-sucesso-mobile.png",
+      "before": "a4b4de4967771e811a2f0bc91ba9f23b7f0355febb4f6076627d78945de55e64",
+      "after": "a4b4de4967771e811a2f0bc91ba9f23b7f0355febb4f6076627d78945de55e64",
+      "unchanged": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/04-area-user-desktop.png",
+      "before": "2092ccf45a38add6aaabfc22caffb08294fa1aad301048bd66c975095a389209",
+      "after": "2092ccf45a38add6aaabfc22caffb08294fa1aad301048bd66c975095a389209",
+      "unchanged": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/04-area-user-mobile.png",
+      "before": "ba90192939d472ce3356fc84fd439cdad6973c55cb95e04855c6d3a8eba9f6a9",
+      "after": "ba90192939d472ce3356fc84fd439cdad6973c55cb95e04855c6d3a8eba9f6a9",
+      "unchanged": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/06-area-admin-desktop.png",
+      "before": "55d085d7f6bdb87d5c6e1ec97da707278266a4c54e218c8c7f52553d4069056c",
+      "after": "55d085d7f6bdb87d5c6e1ec97da707278266a4c54e218c8c7f52553d4069056c",
+      "unchanged": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/06-area-admin-mobile.png",
+      "before": "e2cbf42f68f86b58711f2343763b79e1abd28d9dbf1d02d564a575920093c06f",
+      "after": "e2cbf42f68f86b58711f2343763b79e1abd28d9dbf1d02d564a575920093c06f",
+      "unchanged": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/07-area-indisponivel-desktop.png",
+      "before": "0d95490201d488a37031f95798b1501d2986aece16e6ad72d7692cfbe8429499",
+      "after": "0d95490201d488a37031f95798b1501d2986aece16e6ad72d7692cfbe8429499",
+      "unchanged": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/07-area-indisponivel-mobile.png",
+      "before": "3f0cd7b73b2a9a20f48abbb0157aa31b2cd6585994194224220e7fd120abc218",
+      "after": "3f0cd7b73b2a9a20f48abbb0157aa31b2cd6585994194224220e7fd120abc218",
+      "unchanged": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/08-login-desktop.png",
+      "before": "73ae1889d419bbafa2d0ccf5dddf314f59bc0fe983652a64d9fca729318d1a39",
+      "after": "73ae1889d419bbafa2d0ccf5dddf314f59bc0fe983652a64d9fca729318d1a39",
+      "unchanged": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/08-login-mobile.png",
+      "before": "973e7457bcae6ccf02abf92103c0292eaebfaa05e8b2a219625d6289067757a6",
+      "after": "973e7457bcae6ccf02abf92103c0292eaebfaa05e8b2a219625d6289067757a6",
+      "unchanged": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/09-cadastro-desktop.png",
+      "before": "c79374f7edc89bd86f7d96524e0651a06efa43079f61a7b2555eb2ad1e3aee54",
+      "after": "72567700590e3d45e64f3ed655199bdf49cff273290f32ed33a2fb08235cd4b5",
+      "unchanged": false
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/09-cadastro-mobile.png",
+      "before": "8deb9df3fc52bfb2b5d799653c036519e6104b54128686532bed2cfa51d16c86",
+      "after": "97649e9c1fa73ad9a3447562573bf40c65be151ebd21583a27a2c7b251cf2c27",
+      "unchanged": false
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/10-exclusao-confirmacao-desktop.png",
+      "before": "f2ea8645d25d24439b90b23d6d626aa0d36c7b8567ffe4bbdf4ed36638622ffa",
+      "after": "f2ea8645d25d24439b90b23d6d626aa0d36c7b8567ffe4bbdf4ed36638622ffa",
+      "unchanged": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/10-exclusao-confirmacao-mobile.png",
+      "before": "6355daca3f7646daff69e885efc404c25fa6f40b27200334622a2c7645588895",
+      "after": "6355daca3f7646daff69e885efc404c25fa6f40b27200334622a2c7645588895",
+      "unchanged": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-reference/official-desktop.png",
+      "before": "1219952e0fc3eb55acaf13789fb6d274ba05e8741e06de63a728572d77facf22",
+      "after": "1219952e0fc3eb55acaf13789fb6d274ba05e8741e06de63a728572d77facf22",
+      "unchanged": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-reference/official-mobile.png",
+      "before": "f21a3f0b7c8ccf3e0fd95d4a73a294aba6f2796bb90da811348a0483aa006a60",
+      "after": "f21a3f0b7c8ccf3e0fd95d4a73a294aba6f2796bb90da811348a0483aa006a60",
+      "unchanged": true
+    }
+  ]
+}

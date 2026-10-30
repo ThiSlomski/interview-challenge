@@ -1,3 +1,29 @@
+## REG-ESSENTIAL-001 — Zod e dados essenciais, 30/10/2026
+
+Pedido atual implementado sobre REG-UI-001 pendente preservado. Zod4.6.7 direto,
+schemas strict compartilhados/UI/API; essenciais trim/obrigatórios no cadastro e
+PATCH user/admin, opcionais preservados e foco primeiro erro. Migration3 aplicada
+somente após autorização e preflight0; quatro NOTNULL/CHECK validados/checkACL
+aprovado. Sem reescrever cadastros/sessões/grants ou alterar auth/layout/clima.
+Node69/69, HTTP/PG74/74, UI78/78, perfil41/41, exclusão45/45, cleanup0 e metadados
+iguais nos runners. Build/lint/tipos/audit0/Harness aprovados; Harness parcial.
+Revisões técnicas independentes sem achados pendentes; humana/CI remoto pendentes.
+Smoke Compose ajustado (fixture/count3), não executado; README/CI adiados pelo
+usuário. [Auditoria, prompts, aplicação e limites](../evidence/required-profile-fields.md).
+Sem commit/push/deploy; não repetir aplicação persistente por memória.
+
+## REG-UI-001 — cadastro centralizado, 30/10/2026
+
+Refinamento visual autorizado sobre main/c10747a inicialmente limpa. Somente
+wrapper do formulário e CSS escopado no produto: até920px, início após header,
+introdução/cartão de mesma largura; grade responsiva, botão total no celular.
+UI72/72 final, Harness62/62/lint/tipos/build aprovados; Harness permanece parcial.
+Sucesso/resumo/clima/API/banco/validações/auth preservados. Cleanup0/metadados
+iguais; somente capturas02/09 alteradas e18 PNGs iguais por SHA256. Três capturas
+normais novas. [Pedido, rodadas, correção de captura e limites](../evidence/registration-refinement.md).
+Autorrevisão; humana/CI remoto/teclado virtual físico/zoom real pendentes.
+Sem commit/push/deploy ou uso de contas persistentes; nenhuma etapa adicional.
+
 ## LOGIN-UI-001 — centralização do login, 30/10/2026
 
 Refinamento visual autorizado sobre main/37a7b8f inicialmente limpa. Bloco único

@@ -1,5 +1,17 @@
 # Índice da memória
 
+REG-ESSENTIAL-001,30/10/2026: dados essenciais+Zod4.6.7 compartilhado e migration3
+aplicada localmente por autorização. [Auditoria/evidência](../evidence/required-profile-fields.md),
+handoff/estado vigentes. UI78/78/perfil41/41/exclusão45/45/PG74/74/Node69/69;
+Harness parcial, revisão humana/CI remoto pendentes. README/CI adiados; ajuste
+smoke Compose mantido sem execução. Sem commit/push; não repetir migration.
+
+REG-UI-001,30/10/2026: cadastro centralizado até920px, grid responsivo e lógica
+preservada. Comece pelos checkpoints handoff/estado e pela
+[evidência](../evidence/registration-refinement.md). UI72/72, Harness62/62,
+lint/tipos/build aprovados; Harness parcial. Autorrevisão, humana/CI pendentes.
+Somente pares02/09 alterados;18 PNGs preservados. Sem commit/push/deploy.
+
 Atualização vigente ADMIN-DELETE-UI-001,30/10/2026: contraste danger corrigido
 somente no CSS, API/fluxo preservados. [Evidência e cores](../evidence/admin-delete-visual.md),
 capturas06/10, hashes dos demais16 PNGs/3 referências preservados. UI36/36,

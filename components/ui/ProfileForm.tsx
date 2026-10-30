@@ -1,8 +1,9 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { profileFields, validateProfile } from '@/shared/profile.mjs';
+import { requiredProfileFields } from '@/shared/registration.mjs';
 import type { UserRecord } from './Record';
-import { fieldMessages } from './messages';
+import { fieldMessage } from './messages';
 
 export type ProfileSnapshot = { user: UserRecord; profileVersion: number; etag: string };
 export type ProfileFeedback = { message: string; fields?: Record<string, string>; conflict?: boolean };
@@ -23,7 +24,12 @@ export default function ProfileForm({ profile, busy, feedback, onSave, onCancel,
   const [localFeedback, setLocalFeedback] = useState<ProfileFeedback | null>(null);
   const currentFeedback = localFeedback ?? feedback;
   useEffect(() => { form.current?.querySelector<HTMLInputElement>('input[name="name"]')?.focus(); }, []);
-  useEffect(() => { if (feedback) alert.current?.focus(); }, [feedback]);
+  useEffect(() => {
+    if (!currentFeedback) return;
+    const first = profileFields.find(field => Object.hasOwn(currentFeedback.fields ?? {}, field));
+    if (first) (form.current?.elements.namedItem(first) as HTMLElement | null)?.focus();
+    else alert.current?.focus();
+  }, [currentFeedback]);
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -33,7 +39,6 @@ export default function ProfileForm({ profile, busy, feedback, onSave, onCancel,
     const result = validateProfile(input);
     if (!result.ok) {
       setLocalFeedback({ message: 'Confira os campos indicados abaixo.', fields: result.errors as Record<string, string> });
-      requestAnimationFrame(() => alert.current?.focus());
       return;
     }
     setLocalFeedback(null);
@@ -42,13 +47,13 @@ export default function ProfileForm({ profile, busy, feedback, onSave, onCancel,
 
   return <form ref={form} className="card form-card profile-form" aria-label="Editar meu cadastro" aria-busy={busy} onSubmit={submit} noValidate>
     {embedded ? <h3>Editar meu cadastro</h3> : <h2>Editar meu cadastro</h2>}
-    <p className="required-note">O e-mail identifica sua conta e não pode ser alterado nesta tela. Os demais campos podem ficar em branco.</p>
+    <p className="required-note">Nome, cidade, estado e país são obrigatórios. Endereço, CEP e mensagem são opcionais. O e-mail identifica sua conta e não pode ser alterado nesta tela.</p>
     <div className="field profile-email"><label htmlFor="profile-email">E-mail</label><input id="profile-email" type="email" readOnly value={profile.user.email} autoComplete="email" aria-describedby="profile-email-hint" /><span id="profile-email-hint" className="hint">Identificador da conta, somente leitura.</span></div>
     {currentFeedback && <div ref={alert} tabIndex={-1} role="alert" className="notice error">
       {currentFeedback.message}
       {currentFeedback.fields && <ul>{Object.keys(currentFeedback.fields).filter(field => profileFields.includes(field)).map(field => <li key={field}><a href={'#profile-' + field} onClick={event => {
         event.preventDefault(); (form.current?.elements.namedItem(field) as HTMLElement | null)?.focus();
-      }}>{fieldMessages[field]}</a></li>)}</ul>}
+      }}>{fieldMessage(field, currentFeedback.fields?.[field])}</a></li>)}</ul>}
       {currentFeedback.conflict && <p>Seu rascunho foi mantido. Recarregar descarta o rascunho e mostra a versão atual do cadastro.</p>}
     </div>}
     <div className="form-grid">{fields.map(([name, label, autocomplete]) => {
@@ -56,6 +61,7 @@ export default function ProfileForm({ profile, busy, feedback, onSave, onCancel,
       const hint = name === 'name' ? 'Até 150 caracteres.' : undefined;
       const props = {
         id: 'profile-' + name, name, autoComplete: autocomplete, disabled: busy,
+        required: requiredProfileFields.includes(name),
         defaultValue: profile.user[name as keyof UserRecord] ?? '',
         'aria-invalid': error || undefined,
         'aria-describedby': [hint ? 'profile-' + name + '-hint' : '', error ? 'profile-' + name + '-error' : ''].filter(Boolean).join(' ') || undefined,
@@ -64,7 +70,7 @@ export default function ProfileForm({ profile, busy, feedback, onSave, onCancel,
         <label htmlFor={props.id}>{label}</label>
         {name === 'message' ? <textarea {...props} /> : <input {...props} type="text" />}
         {hint && <span className="hint" id={'profile-' + name + '-hint'}>{hint}</span>}
-        {error && <p className="field-error" id={'profile-' + name + '-error'}>{fieldMessages[name]}</p>}
+        {error && <p className="field-error" id={'profile-' + name + '-error'}>{fieldMessage(name, currentFeedback?.fields?.[name])}</p>}
       </div>;
     })}</div>
     <div className="form-actions actions">

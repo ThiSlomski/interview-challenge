@@ -36,7 +36,7 @@ const accounts = [];
 for (let n = 0; n < 2; n++) {
   const email = `container-${tag}-${n}@example.test`;
   const signup = await request('/api/users', { method: 'POST', body: { name: 'Container Fixture', email,
-    password, passwordConfirmation: password, city: 'Curitiba', country: 'Brasil' } });
+    password, passwordConfirmation: password, city: 'Curitiba', state: 'Paraná', country: 'Brasil' } });
   assert.equal(signup.status, 201);
   const id = signup.json().user.id; assert.match(id, /^[a-f0-9-]{36}$/);
   const login = await request('/api/auth/login', { method: 'POST', body: { email, password } });
@@ -58,7 +58,7 @@ const edit = await request('/api/profile', { method: 'PATCH', cookie: user.cooki
 assert.equal(edit.status, 200);
 const home = await request('/'); assert.equal(home.status, 200);
 assert.match(home.headers['content-security-policy'], /https:\/\/api.open-meteo.com/);
-assert.equal(sql('SELECT count(*) FROM imobilead_meta.pgmigrations'), '2');
+assert.equal(sql('SELECT count(*) FROM imobilead_meta.pgmigrations'), '3');
 assert.equal(sql("SELECT count(*) FROM pg_stat_activity WHERE application_name='imobilead-app' AND usename <> 'imobilead_app'"), '0');
 console.log('COMPOSE_HTTP_OK signup/login/Secure-cookie/profile/user/admin/CSP/migrations');
 

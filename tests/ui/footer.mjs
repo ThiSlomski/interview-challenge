@@ -87,6 +87,7 @@ export async function productionFooterPages(t, browser, origin, admin) {
       await page.goto(origin + '/cadastro');
       for (const [field, value] of Object.entries({ name: 'Footer Synthetic', email,
         password: 'FooterFixture123', passwordConfirmation: 'FooterFixture123',
+        city: 'Curitiba', state: 'Paraná', country: 'Brasil',
         message: Array.from({ length: 30 }, (_, i) => `Linha ${i + 1}: fixture visual.`).join('\n') })) {
         await page.locator('#' + field).fill(value);
       }

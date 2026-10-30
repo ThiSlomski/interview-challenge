@@ -16,6 +16,7 @@ import { profileBrowserTests } from '../profile/browser.mjs';
 import { adminDeleteHttpTests } from '../admin-delete/http-postgres.mjs';
 import { adminDeleteBrowserTests } from '../admin-delete/browser.mjs';
 import { homeBrowserTests } from '../ui/home.mjs';
+import { verifyEssentialFields } from './essential-fields.mjs';
 
 // Explicitly separate from npm test. No mocks and no fallback to imobilead.
 // Requires explicit authorization of its disposable local destination.
@@ -51,10 +52,11 @@ test('PostgreSQL migrations, constraints, sessions and runtime permissions', asy
     await dbAdmin.query(`ALTER ROLE ${roleIdentifier(appRole)} PASSWORD '${password}'`);
     await dbAdmin.query('COMMIT'); rolesCreated = true;
     const migrationConfig = { ...base, database, user: migrationRole, password };
-    assert.equal((await migrate(migrationConfig)).length, 2);
+    assert.equal((await migrate(migrationConfig)).length, 3);
     assert.equal((await migrate(migrationConfig)).length, 0);
     await dbAdmin.query(runtimeGrantsSql(appRole));
     app = new pg.Client({ ...base, database, user: appRole, password }); await app.connect();
+    await verifyEssentialFields(t, dbAdmin, app);
     const runtime = roleIdentifier(appRole);
     if (process.env.HOME_BROWSER_TEST === 'true') {
       await homeBrowserTests(t, { ...base, database, user: appRole, password }, dbAdmin);
@@ -161,7 +163,7 @@ test('PostgreSQL migrations, constraints, sessions and runtime permissions', asy
     await rejectDrift('reject excess TRUNCATE sessions',
       [`GRANT TRUNCATE ON imobilead.sessions TO ${runtime}`],
       [`REVOKE TRUNCATE ON imobilead.sessions FROM ${runtime}`]);
-    const insert = (email, name = 'Fixture') => app.query('INSERT INTO imobilead.users(name,email,password_hash) VALUES($1,$2,$3) RETURNING id,role', [name,email,'$fixture-not-a-real-password-hash']);
+    const insert = (email, name = 'Fixture') => app.query("INSERT INTO imobilead.users(name,email,password_hash,city,state,country) VALUES($1,$2,$3,'Fixture City','Region','Country') RETURNING id,role", [name,email,'$fixture-not-a-real-password-hash']);
     const { rows: [user] } = await insert('fixture@example.test');
     assert.equal((await app.query('SELECT profile_version FROM imobilead.users WHERE id=$1', [user.id])).rows[0].profile_version, 1);
     await assert.rejects(dbAdmin.query('UPDATE imobilead.users SET profile_version=0 WHERE id=$1', [user.id]), { code: '23514' });
@@ -172,12 +174,12 @@ test('PostgreSQL migrations, constraints, sessions and runtime permissions', asy
     await insert('max@example.test', 'a'.repeat(150));
     const competitor = new pg.Client({ ...base, database, user: appRole, password }); await competitor.connect();
     let race;
-    try { race = await Promise.allSettled([insert('race@example.test'), competitor.query('INSERT INTO imobilead.users(name,email,password_hash) VALUES($1,$2,$3)', ['Fixture','race@example.test','$fixture-hash'])]); }
+    try { race = await Promise.allSettled([insert('race@example.test'), competitor.query("INSERT INTO imobilead.users(name,email,password_hash,city,state,country) VALUES($1,$2,$3,'Fixture City','Region','Country')", ['Fixture','race@example.test','$fixture-hash'])]); }
     finally { await competitor.end(); }
     assert.equal(race.filter(result => result.status === 'fulfilled').length, 1);
     assert.equal(race.find(result => result.status === 'rejected').reason.code, '23505');
     await assert.rejects(app.query("UPDATE imobilead.users SET role='admin' WHERE id=$1",[user.id]), { code: '42501' });
-    await assert.rejects(app.query("INSERT INTO imobilead.users(name,email,password_hash,role) VALUES($1,$2,$3,'admin')", ['Fixture','admin-attempt@example.test','$fixture-hash']), { code: '42501' });
+    await assert.rejects(app.query("INSERT INTO imobilead.users(name,email,password_hash,role,city,state,country) VALUES($1,$2,$3,'admin','Fixture City','Region','Country')", ['Fixture','admin-attempt@example.test','$fixture-hash']), { code: '42501' });
     await assert.rejects(dbAdmin.query("UPDATE imobilead.users SET role='owner' WHERE id=$1",[user.id]), { code: '23514' });
     const token = randomBytes(32);
     await app.query("INSERT INTO imobilead.sessions(token_hash,user_id,expires_at) VALUES($1,$2,now()+interval '1 hour')",[token,user.id]);

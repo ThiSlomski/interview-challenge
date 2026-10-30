@@ -1,0 +1,3 @@
+Pode aplicar a migration, em outra rodada vamos atualizar o readme e CI / Compose.
+
+se j? tinha feito o compose, pode deixar !

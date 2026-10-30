@@ -656,3 +656,27 @@ node scripts/container/cleanup.mjs
 CI container-smoke é independente/bloqueante, timeout20min, credenciais sintéticas,
 sem publicação de imagens; cleanup if:always. Teste browser é local separado.
 [Arquitetura](docs/ARCHITECTURE.md) e [evidência/limites](docs/harness/evidence/containerization.md).
+## REG-ESSENTIAL-001 — validação e integridade, 30/10/2026
+
+Cadastro e edição usam shared/schemas.mjs (Zod4.6.7 direto) através dos wrappers
+registration/profile, no navegador e na API. Nome/cidade/estado/país têm trim e
+não podem ser vazios; e-mail/senhas mantêm regras anteriores. Endereço/CEP/mensagem
+continuam opcionais; PATCH não escreve campos omitidos. Erros seguem contrato
+público controlado e foco no primeiro campo, sem detalhes internos do Zod.
+
+Migration3 preparada com guarda contra legados incompatíveis e aplicada uma vez
+ao local127.0.0.1:5432/imobilead após autorização, fresh preflight0 e pós-check.
+Não repetir a aplicação por este registro. Para outro checkout/banco local
+autorizado, o diagnóstico somente leitura é:
+
+```powershell
+node scripts/database/essential-fields-preflight.mjs
+```
+
+Se houver incompatíveis, não inventar valores nem forçar a restrição. O script
+mostra apenas contagens/schema e a migration também recusa o caso atomicamente.
+Testes: npm test; npm run test:db:integration; npm run test:ui;
+npm run test:profile:ui; npm run test:admin-delete:ui. Use fixtures descartáveis,
+nunca contas persistentes. [Resultados e limites](docs/harness/evidence/required-profile-fields.md).
+README/CI ficam para outra rodada; smoke Compose tem fixture essencial/contagem3
+ajustados, mas containers não foram executados novamente nesta etapa.

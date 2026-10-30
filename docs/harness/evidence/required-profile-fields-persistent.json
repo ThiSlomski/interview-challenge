@@ -1,0 +1,162 @@
+{
+  "task": "REG-ESSENTIAL-001 persistent migration",
+  "date": "2026-10-30",
+  "timezone": "America/Sao_Paulo",
+  "authorization": "User explicitly authorized applying this migration; README and CI/Compose deferred to another round.",
+  "migration": "database/migrations/1793491200000-required-profile-fields.cjs",
+  "migrationSha256": "cf1e95694410e682d42d129cc5134a26c1c33a32cdd87926e0e94321039477aa",
+  "before": {
+    "database": "imobilead",
+    "host": "127.0.0.1",
+    "port": 5432,
+    "readOnly": true,
+    "compatible": true,
+    "counts": {
+      "incompatible": 0,
+      "name": 0,
+      "city": 0,
+      "state": 0,
+      "country": 0
+    },
+    "columns": [
+      {
+        "field": "city",
+        "nullable": true
+      },
+      {
+        "field": "country",
+        "nullable": true
+      },
+      {
+        "field": "name",
+        "nullable": false
+      },
+      {
+        "field": "state",
+        "nullable": true
+      }
+    ],
+    "constraints": []
+  },
+  "migrate": {
+    "command": "node scripts/database/cli.mjs migrate",
+    "exitCode": 0,
+    "identity": {
+      "database": "imobilead",
+      "host": "127.0.0.1",
+      "port": 5432,
+      "role": "imobilead_migrate",
+      "objects": 9,
+      "applicationObjects": 6
+    },
+    "applied": 1
+  },
+  "after": {
+    "database": "imobilead",
+    "host": "127.0.0.1",
+    "port": 5432,
+    "readOnly": true,
+    "compatible": true,
+    "counts": {
+      "incompatible": 0,
+      "name": 0,
+      "city": 0,
+      "state": 0,
+      "country": 0
+    },
+    "columns": [
+      {
+        "field": "city",
+        "nullable": false
+      },
+      {
+        "field": "country",
+        "nullable": false
+      },
+      {
+        "field": "name",
+        "nullable": false
+      },
+      {
+        "field": "state",
+        "nullable": false
+      }
+    ],
+    "constraints": [
+      {
+        "name": "users_city_nonblank",
+        "validated": true
+      },
+      {
+        "name": "users_country_nonblank",
+        "validated": true
+      },
+      {
+        "name": "users_name_nonblank",
+        "validated": true
+      },
+      {
+        "name": "users_state_nonblank",
+        "validated": true
+      }
+    ]
+  },
+  "checks": [
+    {
+      "command": "node scripts/database/essential-fields-preflight.mjs",
+      "stage": "before",
+      "exitCode": 0,
+      "compatible": true
+    },
+    {
+      "command": "node scripts/database/essential-fields-preflight.mjs",
+      "stage": "after",
+      "exitCode": 0,
+      "compatible": true
+    },
+    {
+      "command": "node scripts/database/cli.mjs inspect",
+      "exitCode": 0,
+      "identity": {
+        "database": "imobilead",
+        "host": "127.0.0.1",
+        "port": 5432,
+        "role": "imobilead_migrate",
+        "objects": 9,
+        "applicationObjects": 6
+      }
+    },
+    {
+      "command": "node scripts/database/cli.mjs check-app",
+      "exitCode": 0,
+      "identity": {
+        "database": "imobilead",
+        "host": "127.0.0.1",
+        "port": 5432,
+        "role": "imobilead_app",
+        "objects": 9,
+        "applicationObjects": 6
+      },
+      "runtimePrivileges": "approved"
+    }
+  ],
+  "scope": {
+    "userOrSessionDml": false,
+    "grantsChanged": false,
+    "resetOrDropOrTruncate": false,
+    "persistentFixturesCreated": false,
+    "rowValuesReturnedOrLogged": false,
+    "secretsPrinted": false,
+    "readmeEditedByThisTask": false,
+    "ciEditedByThisTask": false,
+    "composeEditedByThisTask": false,
+    "applicationRestarted": false,
+    "commitOrPushOrPublication": false
+  },
+  "preservation": "Migration performs compatibility check and additive NOT NULL/CHECK DDL only; no rewriting of IDs, email, hashes, roles, sessions or profile versions. Compatible migration preservation was separately proven with synthetic rows in disposable PostgreSQL tests.",
+  "limits": [
+    "No persistent HTTP write or account mutation was performed.",
+    "No application restart was requested or executed.",
+    "Human review and remote CI are not established by these database checks."
+  ]
+}

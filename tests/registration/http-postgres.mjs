@@ -8,6 +8,7 @@ import { createServer } from 'node:net';
 import { verify } from '@node-rs/argon2';
 import { roleIdentifier } from '../../scripts/database/provision.mjs';
 import { emailLengthCases } from './email-length-fixtures.mjs';
+import { validateRegistration } from '../../shared/registration.mjs';
 
 // Actual app routes are copied unchanged. The DB provider is adapted only in
 // this isolated temp fixture, since production refuses test DB/roles. An explicit
@@ -56,6 +57,40 @@ export function database() { return pool ??= (async () => {
     const valid={name:'Fixture',email:' Http@Example.test ',password:'Abc12345',passwordConfirmation:'Abc12345',address:"Fixture '); DROP TABLE users; --",city:'Test City',state:'Region',country:'Test Country',postalCode:'A1 Test',message:'<script>fixture</script>'};
     let count=0;
     const post=(body=valid,headers={})=>{ count++; return fetch(origin+'/api/users',{method:'POST',headers:{'content-type':'application/json',origin,...headers},body:typeof body==='string'?body:JSON.stringify(body),signal:AbortSignal.timeout(15000)}); };
+    // Independent process budget: essential-field probes cannot mask invalid
+    // payloads behind the standard suite's deliberate rate-limit exhaustion.
+    if (scenario === 'essential-fields') {
+      await t.test('real Next HTTP: absent, null and whitespace essentials match shared validation and insert no rows', async () => {
+        const before = (await admin.query('SELECT count(*)::int AS n FROM imobilead.users')).rows[0].n;
+        for (const field of ['name','city','state','country']) for (const value of [undefined, null, '', ' \t\r\n\u00a0\u2003\uFEFF ']) {
+          const input = { ...valid, email: 'http-required-invalid@example.test', [field]: value };
+          if (value === undefined) delete input[field];
+          const checked = validateRegistration(input), response = await post(input);
+          assert.equal(response.status, 400); assert.equal(checked.ok, false);
+          assert.deepEqual(await response.json(), { error: 'INVALID_INPUT', fields: checked.errors });
+          assert.equal((await admin.query('SELECT count(*)::int AS n FROM imobilead.users')).rows[0].n, before);
+        }
+      });
+      await t.test('real Next HTTP: address, postal code and message each remain optional', async () => {
+        for (const [field, column] of [['address','address'], ['postalCode','postal_code'], ['message','message']]) {
+          const input = { ...valid, email: `http-optional-${field.toLowerCase()}@example.test` }; delete input[field];
+          const response = await post(input); assert.equal(response.status, 201);
+          const body = await response.json(); assert.deepEqual(Object.keys(body.user), ['id']);
+          const stored = (await admin.query('SELECT address,postal_code,message FROM imobilead.users WHERE id=$1', [body.user.id])).rows[0];
+          assert.equal(stored[column], null); assert.equal(JSON.stringify(body).includes(valid.password), false);
+        }
+      });
+      await t.test('real Next HTTP: complete registration trims essentials and excludes credentials and confirmation from responses', async () => {
+        const response = await post({ ...valid, email: 'http-required-full@example.test', name: ' Pessoa  Sintética ', city: '\tCidade ', state: ' Estado\n', country: '\u00a0País ' });
+        assert.equal(response.status, 201); const body = await response.json();
+        assert.deepEqual(Object.keys(body), ['user']); assert.deepEqual(Object.keys(body.user), ['id']);
+        const stored = (await admin.query('SELECT name,city,state,country,password_hash FROM imobilead.users WHERE id=$1', [body.user.id])).rows[0];
+        assert.deepEqual({ name: stored.name, city: stored.city, state: stored.state, country: stored.country }, { name: 'Pessoa  Sintética', city: 'Cidade', state: 'Estado', country: 'País' });
+        assert.equal(await verify(stored.password_hash, valid.password), true);
+        assert.equal(JSON.stringify(body).includes(valid.password), false); assert.equal(count, 20);
+      });
+      return;
+    }
     // Separate Next instance: six length probes cannot exhaust the standard
     // scenario's budget. Production quota/clock and prior 429 checks stay intact.
     if (scenario === 'email-length') {
@@ -138,4 +173,5 @@ export function database() { return pool ??= (async () => {
     await rm(target,{recursive:true,force:true,maxRetries:3,retryDelay:500});
   }
   await registrationHttpTests(t, config, admin, 'email-length');
+  await registrationHttpTests(t, config, admin, 'essential-fields');
 }

@@ -40,7 +40,7 @@ export function profileBrowserTests(t, config, admin) {
       });
     }
     try {
-      const signup = await context.request.post(origin + '/api/users', { headers: { origin }, data: { name: 'Perfil Sintético', email, password, passwordConfirmation: password, city: 'Cidade inicial' } });
+      const signup = await context.request.post(origin + '/api/users', { headers: { origin }, data: { name: 'Perfil Sintético', email, password, passwordConfirmation: password, city: 'Cidade inicial', state: 'Paraná', country: 'Brasil' } });
       assert.equal(signup.status(), 201); id = (await signup.json()).user.id;
       await enter();
       await scenario('edit own fields, immutable email, no password and server-confirmed display', async () => {
@@ -64,7 +64,7 @@ export function profileBrowserTests(t, config, admin) {
         await edit();
         await page.getByLabel('Nome', { exact: true }).fill('😀'.repeat(151));
         await page.getByRole('button', { name: 'Salvar alterações', exact: true }).click();
-        await expect(page.getByRole('form', { name: 'Editar meu cadastro' }).getByRole('alert')).toBeFocused();
+        await expect(page.getByLabel('Nome', { exact: true })).toBeFocused();
         await expect(page.getByLabel('Nome', { exact: true })).toHaveAttribute('aria-invalid', 'true');
         await page.getByRole('button', { name: 'Cancelar edição', exact: true }).focus();
         await page.keyboard.press('Enter');
@@ -174,6 +174,30 @@ export function profileBrowserTests(t, config, admin) {
         await page.getByRole('button', { name: 'Salvar alterações', exact: true }).click();
         await expect(page.getByRole('status')).toHaveText('Cadastro atualizado com sucesso.');
         assert.equal((await admin.query('SELECT name,role FROM imobilead.users WHERE id=$1', [id])).rows[0].name, 'Administrador atualizado');
+      });
+      for (const role of ['user', 'admin']) await scenario(role + ' cannot clear essential fields in own profile', async () => {
+        await admin.query('UPDATE imobilead.users SET role=$1 WHERE id=$2', [role,id]);
+        await page.goto(origin + '/area');
+        await edit();
+        let patches = 0;
+        const watch = request => { if (request.method() === 'PATCH') patches++; };
+        page.on('request', watch);
+        try {
+          assert.equal(await page.locator('form [required]').count(), 4);
+          for (const [field, message] of Object.entries({ name: 'Informe seu nome.', city: 'Informe uma cidade.', state: 'Informe um estado.', country: 'Informe um país.' })) {
+            const input = page.locator('#profile-' + field), original = await input.inputValue();
+            await input.fill(' \u00a0 ');
+            await page.getByRole('button', { name: 'Salvar alterações', exact: true }).click();
+            await expect(input).toBeFocused();
+            await expect(page.locator('#profile-' + field + '-error')).toHaveText(message);
+            const link = page.locator('form [role="alert"] a[href="#profile-' + field + '"]');
+            await expect(link).toHaveText(message); await link.click(); await expect(input).toBeFocused();
+            await expect(page.locator('#profile-email')).toHaveValue(email);
+            assert.equal(patches, 0);
+            await input.fill(original);
+          }
+        } finally { page.off('request', watch); }
+        await page.getByRole('button', { name: 'Cancelar edição', exact: true }).click();
       });
       for (const role of ['user', 'admin']) await scenario(role + ' editor replaces own card at equal width and position; draft survives polling', async () => {
         await admin.query('UPDATE imobilead.users SET role=$1 WHERE id=$2', [role,id]);

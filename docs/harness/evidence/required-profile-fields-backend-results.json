@@ -1,0 +1,96 @@
+{
+  "role": "backend",
+  "skills": [
+    "deliver-requirement",
+    "verify-delivery",
+    "review-security"
+  ],
+  "executions": [
+    {
+      "name": "zod-first-node",
+      "tests": 67,
+      "pass": 67,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    {
+      "name": "zod-final-validation-including-mixed-errors",
+      "tests": 21,
+      "pass": 21,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    {
+      "name": "zod-final-node",
+      "tests": 68,
+      "pass": 68,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    {
+      "name": "real-next-http-postgresql",
+      "tests": 74,
+      "pass": 74,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "cleanup": [
+        {
+          "cleanup": "confirmed",
+          "protectedMetadata": "unchanged",
+          "remainingResources": 0
+        }
+      ]
+    },
+    {
+      "name": "final-zod-validation-including-registration-and-profile-mixed-errors",
+      "tests": 22,
+      "pass": 22,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    }
+  ],
+  "initialControlledChecksBeforeZod": {
+    "validation": {
+      "tests": 18,
+      "pass": 18,
+      "fail": 0,
+      "skipped": 0
+    },
+    "registrationAndProfileHandlers": {
+      "tests": 22,
+      "pass": 22,
+      "fail": 0,
+      "skipped": 0
+    }
+  },
+  "coverage": [
+    "Zod schemas safeParse and adapter equivalence",
+    "required name/city/state/country and whitespace rejection",
+    "optional address/postalCode/message",
+    "normalized values persist",
+    "unknown-field allowlist and error redaction",
+    "API direct no insertion for invalid essentials",
+    "profile clear denied for both roles with unchanged versions",
+    "existing login/session/authorization and admin-delete HTTP regressions",
+    "PostgreSQL essential constraints and guarded legacy migration"
+  ],
+  "limits": [
+    "HTTP fixture copied schema before mixed-error refinements; final validation22 tests cover refinements; final full npm/Harness/UI run belongs to orchestrator",
+    "No persistent user DML, migrations, grants, remotes or Git mutations",
+    "Human review and remote CI not executed by this agent"
+  ],
+  "review": {
+    "findingsCorrected": [
+      "registration confirmation mismatch suppressed by another invalid type or unknown keys",
+      "profile empty patch and explicit undefined essentials suppressed by invalid version type"
+    ],
+    "remainingMaterialFindings": [],
+    "publicErrors": "Controlled code allowlist, no input/unknown-key/error-object echo",
+    "adapter": "safeParse delegates rules and normalization to shared Zod schemas"
+  }
+}

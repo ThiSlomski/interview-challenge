@@ -19,10 +19,10 @@ export function authenticationHttpTests(t, config, admin) {
     const digest=cookie=>createHash('sha256').update(cookie.split('=')[1]).digest();
     let first, second, expires, userId;
     await t.test('auth real HTTP/PG: registration remains sessionless; fixture accounts',async()=>{
-      const response=await fetch(origin+'/api/users',{method:'POST',headers:{origin,'content-type':'application/json'},body:JSON.stringify({name:'Auth Fixture',email:'auth0@example.test',password,passwordConfirmation:password})});
+      const response=await fetch(origin+'/api/users',{method:'POST',headers:{origin,'content-type':'application/json'},body:JSON.stringify({name:'Auth Fixture',email:'auth0@example.test',password,passwordConfirmation:password,city:'Fixture City',state:'Region',country:'Country'})});
       assert.equal(response.status,201);assert.equal(response.headers.get('set-cookie'),null);
       userId=(await response.json()).user.id;
-      for(let n=1;n<6;n++) await admin.query('INSERT INTO imobilead.users(name,email,password_hash) SELECT name,$1,password_hash FROM imobilead.users WHERE id=$2',[`auth${n}@example.test`,userId]);
+      for(let n=1;n<6;n++) await admin.query('INSERT INTO imobilead.users(name,email,password_hash,city,state,country) SELECT name,$1,password_hash,city,state,country FROM imobilead.users WHERE id=$2',[`auth${n}@example.test`,userId]);
     });
     await t.test('auth real HTTP/PG: valid login, cookie, digest only, absolute one hour',async()=>{
       const response=await login();assert.equal(response.status,200);

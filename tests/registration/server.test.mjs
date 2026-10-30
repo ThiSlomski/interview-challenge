@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { hashPassword, verifyPassword } from '../../server/registration/password.mjs';
 import { createRegistrationHandler, BODY_LIMIT } from '../../server/registration/handler.mjs';
 
-const valid = { name: 'Fixture', email: 'Fixture@Example.test', password: 'Abc12345', passwordConfirmation: 'Abc12345', message: "<script>';</script>" };
+const valid = { name: 'Fixture', email: 'Fixture@Example.test', password: 'Abc12345', passwordConfirmation: 'Abc12345', city: 'Fixture City', state: 'Region', country: 'Country', message: "<script>';</script>" };
 const origin = () => 'http://localhost:3000';
 const request = (value = valid, headers = {}) => new Request(origin() + '/api/users', {
   method: 'POST', headers: { 'content-type': 'application/json', origin: origin(), ...headers }, body: JSON.stringify(value),
@@ -37,6 +37,28 @@ test('parameterized insertion with allowlist, minimal output, no session or cook
 test('invalid input and unknown internal fields never access persistence', async () => {
   const POST = createRegistrationHandler({ origin, database: () => { throw new Error('must not call'); } });
   for (const value of [{}, { ...valid,role:'admin' }, { ...valid,id:'x' }, { ...valid,passwordConfirmation:'different' }]) assert.equal((await POST(request(value))).status,400);
+});
+
+test('direct registration handler rejects missing or blank essentials before hashing/persistence', async () => {
+  for (const field of ['name','city','state','country']) {
+    for (const value of [undefined, null, '', ' \t\n\u00a0 ']) {
+      const POST = createRegistrationHandler({ origin, database: () => { throw new Error('must not call'); } });
+      const input = { ...valid, [field]: value };
+      const response = await POST(request(input));
+      assert.equal(response.status, 400);
+      assert.deepEqual(await response.json(), { error: 'INVALID_INPUT', fields: { [field]: 'REQUIRED_' + field.toUpperCase() } });
+    }
+  }
+});
+
+test('registration insertion receives normalized essentials and nullable optionals without confirmation', async () => {
+  let values;
+  const POST = createRegistrationHandler({ origin, database: async () => ({ query: async (_sql, input) => { values = input; return { rows: [{ id: 'fixture-id' }] }; } }) });
+  const response = await POST(request({ ...valid, name: ' Fixture ', city: '\tCity ', state: ' State\n', country: ' Country ', message: undefined }));
+  assert.equal(response.status, 201);
+  assert.deepEqual([values[0], values[3], values[4], values[5], values[6], values[7], values[8]], ['Fixture', null, 'City', 'State', 'Country', null, null]);
+  const body = await response.json(); assert.deepEqual(body, { user: { id: 'fixture-id' } });
+  assert.equal(JSON.stringify(body).includes(valid.password), false);
 });
 test('only actual email UNIQUE conflict is 409; failures and diagnostics are sanitized', async () => {
   for (const [error,status] of [

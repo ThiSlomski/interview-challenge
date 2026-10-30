@@ -1,0 +1,384 @@
+{
+  "base": "REG-UI-001 dirty snapshot; clean-at-start files recovered from HEAD",
+  "diff": "TEMP/required-profile-fields-exclusive.diff",
+  "entries": [
+    {
+      "file": "SOLUTION.md",
+      "before": "41deaf3a1431a76fa8893c5f74445da1777415c939a3971dab8b3f1dbbd25e3b",
+      "after": "1583767d2f85ee5436432ef434029ea364fc431949eb54922d239e9dc9748740",
+      "changed": true
+    },
+    {
+      "file": "app/globals.css",
+      "before": "8b162fc77939043a500b549f816dbc45fb56c3865fcbf1f0d635684d968638eb",
+      "after": "8b162fc77939043a500b549f816dbc45fb56c3865fcbf1f0d635684d968638eb",
+      "changed": false
+    },
+    {
+      "file": "components/ui/ProfileForm.tsx",
+      "before": "750bf02ca94f940347dfaa8aebe1888f7c7286b2c949aa5f78b636c440876766",
+      "after": "73d3245d6e9a4c9b759373db8a0673a0efc4390f21ae5774bc139d53717b511f",
+      "changed": true
+    },
+    {
+      "file": "components/ui/RegistrationForm.tsx",
+      "before": "6e72f693088956edb152935b61fc3cefdb6f8a1a0cb58c02d5c760696ac6e388",
+      "after": "27cffe6cef6a8b666debc10987f1f4061ad0b5dd7a10b318b2b6f9a615b3fc37",
+      "changed": true
+    },
+    {
+      "file": "components/ui/messages.ts",
+      "before": "3d6748177148935de6488729c9262af576c5bd5968214bf5b3c1e3260445f8fe",
+      "after": "91d64e66ce92477b9d65bb701522807468a237739b78c73b03523768d9194381",
+      "changed": true
+    },
+    {
+      "file": "docs/AI_PROMPTS.md",
+      "before": "48dab353fb66162426c750b966f9b51c891819cc12f300510e4f8ead0b100ad5",
+      "after": "212d1d093ae89a56d6bcf946831234db6ef301764e32b9dd8357067fac74fd39",
+      "changed": true
+    },
+    {
+      "file": "docs/ARCHITECTURE.md",
+      "before": "26f1ed78a7477a8a3d444638910364df741bf5392afdc24c17215bd276bfb6d9",
+      "after": "5ea721a0dbc346273b50e2bd4d6fee50edf93d0acab7b37e487ed18ec3a34f5c",
+      "changed": true
+    },
+    {
+      "file": "docs/REQUIREMENTS.md",
+      "before": "ee837c2915fcf87f25e9a692aa176202627e4dc4c3fbfe96d77dd1063b43bc62",
+      "after": "7cf70e772977b85d44f4bbe2ed28000ecc7a8f8eee7a526f81bb7c4376632e6f",
+      "changed": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/02-cadastro-erros-desktop.png",
+      "before": "8c4b992efdd2ca7d4f6e740a3f886c8d661b00ccd78ca784714e8f86097ee838",
+      "after": "c4a2ac00e1f41d69f3873cfbf17bd574cc8dc53fd524be2f59f51df431ac10d0",
+      "changed": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/02-cadastro-erros-mobile.png",
+      "before": "cbc228dd16c6404ebccde7e520654fc9e5e3e29d4f9dbc286fb34ae56df1d168",
+      "after": "74b01628ef6f3f6a19059c7f1e5ad458a768d0b492ff66ce029b7e0244456038",
+      "changed": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/09-cadastro-desktop.png",
+      "before": "c79374f7edc89bd86f7d96524e0651a06efa43079f61a7b2555eb2ad1e3aee54",
+      "after": "72567700590e3d45e64f3ed655199bdf49cff273290f32ed33a2fb08235cd4b5",
+      "changed": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/09-cadastro-mobile.png",
+      "before": "8deb9df3fc52bfb2b5d799653c036519e6104b54128686532bed2cfa51d16c86",
+      "after": "97649e9c1fa73ad9a3447562573bf40c65be151ebd21583a27a2c7b251cf2c27",
+      "changed": true
+    },
+    {
+      "file": "docs/harness/evidence/ui-captures/README.md",
+      "before": "f1f48b7f200fd7c2c0eadadf5f8f797ca2c8c6d2601f2ea195ffb1eed87338ec",
+      "after": "519b77ba7b7792cb25b3e846975989303c297c5bbf4a520f7cc37e1cd0498692",
+      "changed": true
+    },
+    {
+      "file": "docs/harness/memory/handoff.md",
+      "before": "cacc7f231c886a8085301c05d03e40cb18826f9e57276c7901a529d99ae482ce",
+      "after": "3b1c1cbca025a463f8a11343c3c24c0539d9b6d530835d72c0898f654bc52aab",
+      "changed": true
+    },
+    {
+      "file": "docs/harness/memory/index.md",
+      "before": "266376188cb5013e27edda797e2468449c2bf7261d6af1cba15639ca045afb58",
+      "after": "8c5c3711f12b0bda50349850eeebc5a0b3064fc0369cabade721ee2eca9565f8",
+      "changed": true
+    },
+    {
+      "file": "docs/harness/memory/project-state.md",
+      "before": "ab68be7c527ae1f13432f3c9557bf247462f611b12b61aaed9b54099fe5e5cf2",
+      "after": "aac15d4714197d48226e9dcd537c78a81d7d1a2335ec18b0ed5c4ea0451ce9a4",
+      "changed": true
+    },
+    {
+      "file": "package-lock.json",
+      "before": "902a8003ea756600a95e192c345e1f331e6d4f366c27141e95285f51e8b7eb88",
+      "after": "909ec90c1d621b4fccfb4829a906f2b8e3266f23c85475544e6188a998a195ca",
+      "changed": true
+    },
+    {
+      "file": "package.json",
+      "before": "4ebee85c0bee9a152103eeea28827617430861e146679a771cd67fd1f918d1fc",
+      "after": "c4c702e4c9b55ab9f53c1a2be697374da902c8e6715bb2c5058e24e2d76ac21e",
+      "changed": true
+    },
+    {
+      "file": "scripts/container/smoke.mjs",
+      "before": "5aaa18be61784ac8427b0f90264379b41b5c741ea2e622c0dedd4c0de0615eb7",
+      "after": "bf2f80797fdc97cc4d7985fb915faa930a3742c4b44ea094706751757da9b7e0",
+      "changed": true
+    },
+    {
+      "file": "shared/profile.mjs",
+      "before": "c126107552f5db4875d8b982e555a4a8691e2eca01d088b6add83be761ef1d21",
+      "after": "ee554300d29fd9e58dbfb27e1e5e3fd62fa73f42ed55c6141f03bb446546805d",
+      "changed": true
+    },
+    {
+      "file": "shared/registration.mjs",
+      "before": "15872073c2b2bda850c7ffd0a12a4b954b32006da53e8868956dea11d0f2e2da",
+      "after": "ed391f4be111f8309004a61ed1b34751da087a8386d052574f125da4179653cf",
+      "changed": true
+    },
+    {
+      "file": "tests/admin-delete/browser.mjs",
+      "before": "e9e3a22a27c5eab4627ffa97da5591515d089fbacbda2b510eda75fc98886bbe",
+      "after": "abe0c2026819361a9526772bb2a4b7be4a96ac0f967d508e2a77d9899a78d776",
+      "changed": true
+    },
+    {
+      "file": "tests/admin-delete/http-postgres.mjs",
+      "before": "9d0b43e793510f84ab033d8543cb45e32392f1e19df3fc85c82f24057e0e4dec",
+      "after": "193f0a4b22c254e85e18731fab6ac42d3b7934a3652f978cd0d83fcc59f51077",
+      "changed": true
+    },
+    {
+      "file": "tests/auth/http-postgres.mjs",
+      "before": "50ed16b3450b3464cc10dc67e8b7b118437a1fbf12f8d25d1fca3ebce2a146bf",
+      "after": "d37bd6709dab25793e2a5503b510f0d99b4582f42b1e5b05d33f3e3613e11dfb",
+      "changed": true
+    },
+    {
+      "file": "tests/authorization/http-postgres.mjs",
+      "before": "dc07881b042e89c5e963378d2308a39a92f85efeccb914d5e6e1b5b1e421121b",
+      "after": "5056eba12aa039728e23893822daf31ce8a8b94502b65d1a889ff8e83f04733f",
+      "changed": true
+    },
+    {
+      "file": "tests/database/integration.test.mjs",
+      "before": "14079f40882ca779f0426a73876938d8d1dea7fb7c848b469dd0e4c1db30a8d1",
+      "after": "30c2f44e4ab45f1943f1b8908da826e127ff7bfb4bc6ea20634be247ab3f53bf",
+      "changed": true
+    },
+    {
+      "file": "tests/profile/browser.mjs",
+      "before": "65c37741766b33e37a2be6ae6161949bef2dda693d2011325324a9beedfb9ca8",
+      "after": "ad291fb0cc3ff8d64bbdd5b35f66711b20d25a8d53189c72f35a52260cbb09ee",
+      "changed": true
+    },
+    {
+      "file": "tests/profile/http-postgres.mjs",
+      "before": "5361a54ca5156116be768f2d1fae2e3c1265a2f2fe04dc5079f63a424ed1dba4",
+      "after": "2d6d754c9c0a74aa4976c82d8a65342e3006928404979aa94e2568588ce07f9a",
+      "changed": true
+    },
+    {
+      "file": "tests/profile/server-runner.test.mjs",
+      "before": "82ad77a573d764a06d995b259093077c5e9817228896fe34b99091ab1d66b19a",
+      "after": "9e547bb0d7c581f50e0995f823e634eb90eb3f4018cc5f952922b7c672d452c5",
+      "changed": true
+    },
+    {
+      "file": "tests/profile/server.test.mjs",
+      "before": "92f1646ce3b8c599c01cd39cfec8ae14a95408bf9a907e9ae8ca4e9eb335eea4",
+      "after": "ccbfdd1a7f62b0ac5f6b5ee82b33f78cb533316f2ada3fb0569302b9f979d870",
+      "changed": true
+    },
+    {
+      "file": "tests/profile/validation.test.mjs",
+      "before": "dbba4a73091c0064ade41f32961dfff9938d5a8b6da851bd0084ed77756f17a8",
+      "after": "17708e9d2cf50a69375091bfe6a999202c02eecd5f4a9e7eac4942eca0ea82c4",
+      "changed": true
+    },
+    {
+      "file": "tests/registration/http-postgres.mjs",
+      "before": "57ac05d61c940b546542214af1b6f755643ce0f547f7f13ea4124eca7e88b405",
+      "after": "5f3d377274ae9caac4fd0ebd3b7c77c42e9e57eee5b444ab822a04533b9e082f",
+      "changed": true
+    },
+    {
+      "file": "tests/registration/server-runner.test.mjs",
+      "before": "ec93fc1bf346e957a4bb877f85dce4ea2e6f8dc3e7ce07d2e8acf524b1d9b93d",
+      "after": "ac4449fe2524221636c7e48ee19d86e18f7440a1064df63f15f70fa9aee52cc3",
+      "changed": true
+    },
+    {
+      "file": "tests/registration/server.test.mjs",
+      "before": "a09ba74c70dc0c51addcdf9696bfefb1198bf78b8b4adba5a6865b1e7781ca8c",
+      "after": "622898d327480d69e657502a87f40eec325ffa0e70fd5a58e883e1872e6183e1",
+      "changed": true
+    },
+    {
+      "file": "tests/registration/validation.test.mjs",
+      "before": "4a3fa5d2ff456ea2f2ad35c306697628a6982a11bb851e692053abb17be0b3aa",
+      "after": "335afa98b86b0bdb30bb015e9533b8e01200fa1c44523350aefe87d94b241ed4",
+      "changed": true
+    },
+    {
+      "file": "tests/ui/browser.mjs",
+      "before": "b061552a8ff2749e45e8b07d53404a6133636960f0e05a2096e097b12498889b",
+      "after": "8ec2dbfa522a91fd01fff1d2cb1f2ee0d0febe87d65362a4b7b832a0148665ba",
+      "changed": true
+    },
+    {
+      "file": "tests/ui/fields.mjs",
+      "before": "c0b7e1849d402a08daacefb3afd8afe51a0cd6104257a25ed7d2ae2e3ad42b89",
+      "after": "31635861d974de1b53d768af3392ca846de46b29c8f023874b90e2c6b3d9b05b",
+      "changed": true
+    },
+    {
+      "file": "tests/ui/footer.mjs",
+      "before": "a470425afe4b5c09ccdce6e0d486181bb10d7e7df43058bcca2b84fb16942f7a",
+      "after": "f078ae3a73aa38b4c980f49f6cc7af043069f75b68b909ef452badf60b5b0f75",
+      "changed": true
+    },
+    {
+      "file": "tests/ui/home.mjs",
+      "before": "dbada5b6d4b965a003fdaee8fdd5699d534c7b2bbe2b3027ec609cc70bf28a77",
+      "after": "b62d1b4d3aac2b3edb7509d0f3a33bb5ea542bb8745a5626bfc531d15270d38d",
+      "changed": true
+    },
+    {
+      "file": "tests/ui/races.mjs",
+      "before": "fbcab0fdb6e91e1befd5b011e5cead0f0873e4b8afa0f7a2959223551f468bd4",
+      "after": "aade1c6826a5f6a27ea0e401302d9051cf8e3b6e3d12799da87328ce26ed0261",
+      "changed": true
+    },
+    {
+      "file": "tests/weather/browser.mjs",
+      "before": "cbb34836db7d86d5b3069433a78c55f79cf5128d49bf1c1c5768853400386970",
+      "after": "0ae66e892946273776c2841ef55c9077f9e3d495abe8cd76c3d18358fac67cfb",
+      "changed": true
+    },
+    {
+      "file": "database/migrations/1793491200000-required-profile-fields.cjs",
+      "before": null,
+      "after": "cf1e95694410e682d42d129cc5134a26c1c33a32cdd87926e0e94321039477aa",
+      "changed": true
+    },
+    {
+      "file": "docs/harness/evidence/registration-captures/desktop.png",
+      "before": "fe2e562fe68ed494c1a23900745977fc718785dba582743f2bf3c996d8578fa6",
+      "after": "f24549f4a6ddcf957bd625636e916439e7d64bcfedf84449d580728a922cbe1e",
+      "changed": true
+    },
+    {
+      "file": "docs/harness/evidence/registration-captures/mobile.png",
+      "before": "8deb9df3fc52bfb2b5d799653c036519e6104b54128686532bed2cfa51d16c86",
+      "after": "97649e9c1fa73ad9a3447562573bf40c65be151ebd21583a27a2c7b251cf2c27",
+      "changed": true
+    },
+    {
+      "file": "docs/harness/evidence/registration-captures/tablet.png",
+      "before": "ab6af3b5d33e66c5577b3733dae11d00e78fcd65ebca92a6ea94a265d8d5af56",
+      "after": "84ec84dba3f9694f95fd4a9d82fc141833813052fc0ea13ef70d17b0674d2a49",
+      "changed": true
+    },
+    {
+      "file": "docs/harness/evidence/registration-refinement-harness.json",
+      "before": "6898acebe518bb87161b456e87676e6a68a27941bd1aec0acddfe9147664dd32",
+      "after": "6898acebe518bb87161b456e87676e6a68a27941bd1aec0acddfe9147664dd32",
+      "changed": false
+    },
+    {
+      "file": "docs/harness/evidence/registration-refinement-hashes.json",
+      "before": "e8fe5f902add8edfea47c0952e0ce1ade13b1de282d0c3043e0d7b6a742df828",
+      "after": "e8fe5f902add8edfea47c0952e0ce1ade13b1de282d0c3043e0d7b6a742df828",
+      "changed": false
+    },
+    {
+      "file": "docs/harness/evidence/registration-refinement-results.json",
+      "before": "38f18bc3a5d0ab19c67df1799d088b10cbbe1d623d92d292283fec9d1cb24f34",
+      "after": "38f18bc3a5d0ab19c67df1799d088b10cbbe1d623d92d292283fec9d1cb24f34",
+      "changed": false
+    },
+    {
+      "file": "docs/harness/evidence/registration-refinement.md",
+      "before": "e3779ba0363afe4b938dbef6491c41415266d1f82393f20bbe705a9cb0931dec",
+      "after": "e3779ba0363afe4b938dbef6491c41415266d1f82393f20bbe705a9cb0931dec",
+      "changed": false
+    },
+    {
+      "file": "docs/harness/evidence/required-profile-fields-backend-results.json",
+      "before": null,
+      "after": "01486558399fac5a510153bc478ab5ad7bd65ff3db7c219bd7f0dcc412bb2873",
+      "changed": true
+    },
+    {
+      "file": "docs/harness/evidence/required-profile-fields-harness.json",
+      "before": null,
+      "after": "b8d746cb0a46296d721935c6e7c1aef70a2b9d499b8a62f56977715bbedbc60f",
+      "changed": true
+    },
+    {
+      "file": "docs/harness/evidence/required-profile-fields-hashes.json",
+      "before": null,
+      "after": "6a5d0b1e6a08f44d26c631362d4c7cc81a1363fd17c29dc9e78fc50d3f58dcae",
+      "changed": true
+    },
+    {
+      "file": "docs/harness/evidence/required-profile-fields-persistent.json",
+      "before": null,
+      "after": "a1ecc79da7521444bdf1306ad536b26f2a8908726e778a5bdb2d72920b40050a",
+      "changed": true
+    },
+    {
+      "file": "docs/harness/evidence/required-profile-fields-results.json",
+      "before": null,
+      "after": "90f28bfdbdd385f21a7cdc7b7a74827b6be74603323b83c1b7a9527f0f0de28a",
+      "changed": true
+    },
+    {
+      "file": "docs/harness/evidence/required-profile-fields.md",
+      "before": "961021b0478680050cfcb1b18aa671c902ae7e0108f8b6cc115e64ea4f80f697",
+      "after": "03eb53f69f2d9e9356e3e48fd55a28fdfd5462418563655d6ee0e237a4801caf",
+      "changed": true
+    },
+    {
+      "file": "docs/prompts/2026-10-30-registration-refinement.txt",
+      "before": "6928b85082291539954306d71661ebd0717c10c9e064c736e4292782b9309a47",
+      "after": "6928b85082291539954306d71661ebd0717c10c9e064c736e4292782b9309a47",
+      "changed": false
+    },
+    {
+      "file": "docs/prompts/2026-10-30-required-profile-fields-authorizations.txt",
+      "before": null,
+      "after": "eb52027f1d55210ecfd5fba12d72c12cf64fef5d14ff6cdb0c4b80f2ba354f9a",
+      "changed": true
+    },
+    {
+      "file": "docs/prompts/2026-10-30-required-profile-fields.txt",
+      "before": null,
+      "after": "3b328fdd5d5c963e603c18bd34735cce3b3242fa216b1b945b9fe0f0de9882ac",
+      "changed": true
+    },
+    {
+      "file": "docs/prompts/2026-10-30-zod-validation-audit.txt",
+      "before": null,
+      "after": "40cfa29a4e56a634130049fec9b93b247a28ffa9a11824da360e98bb7d7ccac9",
+      "changed": true
+    },
+    {
+      "file": "scripts/database/essential-fields-preflight.mjs",
+      "before": null,
+      "after": "c84a48bfda719fbfac252a8e047535aa996b1c1e7462e62a5fa1501e95c32dcd",
+      "changed": true
+    },
+    {
+      "file": "shared/schemas.mjs",
+      "before": null,
+      "after": "65a6f69620be927ca1edd9ac1d4d19b651642fdd5bc04f85a9cb73a4bc958bf6",
+      "changed": true
+    },
+    {
+      "file": "tests/database/essential-fields.mjs",
+      "before": null,
+      "after": "638d4ad559586635a058eb031d0d5b8cfc77f31970508ebf35a3ae5676922744",
+      "changed": true
+    },
+    {
+      "file": "tests/ui/registration-layout.mjs",
+      "before": "3b76dd30b73e26c3890f34caf14664a79ac92324f6e5987ef131f102f1a62887",
+      "after": "bde312c660c14b0efdd4524ac8e9d40be95801a3164bc60c79bf40781f5d5f3f",
+      "changed": true
+    }
+  ]
+}

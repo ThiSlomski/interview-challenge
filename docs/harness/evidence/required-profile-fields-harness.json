@@ -1,0 +1,105 @@
+{
+  "command": "verify",
+  "scope": "harness-and-product-tests",
+  "partial": true,
+  "readiness": "not-assessed",
+  "ok": true,
+  "checks": [
+    {
+      "name": "validate",
+      "command": "validate",
+      "ok": true,
+      "errors": [],
+      "nativeSemantics": "Run native-probe; these structural checks alone do not prove Codex loading."
+    },
+    {
+      "name": "harness-tests",
+      "ok": true,
+      "code": 0,
+      "diagnostic": {
+        "classification": "success",
+        "code": 0,
+        "termination": "not-needed",
+        "stderr": "withheld",
+        "investigation": null
+      }
+    },
+    {
+      "name": "native-probe",
+      "ok": true,
+      "code": 0,
+      "diagnostic": {
+        "classification": "success",
+        "code": 0,
+        "termination": "not-needed",
+        "stderr": "withheld",
+        "investigation": null
+      }
+    },
+    {
+      "name": "lint",
+      "ok": true,
+      "code": 0,
+      "error": null,
+      "diagnostic": {
+        "classification": "success",
+        "code": 0,
+        "termination": "not-needed",
+        "stderr": "withheld",
+        "investigation": null
+      },
+      "durationMs": 9286
+    },
+    {
+      "name": "typecheck-no-generated-output",
+      "ok": true,
+      "code": 0,
+      "error": null,
+      "diagnostic": {
+        "classification": "success",
+        "code": 0,
+        "termination": "not-needed",
+        "stderr": "withheld",
+        "investigation": null
+      },
+      "durationMs": 3886
+    },
+    {
+      "name": "product-tests",
+      "ok": true,
+      "status": "passed",
+      "execution": "executed",
+      "code": 0,
+      "report": {
+        "proven": true,
+        "tests": 69,
+        "pass": 69,
+        "fail": 0,
+        "skipped": 0,
+        "todo": 0,
+        "source": "node-test-summary-events"
+      },
+      "reason": "Structured per-file runner summaries prove nonzero passing cases in declared scope."
+    },
+    {
+      "name": "build",
+      "status": "not-executed",
+      "reason": "Build is outside this partial verification command."
+    },
+    {
+      "name": "full-product-assessment",
+      "status": "not-executed",
+      "reason": "No end-to-end, remote CI or comprehensive security/readiness assessment in this command."
+    }
+  ],
+  "notExecuted": [
+    {
+      "name": "build",
+      "reason": "Build is outside this partial verification command."
+    },
+    {
+      "name": "full-product-assessment",
+      "reason": "No end-to-end, remote CI or comprehensive security/readiness assessment in this command."
+    }
+  ]
+}

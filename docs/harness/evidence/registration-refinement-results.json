@@ -1,0 +1,173 @@
+{
+  "results": [
+    {
+      "name": "baseline",
+      "tests": 24,
+      "pass": 24,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "cleanup": [
+        {
+          "cleanup": "confirmed",
+          "protectedMetadata": "unchanged",
+          "remainingResources": 0
+        }
+      ],
+      "diagnostics": [
+        {
+          "flushSync": 0,
+          "hydration": 0,
+          "consoleError": 0,
+          "consoleWarning": 0,
+          "pageerror": 0,
+          "preloadHint": 0,
+          "navigations": 0,
+          "documents": 0
+        }
+      ]
+    },
+    {
+      "name": "ui-round-1",
+      "tests": 72,
+      "pass": 67,
+      "fail": 5,
+      "skipped": 0,
+      "cancelled": 0,
+      "cleanup": [
+        {
+          "cleanup": "confirmed",
+          "protectedMetadata": "unchanged",
+          "remainingResources": 0
+        }
+      ],
+      "diagnostics": [
+        {
+          "flushSync": 0,
+          "hydration": 1,
+          "consoleError": 0,
+          "consoleWarning": 0,
+          "pageerror": 0,
+          "preloadHint": 3,
+          "navigations": 100,
+          "documents": 50
+        }
+      ]
+    },
+    {
+      "name": "ui-round-2",
+      "tests": 72,
+      "pass": 69,
+      "fail": 3,
+      "skipped": 0,
+      "cancelled": 0,
+      "cleanup": [
+        {
+          "cleanup": "confirmed",
+          "protectedMetadata": "unchanged",
+          "remainingResources": 0
+        }
+      ],
+      "diagnostics": [
+        {
+          "flushSync": 0,
+          "hydration": 1,
+          "consoleError": 0,
+          "consoleWarning": 0,
+          "pageerror": 0,
+          "preloadHint": 3,
+          "navigations": 101,
+          "documents": 50
+        }
+      ]
+    },
+    {
+      "name": "capture-probe-before-fix",
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "skipped": 0,
+      "cancelled": 0,
+      "cleanup": [
+        {
+          "cleanup": "confirmed",
+          "protectedMetadata": "unchanged",
+          "remainingResources": 0
+        }
+      ],
+      "diagnostics": [
+        {
+          "flushSync": 0,
+          "hydration": 1,
+          "consoleError": 0,
+          "consoleWarning": 0,
+          "pageerror": 0,
+          "preloadHint": 0,
+          "navigations": 2,
+          "documents": 1
+        }
+      ]
+    },
+    {
+      "name": "capture-probe-after-fix",
+      "tests": 24,
+      "pass": 24,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "cleanup": [
+        {
+          "cleanup": "confirmed",
+          "protectedMetadata": "unchanged",
+          "remainingResources": 0
+        }
+      ],
+      "diagnostics": [
+        {
+          "flushSync": 0,
+          "hydration": 0,
+          "consoleError": 0,
+          "consoleWarning": 0,
+          "pageerror": 0,
+          "preloadHint": 0,
+          "navigations": 2,
+          "documents": 1
+        }
+      ]
+    },
+    {
+      "name": "ui-final",
+      "tests": 72,
+      "pass": 72,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "cleanup": [
+        {
+          "cleanup": "confirmed",
+          "protectedMetadata": "unchanged",
+          "remainingResources": 0
+        }
+      ],
+      "diagnostics": [
+        {
+          "flushSync": 0,
+          "hydration": 0,
+          "consoleError": 0,
+          "consoleWarning": 0,
+          "pageerror": 0,
+          "preloadHint": 3,
+          "navigations": 103,
+          "documents": 51
+        }
+      ]
+    }
+  ],
+  "captureDiagnostic": {
+    "mismatch": "inline caret-color styles introduced during screenshot",
+    "correction": "Playwright caret initial for signup screenshots",
+    "productChange": false
+  },
+  "build": "passed",
+  "prompt": "byte-identical SHA256"
+}
