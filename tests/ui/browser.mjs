@@ -8,7 +8,7 @@ import { inspectFields } from './fields.mjs';
 import { watchBrowserErrors } from './console.mjs';
 import { geocoding, weather } from '../weather/fixtures.mjs';
 import { weatherBrowserTests } from '../weather/browser.mjs';
-import { inspectFooterMatrix } from './footer.mjs';
+import { inspectFooterMatrix, inspectFooterLink } from './footer.mjs';
 import { loginLayoutTests } from './login.mjs';
 import { registrationLayoutTests } from './registration-layout.mjs';
 import { registrationSuccessLayoutTests } from './registration-success-layout.mjs';
@@ -134,8 +134,8 @@ export function uiBrowserTests(t, config, admin) {
         await expect(page.locator('header img')).toBeVisible();
         assert.equal(await page.locator('header img').evaluate(image => image.naturalWidth > 0), true);
         const footer = page.locator('footer a');
-        await expect(footer).toHaveAttribute('href', '/');
-        await expect(footer).toHaveAccessibleName('Slomski Solutions — início');
+        await expect(footer).toHaveAttribute('href', 'https://www.slomskisolutions.com.br');
+        await expect(footer).toHaveAccessibleName('Acessar o site da Slomski Solutions');
         await expect(page.locator('.footer-slogan')).toHaveText('Engenharia digital para um futuro real.');
         await expect(page.locator('.footer-copyright')).toHaveText('© 2026 SLOMSKI SOLUTIONS');
         await shot('01-home-normal');
@@ -147,6 +147,9 @@ export function uiBrowserTests(t, config, admin) {
         await shot('01-home-focus');
         await page.keyboard.press('Enter');
         await expect(page.locator('main#conteudo')).toBeFocused();
+      });
+      await scenario('shared footer external link mouse, keyboard and touch', async () => {
+        await inspectFooterLink(page, origin);
       });
       await scenario('invalid signup, shared limits and associated errors', async () => {
         await page.goto(origin + '/cadastro');

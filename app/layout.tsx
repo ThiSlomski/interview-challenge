@@ -46,10 +46,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {children}
         <footer className="site-footer">
           <div className="shell footer-content">
-            <Link className="brand footer-brand" href="/" aria-label="Slomski Solutions — início">
+            <a className="brand footer-brand" href="https://www.slomskisolutions.com.br" target="_blank" rel="noopener noreferrer" aria-label="Acessar o site da Slomski Solutions">
               <Image src="/brand/slomski-solutions-mark.svg" width={40} height={40} alt="" />
               <span className="brand-name"><span>SLOMSKI</span><span>SOLUTIONS</span></span>
-            </Link>
+            </a>
             <p className="footer-slogan">Engenharia digital para um futuro real.</p>
             <p className="footer-copyright">© 2026 SLOMSKI SOLUTIONS</p>
           </div>

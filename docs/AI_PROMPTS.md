@@ -469,11 +469,13 @@ Pedido complementar para compartilhar substituição e largura do cartão de per
 ## LOGIN-UI-001 — equilíbrio do login, 30/10/2026
 
 Centralizar o conjunto de autenticação e equilibrar ações responsivas preservando contratos de segurança. [Pedido integral](prompts/2026-10-30-login-refinement.txt) e [evidência](harness/evidence/login-refinement.md).
+
 # REG-UI-001 — refinamento visual do cadastro, 30/10/2026
 
 Centralizar introdução e formulário em até920px, com grade responsiva e estados
 preservados. [Pedido integral](prompts/2026-10-30-registration-refinement.txt) e
 [evidência](harness/evidence/registration-refinement.md).
+
 ## REG-ESSENTIAL-001 — dados essenciais e Zod, 30/10/2026
 
 Tornar nome/localização obrigatórios no cadastro/perfil e migrar validação manual
@@ -487,3 +489,9 @@ e [evidência](harness/evidence/required-profile-fields.md).
 Reutilizar o contêiner do cadastro na conclusão e tratar o foco do título sem
 remover acessibilidade. [Pedido integral](prompts/2026-10-30-registration-success-layout.txt)
 e [evidência](harness/evidence/registration-success-layout.md).
+
+## FOOTER-LINK-001 — site oficial no rodapé, 30/10/2026
+
+Restaurar a marca completa como link externo seguro, preservando o rodapé
+compartilhado e sua aparência. [Pedido integral](prompts/2026-10-30-footer-official-link.txt)
+e [evidência](harness/evidence/footer-official-link.md).

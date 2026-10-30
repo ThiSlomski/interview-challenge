@@ -1,3 +1,19 @@
+## FOOTER-LINK-001 — site oficial, 30/10/2026
+
+Base main/533b184 inicialmente limpa. Marca completa do único rodapé no RootLayout
+agora aponta a https://www.slomskisolutions.com.br, target="_blank", rel noopener
+noreferrer e nome acessível solicitado. CSS só acrescenta cor no hover/foco;
+logo40x40, grade/slogan/copyright/foco global preservados. Node69/69, lint/tipos,
+build e doctor/validate/verify aprovados (Harness parcial/readiness:not-assessed).
+Teste novo mouse/Enter/toque e nova aba/opener nulo passou; UI88/88, zero skips,
+matriz pública/user/admin320–1440px e texto200%. Cleanup confirmado/recursos0,
+metadados protegidos iguais. diff --check aprovado.
+Produção desktop/celular inspecionada, pixels normais idênticos ao alternar os
+atributos antigos; quatro capturas novas, anteriores preservadas.
+[Contrato e resultados](../evidence/footer-official-link.md).
+Autorrevisão sequencial; revisão humana/dispositivo físico/CI remoto pendentes.
+Sem commit/push/publicação, sem próxima etapa funcional.
+
 ## REG-SUCCESS-UI-001 — conclusão alinhada, 30/10/2026
 
 Base main/75da973 inicialmente limpa; etapa independente concluída. Sucesso usa

@@ -1,3 +1,17 @@
+## FOOTER-LINK-001 — site oficial, 30/10/2026
+
+Rodapé único no RootLayout com símbolo/texto no link externo solicitado,
+target="_blank", noopener/noreferrer e nome acessível. Produto: layout e CSS
+escopado ao footer, sem mudanças em cabeçalho/auth/API/banco. Base main/533b184
+limpa. Hover/foco sem alteração de geometria; logo40x40, slogan e copyright iguais.
+Node69/69, lint/tipos/build e doctor/validate/verify aprovados; Harness parcial.
+Novo teste de mouse/teclado/toque passou; UI88/88, zero skips, matriz pública/
+user/admin320–1440px e texto200%. Cleanup confirmado/recursos0, metadados
+protegidos iguais; diff --check aprovado.
+Capturas desktop/celular normais/foco inspecionadas e anteriores preservadas.
+[Evidência](../evidence/footer-official-link.md). Autorrevisão; humana/dispositivo
+físico/CI remoto pendentes. Sem commit/push/publicação ou próxima etapa.
+
 ## REG-SUCCESS-UI-001 — conclusão alinhada, 30/10/2026
 
 Base main/75da973 inicialmente limpa; etapa independente concluída. Sucesso usa

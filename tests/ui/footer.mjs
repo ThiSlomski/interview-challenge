@@ -2,10 +2,72 @@ import assert from 'node:assert/strict';
 import { expect } from '@playwright/test';
 import { watchBrowserErrors } from './console.mjs';
 
+export async function inspectFooterLink(page, origin) {
+  const destination = 'https://www.slomskisolutions.com.br';
+  const externalRoute = route => route.fulfill({ contentType: 'text/html', body: '<title>Local destination fixture</title>' });
+  async function activate(targetPage, action) {
+    const opened = targetPage.waitForEvent('popup');
+    await action();
+    const popup = await opened;
+    try {
+      await popup.waitForLoadState();
+      assert.equal(popup.url(), destination + '/');
+      assert.equal(await popup.evaluate(() => window.opener === null), true);
+      await expect(targetPage).toHaveURL(origin + '/');
+    } finally { await popup.close(); }
+  }
+  await page.goto(origin);
+  const context = page.context();
+  await context.route(destination + '/**', externalRoute);
+  try {
+    const brand = page.locator('.footer-brand');
+    await brand.scrollIntoViewIfNeeded();
+    await page.mouse.move(0, 0);
+    await page.evaluate(() => document.fonts.ready);
+    const before = await brand.boundingBox();
+    const normal = await brand.evaluate(element => getComputedStyle(element).color);
+    await brand.hover();
+    assert.equal(await brand.evaluate(element => getComputedStyle(element).cursor), 'pointer');
+    assert.notEqual(await brand.evaluate(element => getComputedStyle(element).color), normal);
+    assert.deepEqual(await brand.boundingBox(), before, 'HOVER_PRESERVES_GEOMETRY');
+    await activate(page, () => brand.locator('img').click());
+    await activate(page, () => brand.locator('.brand-name').click());
+    // Reach the complete brand through the native tab order.
+    await page.mouse.move(0, 0);
+    await brand.focus();
+    await page.keyboard.press('Shift+Tab');
+    await page.keyboard.press('Tab');
+    await expect(brand).toBeFocused();
+    const focus = await brand.evaluate(element => {
+      const style = getComputedStyle(element);
+      return { visible: element.matches(':focus-visible'), outline: style.outlineStyle,
+        width: parseFloat(style.outlineWidth), color: style.color };
+    });
+    assert(focus.visible && focus.outline === 'solid' && focus.width >= 3);
+    assert.notEqual(focus.color, normal);
+    assert.deepEqual(await brand.boundingBox(), before, 'FOCUS_PRESERVES_GEOMETRY');
+    await activate(page, () => page.keyboard.press('Enter'));
+  } finally { await context.unroute(destination + '/**', externalRoute); }
+
+  const touchContext = await context.browser().newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+  try {
+    await touchContext.route(destination + '/**', externalRoute);
+    const mobile = await touchContext.newPage();
+    await mobile.goto(origin);
+    await inspectFooter(mobile);
+    await activate(mobile, () => mobile.locator('.footer-brand img').tap());
+    await activate(mobile, () => mobile.locator('.footer-brand .brand-name').tap());
+  } finally { await touchContext.close(); }
+}
+
 export async function inspectFooter(page) {
   await expect(page.locator('footer')).toHaveCount(1);
-  await expect(page.locator('footer a')).toHaveAccessibleName('Slomski Solutions — início');
-  await expect(page.locator('footer a')).toHaveAttribute('href', '/');
+  await expect(page.locator('footer a')).toHaveAccessibleName('Acessar o site da Slomski Solutions');
+  await expect(page.locator('footer a')).toHaveAttribute('href', 'https://www.slomskisolutions.com.br');
+  await expect(page.locator('footer a')).toHaveAttribute('target', '_blank');
+  await expect(page.locator('footer a')).toHaveAttribute('rel', 'noopener noreferrer');
+  await expect(page.locator('footer a img')).toHaveCount(1);
+  await expect(page.locator('footer a .brand-name')).toHaveText('SLOMSKISOLUTIONS');
   await expect(page.locator('footer img')).toHaveAttribute('alt', '');
   await expect(page.locator('.footer-slogan')).toHaveText('Engenharia digital para um futuro real.');
   await expect(page.locator('.footer-copyright')).toHaveText('© 2026 SLOMSKI SOLUTIONS');

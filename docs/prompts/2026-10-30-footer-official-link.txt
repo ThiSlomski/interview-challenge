@@ -1,0 +1,59 @@
+AJUSTE FINAL — RESTAURAR LINK DA SLOMSKI SOLUTIONS NO RODAPÉ
+
+O novo rodapé compartilhado removeu o link existente para o site oficial da Slomski Solutions.
+
+Restaure esse acesso no componente compartilhado do rodapé.
+
+REQUISITOS
+
+1. Transformar o conjunto visual da marca no lado esquerdo do rodapé em um único link:
+   - símbolo da Slomski Solutions;
+   - texto “SLOMSKI SOLUTIONS”.
+
+2. Destino exato:
+
+https://www.slomskisolutions.com.br
+
+3. O link deve:
+   - abrir em uma nova aba;
+   - utilizar `target="_blank"`;
+   - utilizar `rel="noopener noreferrer"`;
+   - possuir nome acessível, como `aria-label="Acessar o site da Slomski Solutions"`;
+   - incluir toda a área visual da marca, não somente o texto;
+   - apresentar cursor de link;
+   - funcionar com mouse, toque e teclado.
+
+4. Preservar:
+   - aparência atual do rodapé;
+   - dimensões do logotipo;
+   - alinhamento das três colunas;
+   - texto central “Engenharia digital para um futuro real.”;
+   - copyright;
+   - responsividade;
+   - foco visível;
+   - contraste;
+   - rodapé compartilhado em todas as páginas.
+
+5. Adicionar um efeito discreto de `hover` e foco, consistente com os demais links da aplicação, sem alterar bruscamente o tamanho ou provocar deslocamento do layout.
+
+6. Não duplicar o rodapé nem inserir o link individualmente em cada página. A alteração deve ser feita somente no componente compartilhado.
+
+7. Não alterar cabeçalho, navegação, autenticação, APIs, banco de dados ou qualquer comportamento não relacionado.
+
+TESTES
+
+Validar:
+
+- URL exata;
+- abertura em nova aba;
+- atributos de segurança;
+- navegação por teclado;
+- foco visível;
+- área completa da marca clicável;
+- funcionamento em desktop e celular;
+- presença do link em todas as páginas que utilizam o rodapé;
+- ausência de alteração visual ou regressão de layout.
+
+Executar lint, typecheck, testes relacionados, build e `git diff --check`.
+
+Não executar commit, push ou publicação.
