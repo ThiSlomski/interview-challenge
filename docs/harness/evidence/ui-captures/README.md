@@ -2,6 +2,17 @@
 
 Dados sintéticos. Desktop: 1280 × 900; celular: 390 × 844
 
+## Previsão no cadastro concluído — 30/10/2026
+
+WEATHER-001 atualiza somente o par 03, em página integral. Confirmação, resumo
+sem senha, previsão do segundo dia e atribuição Open-Meteo aparecem juntos.
+Resposta meteorológica sintética e interceptada, não previsão real. O texto de
+mensagem com script é fixture literal para verificar escape, nunca executado.
+Os demais 16 PNGs e as três referências são preservados por SHA-256, conforme
+[evidência/hashes](../ui.md#weather-001--previsão-do-dia-seguinte-30102026).
+Inspeção visual do agente em desktop/celular; revisão humana pendente.
+Sem indicador de desenvolvimento nas capturas. Históricos abaixo preservados.
+
 Conjunto consolidado após a correção histórica UI-001-P1. A padronização posterior
 moveu a galeria para `ui-captures/` e as referências para `ui-reference/`, sem
 modificar os PNGs ou o JSON oficial. Este README recebeu atualização documental.
@@ -18,7 +29,7 @@ deste conjunto. [Entrega principal](../ui.md) e [inventário](../ui-organization
 | Inicial com foco | Skip-link em linha própria, sem sobrepor marca | [Desktop](01-home-focus-desktop.png) | [Celular](01-home-focus-mobile.png) |
 | Cadastro vazio | Todos os campos, antes do envio | [Desktop](09-cadastro-desktop.png) | [Celular](09-cadastro-mobile.png) |
 | Cadastro com erros | Erro e foco de teclado simultâneos no campo de senha | [Desktop](02-cadastro-erros-desktop.png) | [Celular](02-cadastro-erros-mobile.png) |
-| Cadastro concluído | Resumo sem senha e indicação de login necessário | [Desktop](03-cadastro-sucesso-desktop.png) | [Celular](03-cadastro-sucesso-mobile.png) |
+| Cadastro concluído | Resumo sem senha, login necessário e previsão de amanhã | [Desktop](03-cadastro-sucesso-desktop.png) | [Celular](03-cadastro-sucesso-mobile.png) |
 | Área user | Cadastro próprio, sem controles administrativos | [Desktop](04-area-user-desktop.png) | [Celular](04-area-user-mobile.png) |
 | Área admin | Título e registros autorizados; sem capturar os 100 itens | [Desktop](06-area-admin-desktop.png) | [Celular](06-area-admin-mobile.png) |
 | Indisponibilidade | Falha segura, sem dados e com recuperação | [Desktop](07-area-indisponivel-desktop.png) | [Celular](07-area-indisponivel-mobile.png) |

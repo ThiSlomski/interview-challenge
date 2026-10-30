@@ -1,5 +1,79 @@
 # Arquitetura da solução
 
+## WEATHER-001 — previsão no navegador, 30/10/2026
+
+README 13.c/d implementados no sucesso do cadastro. Esta decisão substitui apenas
+as indicações históricas de clima pendente abaixo. O resumo continua somente
+em memória e é descartado ao recarregar/sair; senha, contrato do POST, banco,
+sessão, autorização e revalidação administrativa permanecem preservados.
+
+Open-Meteo foi escolhida por oferecer geocodificação e previsão diária REST
+diretamente no navegador, sem chave neste uso gratuito do desafio, sem dependência
+nova, embed, proxy, Server Action ou endpoint interno. Consulte os termos do
+serviço para outro uso comercial. Fontes oficiais consultadas em 30/10/2026:
+[geocodificação](https://open-meteo.com/en/docs/geocoding-api) e
+[previsão/WMO](https://open-meteo.com/en/docs).
+
+Fluxo: sucesso confirmado → Weather cliente recebe somente city/state/country →
+GET geocoding-api.open-meteo.com/v1/search → validação/seleção → GET
+api.open-meteo.com/v1/forecast com coordenadas → validação → seção acessível.
+shared/weather.mjs reúne validação, seleção, URLs, tradução WMO, formatação e
+coordenação HTTP; weather.d.mts descreve os campos externos consumidos e os
+resultados validados. components/ui/Weather.tsx controla ciclo de vida e exibição.
+
+A geocodificação pede 5 resultados em português. name combina cidade+estado,
+ou cidade+país sem estado, ou cidade sem ambos. Brasil/Brazil/BR adicionam
+countryCode=BR, sem tabela de países. A seleção normaliza acentos, espaços e
+maiúsculas; prioriza nome exato, região administrativa e país/código, com ordem
+da API como desempate estável. Rejeita nomes alheios e país incompatível com BR.
+Prefixos compatíveis são aceitos conforme busca do serviço. Homônimos, grafias,
+abreviações de estado e traduções podem continuar ambíguos; a localidade resolvida
+é exibida, sem afirmar validação postal/endereço ou pedir geolocalização do usuário.
+Não há busca adicional por endereço/CEP nem tabela global de países.
+
+A previsão pede somente weather_code, temperature_2m_max/min e
+precipitation_probability_max, timezone=auto e forecast_days=2. Usa o índice1
+do calendário devolvido no fuso da localização, sem calcular amanhã no fuso do
+navegador. Valida objeto, fuso, unidades, dois dias consecutivos, arrays,
+números finitos, mínima ≤ máxima e percentual 0–100; chuva ausente/null é omitida.
+A data civil é formatada em UTC ao meio-dia para não deslocar o dia por fuso.
+Códigos WMO conhecidos têm rótulos PT-BR; código inteiro desconhecido tem texto
+neutro. Textos externos são nós React, nunca HTML executável.
+
+Somente cidade/estado/país entram na busca; somente coordenadas e opções fixas
+entram na previsão. URLs usam URL/URLSearchParams. Ambas as chamadas são GET
+com credentials=omit, referrerPolicy=no-referrer, cache=no-store e redirect=error;
+sem nome, e-mail, endereço/CEP, mensagem, UUID, senha, cookies, tokens ou sessão.
+Não há persistência de previsão, chave ou variável de ambiente nova.
+Na revisão de configuração desta etapa, os dois placeholders legados de clima
+foram removidos de `.env.example`: não tinham consumidores no código ou nos
+validadores. Open-Meteo não exige credencial para o uso adotado. As URLs oficiais
+são constantes privadas do módulo, sem versões públicas de variáveis de ambiente
+ou configuração de host em runtime. `SESSION_TTL_SECONDS=3600` foi preservado
+por pertencer à autenticação; a CSP continua restrita aos mesmos dois hosts e self.
+
+Na base a640fa6, next.config.mjs não configurava CSP/headers; foi acrescentado
+somente Content-Security-Policy: connect-src 'self'
+https://geocoding-api.open-meteo.com https://api.open-meteo.com. Não há curingas
+nem alteração em outra diretiva/header. Isso delimita conexões, sem afirmar uma
+CSP completa para scripts/styles ou demais riscos fora desta etapa.
+
+Confirmação/resumo aparecem imediatamente. Clima tem loading anunciado por
+role=status/aria-live, sucesso, ausência de cidade sem requisição, localização
+ausente, resposta inválida, falha HTTP/rede e botão de retry. AbortController
+cancela ao desmontar ou tentar de novo; geração e signal descartam respostas
+antigas, inclusive transporte que ignora abort. Prazo de 12s torna rede travada
+recuperável. Cancelamento de desmontagem é silencioso porque a seção já saiu.
+Falha externa nunca transforma cadastro confirmado em erro e não revela detalhes
+internos. Atribuição legível abre Open-Meteo com noopener/noreferrer e aviso
+acessível de nova aba. Sem console com dados ou respostas externas.
+
+Unitários Node e browser Chromium interceptam o serviço; nenhuma execução depende
+de disponibilidade real. O cadastro principal da suíte continua real em PostgreSQL
+descartável; cenários isolados de clima interceptam POST 201 sem inserir usuários.
+Aceite, hashes, resultados e limites na [evidência UI](harness/evidence/ui.md#weather-001--previsão-do-dia-seguinte-30102026).
+Autorrevisão sequencial; revisão humana e CI remoto permanecem pendentes.
+
 ## Estado atual — UI-001 (29/10/2026)
 
 Cadastro/login/área protegida e logout integrados, com listagem administrativa.

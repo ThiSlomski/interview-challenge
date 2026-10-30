@@ -1,3 +1,52 @@
+## Refinamento visual do clima — 30/10/2026
+
+Etapa pontual autorizada: SVGs React locais por código WMO e remoção do aviso
+de descarte do resumo. Mensagem principal, persistência, resumo sem senha e
+descarte em memória preservados; sem mudança em endpoints/validação/dia/descrições/
+timeout/abort/retry/CSP ou outras páginas. Sem dependência/animação/asset externo.
+Unitários26/26, Harness parcial Node55/55, lint/typecheck/build aprovados;
+UI completa/documentos/hash/diff na [evidência](../evidence/ui.md#refinamento-visual-do-clima--30102026).
+UI final43/43, zero falhas/skips/diagnósticos inesperados; cadastro sintético
+persistido, cleanup0/metadados principais iguais; documentos/links/UTF-8/diff aprovados.
+Par03 atualizado; demais16 PNGs e3 referências preservados. Citação dos nomes
+legados somente no prompt integral; nenhuma configuração funcional reintroduzida.
+Autorrevisão; revisão humana/CI remoto/HTTPS/outros navegadores pendentes.
+Sem commit/push/publicação; alterações anteriores preservadas. Histórico abaixo.
+
+## Revisão da configuração de clima — 30/10/2026
+
+Configuração legada removida do exemplo; busca confirmou nenhum consumidor no
+código ou validador. Open-Meteo sem credencial no uso adotado; dois endpoints
+oficiais fixos em constantes internas, sem variáveis públicas. Sessão absoluta
+SESSION_TTL_SECONDS=3600 e CSP self/dois hosts intactos. Documentação/tabela
+alinhadas, com QA na [evidência](../evidence/ui.md#revisão-da-configuração-de-clima--30102026).
+QA atual: clima14/14, Node43/43 pelo Harness parcial; lint/typecheck/build,
+documentos/links/UTF-8 e diff aprovados; busca legada sem ocorrências.
+UI/HTTP/PG da entrega abaixo não reexecutados neste complemento; sem banco,
+commit/push/publicação. Revisão humana pendente; histórico preservado.
+
+## WEATHER-001 — estado vigente, 30/10/2026
+
+README 13.c/d implementados por pedido explícito, substituindo clima pendente
+dos históricos. Base main/a640fa6 limpa. Previsão no sucesso: client recebe só
+localização do resumo, geocodifica e consulta segundo dia com timezone=auto.
+Sem credencial/dependência/endpoint interno/SSR/persistência; connect-src limitado
+a self e dois hosts Open-Meteo, sem mexer em outros headers/diretivas.
+Cadastro/resumo/auth/admin/schema/revalidação permanecem preservados.
+
+QA final: unitários clima14/14; Harness comprovou43 Node; cadastro servidor8/8;
+UI clima28/28; UI completa43/43; HTTP/PG40/40. Zero falhas/skips finais;
+lint/typecheck/build/documentos/doctor/validate/verify parcial aprovados.
+Fixtures autorizadas somente locais descartáveis: cleanup0, metadados/ACLs
+principais iguais, nenhum dado real lido/alterado. Somente par03 atualizado,
+demais16 PNGs e3 referências preservados. Falhas intermediárias dos testes
+StrictMode, limites, hashes e diff na [UI canônica](../evidence/ui.md#weather-001--previsão-do-dia-seguinte-30102026).
+
+Autorrevisão sequencial; revisão humana, CI remoto, HTTPS/produção e múltiplos
+navegadores pendentes. Open-Meteo real não testada; respostas externas simuladas
+deterministicamente. Sem commit/push/publicação ou próxima etapa autorizada.
+Histórico abaixo preservado.
+
 ## Refinamento administrativo — 30/10/2026
 
 UI-001-A autorizado sobre main/4725e00 inicialmente limpo. User mantém cadastro

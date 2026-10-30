@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "node --test tests/database/config.test.mjs tests/registration/validation.test.mjs tests/registration/server-runner.test.mjs tests/auth/server-runner.test.mjs tests/authorization/server-runner.test.mjs",
+    "test": "node --test tests/database/config.test.mjs tests/registration/validation.test.mjs tests/registration/server-runner.test.mjs tests/auth/server-runner.test.mjs tests/authorization/server-runner.test.mjs tests/weather/weather.test.mjs",
     "test:registration:server": "node --conditions=react-server --test tests/registration/server.test.mjs",
     "test:auth:server": "node --conditions=react-server --test tests/auth/server.test.mjs",
     "test:db:integration": "node --test tests/database/integration.test.mjs",
@@ -19,7 +19,9 @@
     "db:check": "node scripts/database/cli.mjs check-app",
     "test:authorization:server": "node --conditions=react-server --test tests/authorization/server.test.mjs",
     "db:promote-admin": "node scripts/database/admin-user-cli.mjs",
-    "test:ui": "node --test tests/ui/integration.test.mjs"
+    "test:ui": "node --test tests/ui/integration.test.mjs",
+    "test:weather": "node --test tests/weather/weather.test.mjs",
+    "test:weather:ui": "node --test tests/weather/ui.test.mjs"
   },
   "dependencies": {
     "@node-rs/argon2": "2.2.2",

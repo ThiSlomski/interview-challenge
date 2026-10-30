@@ -1,0 +1,376 @@
+Implemente o requisito obrigatório de previsão do tempo do dia seguinte na tela de sucesso do cadastro.
+
+Antes de começar
+
+1. Confirme que a árvore está limpa.
+2. Leia:
+   - README, especialmente o requisito 13;
+   - fluxo atual de cadastro;
+   - tela de sucesso;
+   - armazenamento temporário do resumo;
+   - CSP e headers de segurança;
+   - testes e capturas do cadastro bem-sucedido;
+   - documentação canônica da arquitetura e da UI.
+3. Não altere funcionalidades já aprovadas fora deste escopo.
+
+Requisito original
+
+Após um cadastro bem-sucedido, a tela de sucesso deve apresentar:
+
+- confirmação do cadastro;
+- resumo dos dados enviados, sem senha;
+- previsão do tempo do dia seguinte para a cidade informada;
+- consumo de uma API REST gratuita diretamente pelo client;
+- nenhum embed.
+
+Decisão técnica
+
+Utilize a Open-Meteo diretamente no navegador, sem criar proxy ou endpoint interno.
+
+Fluxo esperado:
+
+1. receber cidade, estado e país do resumo temporário do cadastro;
+2. converter a localização em latitude e longitude usando a API de geocodificação;
+3. consultar a previsão do dia seguinte usando as coordenadas;
+4. apresentar um resultado simples, acessível e coerente com a UI existente.
+
+Geocodificação
+
+Endpoint:
+
+https://geocoding-api.open-meteo.com/v1/search
+
+Use parâmetros equivalentes a:
+
+- `name`
+- `count`
+- `language=pt`
+- `format=json`
+
+Monte a busca com:
+
+- cidade e estado, quando o estado estiver informado;
+- cidade e país, quando não houver estado;
+- somente cidade como último recurso.
+
+Se o país representar claramente Brasil, como `Brasil`, `Brazil` ou `BR`, pode usar `countryCode=BR`.
+
+Não tente manter uma tabela completa de países.
+
+Solicite poucos resultados e selecione deterministicamente o melhor candidato considerando:
+
+- nome normalizado da cidade;
+- estado ou região administrativa;
+- país;
+- resultado mais compatível retornado pela API.
+
+Não use apenas o primeiro resultado sem avaliar os dados disponíveis.
+
+Previsão
+
+Endpoint:
+
+https://api.open-meteo.com/v1/forecast
+
+Solicite somente os dados necessários:
+
+- `latitude`
+- `longitude`
+- `daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max`
+- `timezone=auto`
+- `forecast_days=2`
+
+A previsão exibida deve ser o segundo dia retornado, correspondente ao dia seguinte na localização consultada.
+
+Valide estruturalmente a resposta antes de acessar os índices. Não confie cegamente no JSON externo.
+
+Apresentação
+
+Crie uma seção na tela de sucesso com o título:
+
+`Previsão para amanhã`
+
+Apresente:
+
+- localidade resolvida;
+- data da previsão;
+- condição meteorológica em português;
+- temperatura mínima;
+- temperatura máxima;
+- probabilidade máxima de chuva, quando disponível;
+- atribuição discreta:
+  `Dados meteorológicos: Open-Meteo`
+
+A atribuição deve apontar para o site oficial da Open-Meteo, abrir de forma segura e permanecer legível.
+
+Converta os códigos meteorológicos WMO para descrições curtas em português, incluindo pelo menos:
+
+- céu limpo;
+- parcialmente nublado;
+- nublado;
+- neblina;
+- garoa;
+- chuva;
+- neve;
+- pancadas de chuva;
+- tempestade.
+
+Para códigos desconhecidos, exiba uma descrição neutra, sem quebrar a tela.
+
+Use o padrão visual existente da Slomski Solutions. Não redesenhe a página inteira.
+
+Estados obrigatórios
+
+Implemente estados claros para:
+
+1. carregamento;
+2. sucesso;
+3. cidade não informada;
+4. localização não encontrada;
+5. resposta externa inválida;
+6. falha de rede;
+7. cancelamento por desmontagem;
+8. tentativa novamente.
+
+Quando não houver cidade, não faça requisição e apresente:
+
+`Previsão indisponível porque a cidade não foi informada.`
+
+Em falhas externas:
+
+- preserve a confirmação e o resumo do cadastro;
+- não transforme o cadastro realizado em erro;
+- apresente uma mensagem amigável;
+- permita tentar novamente;
+- não exponha URL completa, stack trace ou detalhes internos.
+
+Privacidade
+
+Envie à Open-Meteo somente os dados necessários para localizar a cidade:
+
+- cidade;
+- estado;
+- país.
+
+Nunca envie:
+
+- nome;
+- e-mail;
+- endereço completo;
+- CEP;
+- mensagem;
+- identificador do usuário;
+- senha;
+- cookie;
+- token ou dados de sessão.
+
+Não persista a previsão no banco.
+
+Não adicione API key ou nova variável de ambiente, pois a integração escolhida não exige credencial para este uso.
+
+Segurança
+
+Atualize a CSP somente no mínimo necessário para permitir conexões do navegador com:
+
+- `https://geocoding-api.open-meteo.com`
+- `https://api.open-meteo.com`
+
+Restrinja a alteração a `connect-src`.
+
+Não amplie para curingas como:
+
+- `https:`
+- `*`
+- `*.open-meteo.com`
+
+Não enfraqueça outros headers.
+
+A implementação deve:
+
+- usar `AbortController`;
+- cancelar requisições ao desmontar ou iniciar nova tentativa;
+- ignorar respostas antigas;
+- usar URLs construídas com `URL` e `URLSearchParams`;
+- validar status HTTP;
+- validar os campos utilizados;
+- evitar renderização de HTML recebido externamente;
+- não usar `dangerouslySetInnerHTML`;
+- não registrar dados pessoais ou respostas completas no console.
+
+Arquitetura
+
+Prefira separar:
+
+- tipos das respostas externas;
+- validação das respostas;
+- seleção da localização;
+- tradução do código meteorológico;
+- componente visual;
+- coordenação das requisições.
+
+Não adicione dependência apenas para essa integração.
+
+A chamada deve acontecer no cliente, como determina o desafio.
+
+Não criar:
+
+- `/api/weather`;
+- Server Action para buscar o clima;
+- chamada durante SSR;
+- chamada dentro do endpoint de cadastro;
+- armazenamento da previsão.
+
+Preservações
+
+Não alterar:
+
+- contrato do cadastro;
+- schema ou migrations;
+- autenticação;
+- autorização;
+- sessão;
+- área protegida;
+- procedimento administrativo;
+- resumo sem senha;
+- descarte do resumo ao recarregar ou sair, conforme decisão atual;
+- UI administrativa;
+- intervalo ou lógica de revalidação da área protegida.
+
+Testes unitários
+
+Adicione testes para:
+
+1. normalização da localização;
+2. seleção correta entre resultados semelhantes;
+3. cidade inexistente;
+4. resposta de geocodificação inválida;
+5. resposta meteorológica inválida;
+6. seleção do dia seguinte;
+7. formatação de data;
+8. temperaturas;
+9. probabilidade de chuva;
+10. códigos meteorológicos conhecidos;
+11. código meteorológico desconhecido;
+12. ausência de cidade;
+13. URL montada com codificação segura.
+
+Testes de interface
+
+Com interceptação determinística das requisições externas, teste:
+
+1. tela de sucesso continua aparecendo imediatamente;
+2. estado de carregamento;
+3. resultado meteorológico do dia seguinte;
+4. cidade, estado e país usados na geocodificação;
+5. somente dados de localização enviados externamente;
+6. nenhuma informação pessoal indevida na URL;
+7. falha de geocodificação;
+8. localização sem resultados;
+9. falha da previsão;
+10. resposta externa malformada;
+11. botão de tentar novamente;
+12. cancelamento e resposta antiga ignorada;
+13. ausência de requisição quando cidade estiver vazia;
+14. cadastro permanece confirmado quando o clima falha;
+15. ausência de senha no DOM;
+16. nenhuma chamada para endpoint interno de clima;
+17. requisições iniciadas pelo navegador;
+18. desktop e celular;
+19. zero `pageerror` e diagnósticos inesperados.
+
+Os testes automatizados não devem depender da disponibilidade real da Open-Meteo.
+
+Se fizer uma verificação manual real, registre-a separadamente como teste externo não determinístico e não a torne obrigatória no CI.
+
+Capturas
+
+Atualize somente o par afetado da tela de cadastro concluído:
+
+- desktop;
+- celular.
+
+Use dados sintéticos.
+
+A captura deve mostrar:
+
+- confirmação do cadastro;
+- resumo sem senha;
+- previsão de amanhã;
+- atribuição à Open-Meteo.
+
+Preserve por hash as capturas não afetadas.
+
+Não capture o indicador de desenvolvimento do Next.js.
+
+Documentação
+
+Documente:
+
+- por que a Open-Meteo foi escolhida;
+- fluxo client → geocodificação → previsão;
+- ausência de chave;
+- dados enviados ao serviço externo;
+- tratamento de indisponibilidade;
+- CSP adicionada;
+- seleção do dia seguinte pelo fuso da localização;
+- limites e ambiguidades da geocodificação;
+- atribuição da fonte;
+- testes executados.
+
+Atualize a documentação canônica existente, sem criar trilha paralela.
+
+Salve este prompt integral em `docs/prompts/`.
+
+Adicione em `docs/AI_PROMPTS.md` somente o resumo com link para o arquivo integral.
+
+Validações finais
+
+Execute os comandos canônicos do projeto para:
+
+- testes da previsão;
+- cadastro;
+- UI completa;
+- lint;
+- typecheck;
+- build;
+- validação documental;
+- links e âncoras;
+- UTF-8;
+- `git diff --check`;
+- Harness aplicável.
+
+Confirme também:
+
+- nenhuma credencial adicionada;
+- nenhuma nova dependência desnecessária;
+- nenhuma API interna de clima;
+- CSP restrita aos dois hosts;
+- capturas não afetadas preservadas;
+- árvore sem arquivos temporários.
+
+Restrições
+
+- Não fazer commit.
+- Não fazer push.
+- Não publicar.
+- Não alterar banco.
+- Não usar dados pessoais reais.
+- Não iniciar melhorias de CI nesta etapa.
+- Não misturar ajustes administrativos ou visuais não relacionados.
+
+Entrega
+
+Ao concluir, informe:
+
+1. resumo da implementação;
+2. arquivos alterados;
+3. fluxo das duas chamadas REST;
+4. dados enviados externamente;
+5. estados tratados;
+6. alterações na CSP;
+7. testes e resultados;
+8. capturas atualizadas e hashes preservados;
+9. documentação atualizada;
+10. pendências reais;
+11. diff exclusivo;
+12. sugestão de commit isolado, sem executá-lo.

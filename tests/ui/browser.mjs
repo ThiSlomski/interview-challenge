@@ -6,6 +6,8 @@ import { registrationHttpTests } from '../registration/http-postgres.mjs';
 import { roleIdentifier } from '../../scripts/database/provision.mjs';
 import { inspectFields } from './fields.mjs';
 import { watchBrowserErrors } from './console.mjs';
+import { geocoding, weather } from '../weather/fixtures.mjs';
+import { weatherBrowserTests } from '../weather/browser.mjs';
 
 const expect = baseExpect.configure({ timeout: 15000 });
 
@@ -15,6 +17,9 @@ export function uiBrowserTests(t, config, admin) {
     const browser = await chromium.launch({ channel: 'chromium' });
     const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
     const page = await context.newPage();
+    // All external weather traffic is deterministic, including the real signup.
+    await page.route('https://geocoding-api.open-meteo.com/v1/search?*', route => route.fulfill({ json: geocoding }));
+    await page.route('https://api.open-meteo.com/v1/forecast?*', route => route.fulfill({ json: weather }));
     const diagnostics = watchBrowserErrors(page, origin);
     const screenshots = resolve('docs/harness/evidence/ui-captures');
     await mkdir(screenshots, { recursive: true });
@@ -23,9 +28,9 @@ export function uiBrowserTests(t, config, admin) {
     let id;
     // Only hide Next's development chrome, never application content.
     async function shot(name) {
-      // This refinement only changes the administrative pair. Other evidence
+      // This requirement only changes the signup success pair. Other evidence
       // stays byte-identical while the full functional suite still executes.
-      if (name !== '06-area-admin') return;
+      if (name !== '03-cadastro-sucesso') return;
       const original = page.viewportSize();
       for (const [device, viewport] of [['desktop', { width: 1280, height: 900 }], ['mobile', { width: 390, height: 844 }]]) {
         await page.setViewportSize(viewport);
@@ -43,6 +48,11 @@ export function uiBrowserTests(t, config, admin) {
           await expect(page.getByRole('heading', { name: 'Painel administrativo' })).toBeInViewport();
           await expect(page.getByText('Você · Administrador', { exact: true })).toBeInViewport();
           await expect(page.locator('.record-card').first()).toBeInViewport();
+        }
+        if (name === '03-cadastro-sucesso') {
+          const spacing = await page.getByRole('region', { name: 'Resumo do cadastro' }).evaluate(section =>
+            section.querySelector('.registration-success-actions').getBoundingClientRect().top - section.querySelector('dl').getBoundingClientRect().bottom);
+          assert(spacing >= 24, 'SUCCESS_ACTIONS_SPACING');
         }
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
         await page.screenshot({ path: resolve(screenshots, name + '-' + device + '.png'), fullPage: true, style: 'nextjs-portal { visibility: hidden !important; }' });
@@ -84,6 +94,10 @@ export function uiBrowserTests(t, config, admin) {
       assert.equal(await page.evaluate(() => document.cookie.includes('imobilead_session')), false);
     }
     try {
+      if (process.env.UI_WEATHER_ONLY === 'true') {
+        await weatherBrowserTests(t, browser, origin);
+        return;
+      }
       // Verify the icon resource rather than ignoring unrelated console 404s.
       assert.equal((await context.request.get(origin + '/brand/slomski-solutions-mark.svg')).status(), 200);
       await scenario('public navigation, direct protected redirect and keyboard', async () => {
@@ -136,10 +150,18 @@ export function uiBrowserTests(t, config, admin) {
       await scenario('successful signup, escaped text, memory-only summary and no session', async () => {
         await signup();
         await page.getByLabel(/^Cidade(?: \*)?$/).fill('Cidade Sintética');
+        await page.getByLabel(/^Estado(?: \*)?$/).fill('Paraná');
+        await page.getByLabel(/^País(?: \*)?$/).fill('Brasil');
         await page.getByLabel(/^Mensagem(?: \*)?$/).fill('<script>window.uiXss=1</script>');
         await page.getByRole('button', { name: 'Criar cadastro', exact: true }).click();
         await expect(page.getByRole('heading', { name: 'Cadastro concluído', exact: true })).toBeVisible();
         id = (await admin.query('SELECT id FROM imobilead.users WHERE email=$1', [email])).rows[0].id;
+        // Read only this synthetic row in the disposable fixture: removing the
+        // notice must not change real registration persistence.
+        const persisted = (await admin.query('SELECT name,city,state,country FROM imobilead.users WHERE id=$1', [id])).rows[0];
+        assert.deepEqual(persisted, { name: 'Pessoa Sintética UI', city: 'Cidade Sintética', state: 'Paraná', country: 'Brasil' });
+        await expect(page.getByText('Seu cadastro foi criado. Você ainda precisa entrar para acessar a área protegida.', { exact: true })).toBeVisible();
+        await expect(page.getByText(/Este resumo fica disponível somente nesta página/)).toHaveCount(0);
         await expect(page.getByRole('heading', { name: 'Cadastro concluído', exact: true })).toBeFocused();
         assert.equal((await page.locator('body').innerText()).includes(password), false);
         assert.equal(await page.locator('input[type="password"]').count(), 0);
@@ -149,6 +171,9 @@ export function uiBrowserTests(t, config, admin) {
         assert.equal((await context.request.get(origin + '/api/auth/session')).status(), 401);
         await expect(page.getByRole('heading', { name: 'Cadastro concluído', exact: true })).toBeFocused();
         assert.equal(await page.locator('.skip-link').evaluate(link => link.matches(':focus')), false);
+        await expect(page.getByText('31 de outubro de 2026', { exact: true })).toBeVisible();
+        await expect(page.locator('svg.weather-icon--partly-cloudy')).toBeVisible();
+        await expect(page.getByRole('link', { name: /Dados meteorológicos: Open-Meteo/ })).toBeVisible();
         await shot('03-cadastro-sucesso');
         await page.reload();
         await expect(page.getByRole('button', { name: 'Criar cadastro', exact: true })).toBeVisible();
@@ -405,6 +430,7 @@ export function uiBrowserTests(t, config, admin) {
         await shot('09-cadastro');
       });
       await scenario('field keyboard focus, layout, autofill and pending state', () => inspectFields(page, context, origin, shot));
+      await weatherBrowserTests(t, browser, origin);
     } finally {
       console.log(JSON.stringify({ uiBrowserDiagnostics: diagnostics.counts() }));
       diagnostics.dispose();

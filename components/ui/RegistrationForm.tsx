@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { registrationFields, validateRegistration } from '@/shared/registration.mjs';
 import UserDetails, { type UserRecord } from './Record';
 import { fieldMessages, requestMessage } from './messages';
+import Weather from './Weather';
 
 const fields = [
   ['name', 'Nome', 'text', 'name'],
@@ -101,15 +102,12 @@ export default function RegistrationForm() {
       </div>
       <section className="card form-card" aria-label="Resumo do cadastro">
         <UserDetails user={summary} />
-        <p className="notice summary-notice">
-          Este resumo fica disponível somente nesta página. Ao recarregar ou sair,
-          ele será descartado. Depois de entrar, você poderá consultar seus dados na sua área.
-        </p>
-        <div className="actions">
+        <div className="actions registration-success-actions">
           <Link className="button" href="/login">Entrar na minha conta</Link>
           <Link href="/">Voltar ao início</Link>
         </div>
       </section>
+      <Weather city={summary.city} state={summary.state} country={summary.country} />
     </>;
   }
 

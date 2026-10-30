@@ -1,3 +1,17 @@
+## WEATHER-001 — atualização vigente, 30/10/2026
+
+README13.c/d implementados: Open-Meteo REST diretamente no navegador, geocodificação
+avaliada e previsão do segundo dia local. Estados/privacidade/cancelamento/retry
+testados com respostas externas determinísticas. Confirmação e resumo preservados.
+[Decisão](ARCHITECTURE.md#weather-001--previsão-no-navegador-30102026),
+[evidência/testes/limites](harness/evidence/ui.md#weather-001--previsão-do-dia-seguinte-30102026).
+Esta atualização supera o clima pendente dos históricos abaixo; revisão humana
+permanece pendente, sem declaração de prontidão integral.
+Revisão de configuração: exemplo e tabela de ambiente não exigem configuração
+de clima; removidos placeholders legados sem consumidores. Endpoints Open-Meteo
+fixos em constantes internas, sem credencial no uso adotado nem variáveis públicas.
+`SESSION_TTL_SECONDS=3600` permanece da autenticação; CSP preservada.
+
 ## Entrada frontend consolidada — 29/10/2026
 
 [Entrega principal](harness/evidence/ui.md), [detalhe histórico P1](harness/evidence/ui-p1.md)
@@ -159,8 +173,8 @@ Estrutura de banco não conclui cadastro, autenticação, autorização ou logou
 | 12.b | Item 12 | Área respeita user/admin | User vê próprio registro; admin recebe listagem autorizada | Sem registros ou UI por papel | F/B; controle servidor também exigido | Pendente |
 | 13.a | README Parte 3, item 13 | Tela de sucesso confirma cadastro | Confirmação aparece após criação bem-sucedida | Sem cadastro/tela de sucesso | F/X | Pendente |
 | 13.b | Item 13 | Resumo submetido sem senha | Resumo mostra dados apropriados e omite senha | Sem resumo | F/X; sem teste de exposição | Pendente |
-| 13.c | Item 13 | Previsão do dia seguinte para cidade informada | Cidade e data de amanhã determinam a previsão exibida | Sem cidade, data ou consulta de clima | F/X | Pendente |
-| 13.d | Item 13 | API RESTful gratuita chamada a partir do client; sem embed | Evidência de chamada REST do navegador à API escolhida para previsão | REST cliente existente busca só `/api/v1`, que retorna mensagem fixa | F/X; revisão independente por fluxo, sem tráfego de navegador demonstrado | Pendente |
+| 13.c | Item 13 | Previsão do dia seguinte para cidade informada | Cidade e data de amanhã determinam a previsão exibida | WEATHER-001: localização avaliada, segundo dia no fuso local, estados e retry | Unitários e Chromium determinísticos na evidência UI | Implementado; revisão humana pendente |
+| 13.d | Item 13 | API RESTful gratuita chamada a partir do client; sem embed | Evidência de chamada REST do navegador à API escolhida para previsão | Open-Meteo direto do navegador, sem chave/proxy/embed/persistência | Chromium: duas fetch externas, URLs/headers e privacidade conferidos | Implementado; serviço real não exercitado |
 | 14.a | README Parte 5, item 14 | Unitários de validação | Casos relevantes válidos/inválidos executados em runner real | Node test runner em configuração de conexão; validação de cadastro ainda ausente | DB-001; não substitui os unitários funcionais do README | Parcial; escopo de configuração |
 | 14.b | Item 14 | Unitários de autorização | User não acessa outro; só admin lista todos | Sem regras/testes funcionais | B | Pendente |
 | 14.c | Item 14 | Ao menos um teste de API | Comportamento relevante de API é exercitado, por exemplo login ou 401/403 | Sem teste de API | B | Pendente |

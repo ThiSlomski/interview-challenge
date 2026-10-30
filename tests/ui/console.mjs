@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 
 // Keep only categories/counters: React diagnostic arguments can contain private
 // render data. Nothing here stores/prints raw browser messages, URLs or stacks.
-export function watchBrowserErrors(page, origin) {
+export function watchBrowserErrors(page, origin, weatherFailuresExpected = false) {
   const counts = { flushSync: 0, hydration: 0, consoleError: 0, consoleWarning: 0, pageerror: 0, preloadHint: 0, navigations: 0, documents: 0 };
   function consoleMessage(message) {
     const type = message.type();
@@ -20,6 +20,8 @@ export function watchBrowserErrors(page, origin) {
     // These suites deliberately exercise failed/denied API requests. Allow only
     // Chromium's resource diagnostic at the API URL, never arbitrary app errors.
     const api = message.location().url.startsWith(origin + '/api/');
+    const weather = weatherFailuresExpected && /^https:\/\/(?:geocoding-api|api)\.open-meteo\.com\/v1\/(?:search|forecast)\?/.test(message.location().url);
+    if (weather && /^Failed to load resource:/.test(text) && /(?:status of 503\b|net::ERR_FAILED|net::ERR_ABORTED)/.test(text)) return;
     if (api && /^Failed to load resource:/.test(text)
       && /(?:status of (?:400|401|403|408|409|413|415|429|500|503)\b|net::ERR_FAILED|net::ERR_ABORTED)/.test(text)) return;
     counts[type === 'warning' ? 'consoleWarning' : 'consoleError']++;

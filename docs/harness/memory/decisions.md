@@ -1,5 +1,17 @@
 # Índice de decisões
 
+## WEATHER-001 — 30/10/2026
+
+Open-Meteo sem chave, diretamente no navegador: geocodificação com localização
+e previsão com coordenadas; índice 1 dos dois dias em timezone=auto. Sem proxy,
+endpoint interno, dependência nova ou persistência. URLs restritas e credenciais
+omitidas; somente connect-src acrescentado à CSP antes ausente na base a640fa6.
+Validação externa, prazo, abortos/geração, retry e confirmação independente.
+[Decisão completa](../../ARCHITECTURE.md#weather-001--previsão-no-navegador-30102026),
+[contrato](../evidence/weather-plan.md) e
+[evidência UI](../evidence/ui.md#weather-001--previsão-do-dia-seguinte-30102026).
+Autorrevisão sequencial; revisão humana e CI remoto pendentes.
+
 ## REG-001 — 29/10/2026
 
 POST /api/users, Argon2id (@node-rs/argon2 2.2.2), validação compartilhada sem banco,

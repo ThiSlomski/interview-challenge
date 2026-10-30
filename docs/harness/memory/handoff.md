@@ -1,3 +1,53 @@
+## Refinamento visual do clima — 30/10/2026
+
+WeatherIcon local/declarativo, grupos WMO com fallback, decorativo e sem animação.
+Composição pontual no sucesso; aviso ambíguo do resumo removido, sem alterar
+resumo em memória, cadastro persistido, API/banco/auth ou módulo/ciclo REST/CSP.
+Unitários26/26 e Harness Node55/55; lint/typecheck/build aprovados. UI completa,
+hashes, documentos e diff incremental na [evidência](../evidence/ui.md#refinamento-visual-do-clima--30102026).
+UI final43/43, zero falhas/skips/diagnósticos inesperados; persistência sintética
+conferida, cleanup0/metadados principais iguais. Documentos/links/UTF-8/diff passaram.
+Somente par03 atualizado;16 PNGs e3 referências preservados por hash.
+Nomes antigos de configuração apenas como citação do usuário no prompt integral,
+nenhum uso funcional. Autorrevisão; revisão humana pendente. Sem commit/push/
+publicação; alterações anteriores preservadas. Histórico abaixo.
+
+## Revisão da configuração de clima — 30/10/2026
+
+Complemento autorizado: removidos os dois placeholders de clima do exemplo de
+ambiente após busca confirmar ausência de consumidores/validadores. Open-Meteo
+sem credencial neste uso, endpoints oficiais em constantes internas; nenhuma
+variável pública. SESSION_TTL_SECONDS=3600 e CSP com self/dois hosts preservados.
+SOLUTION/arquitetura/requisitos/tabela e registros atualizados. Verificações
+atuais na [evidência](../evidence/ui.md#revisão-da-configuração-de-clima--30102026).
+QA deste complemento: clima14/14, Harness parcial com Node43/43, lint/typecheck/
+build/documentos/links/UTF-8/diff aprovados. Busca legada sem ocorrências.
+Sem acesso ao banco/reexecução UI/commit/push; alterações anteriores preservadas.
+Autorrevisão; revisão humana pendente. Histórico abaixo.
+
+## WEATHER-001 — previsão no sucesso, 30/10/2026
+
+Implementação explicitamente autorizada de README 13.c/d em main/a640fa6,
+inicialmente limpo. Open-Meteo REST no navegador, geocodificação avaliada e
+previsão do segundo dia no fuso local, sem chave/dependência/proxy/persistência.
+Resumo em memória, cadastro/API/auth/banco/admin/revalidação preservados.
+Somente connect-src adicionado aos dois hosts exatos e self; antes não havia CSP.
+Estados acessíveis, validação JSON, cancelamento/geração/prazo/retry implementados.
+
+QA local: clima unitário14/14, Node43/43 comprovados pelo Harness, servidor de
+cadastro8/8, UI isolada28/28, UI completa43/43 e HTTP/PG40/40; zero falhas/skips
+nos resultados finais. Falhas intermediárias dos testes e correção StrictMode
+registradas na evidência. Lint/typecheck/build/documentos/Harness parcial passaram.
+Fixtures locais autorizadas via TEST_ADMIN_DATABASE_URL: cleanup0 e metadados
+principais preservados, sem leitura de cadastros reais/escrita em imobilead.
+Par03 atualizado;16 capturas e3 referências preservadas por hash.
+
+[Decisão](../../ARCHITECTURE.md#weather-001--previsão-no-navegador-30102026),
+[evidência/hashes/diff](../evidence/ui.md#weather-001--previsão-do-dia-seguinte-30102026).
+Autorrevisão sequencial; revisão humana/CI remoto/HTTPS/múltiplos navegadores
+pendentes. Serviço externo real não exercitado; testes interceptam Open-Meteo.
+Sem commit/push/publicação; nenhuma próxima etapa iniciada. Histórico abaixo.
+
 ## Refinamento administrativo — 30/10/2026
 
 UI-001-A autorizado sobre main/4725e00 inicialmente limpo. User mantém cadastro

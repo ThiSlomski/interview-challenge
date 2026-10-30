@@ -14,7 +14,11 @@ Roteiro vigente único do frontend UI-001, incluindo a correção histórica UI-
 2. Na inicial `/`, escolha Criar cadastro. Confira erros de validação e preencha
    os campos com dados seus ou sintéticos no seu ambiente de avaliação.
 3. Após sucesso em `/cadastro`, confira resumo sem senha e aviso de login necessário.
-   Ele existe somente em memória; recarregar/saída descarta. Entre em `/login`.
+   Confira também Previsão para amanhã: localidade resolvida, data, condição,
+   mínima/máxima, chuva quando disponível e atribuição Open-Meteo. Sem cidade
+   não há consulta; indisponibilidade oferece Tentar novamente e mantém cadastro
+   confirmado. Resumo e previsão existem somente em memória; recarregar/saída
+   descarta. Entre em `/login`.
 4. Consulte `/area`: usuário comum vê apenas o próprio cadastro. Sem sessão válida,
    a URL deve redirecionar; falha de infraestrutura exibe indisponibilidade segura.
 5. Avalie a listagem paginada com administrador já provisionado pelo
@@ -37,7 +41,9 @@ identidade conferida antes/depois da permissão e sessão absoluta3600s sem reno
 
 Identidade Slomski Solutions com SVG/fontes locais; rodapé identifica o
 Desafio técnico Imobilead e abre o site oficial com aviso acessível de nova aba.
-Clima, revisão humana, CI remoto do diff e HTTPS/produção seguem pendentes.
+Clima usa REST Open-Meteo diretamente no navegador, sem chave/configuração nova,
+enviando somente localização/coordenadas. [Decisão e limites](docs/ARCHITECTURE.md#weather-001--previsão-no-navegador-30102026).
+Revisão humana, CI remoto do diff e HTTPS/produção seguem pendentes.
 Resultados históricos e verificação desta organização estão separados na entrega
 principal; reorganizar documentos não reaprova por si só a correção assíncrona.
 
@@ -138,6 +144,12 @@ carregamento normal de ambiente. Nenhum cliente deve receber essas variáveis.
 | DATABASE_URL | papel imobilead_app, uso exclusivo do servidor da aplicação |
 | DB_TRUST_REMOVED | defina true somente após conferir que regra trust temporária foi removida |
 | SESSION_TTL_SECONDS | sessão absoluta de3600 segundos, sem renovação |
+
+O clima não usa variáveis de ambiente nem credencial no uso adotado da
+Open-Meteo. Os dois endpoints oficiais são constantes internas de
+`shared/weather.mjs`; não há configuração pública de URL/chave. Os placeholders
+legados de clima foram removidos do exemplo. `SESSION_TTL_SECONDS=3600` permanece
+obrigatório para autenticação e não pertence à previsão.
 
 Todas as URLs desta etapa apontam para `127.0.0.1:5432/imobilead`. O runtime exige
 `imobilead_app` e verifica os privilégios efetivos; não use `postgres` na aplicação.
@@ -309,7 +321,14 @@ a chamar os testes offline pelo script atualizado; integração PostgreSQL isola
 no CI fica pendente. A aprovação anterior de CI/build foi informada pelo usuário
 para o checkpoint do Harness V1; esta etapa não dispara nem comprova CI remoto.
 
-O frontend integra cadastro/login/consulta/logout. Clima é o próximo requisito, ainda pendente; CI remoto do diff, HTTPS e revisão humana também não foram aprovados. Integração e navegador permanecem separados do adaptador parcial do Harness.
+O frontend integra cadastro/login/consulta/logout e previsão de amanhã no sucesso.
+Execute `npm run test:weather` para 14 unitários offline (também no npm test) e
+`npm run test:ui` para UI completa com clima interceptado deterministicamente,
+incluindo privacidade, falhas, retry e cancelamento. Use somente a fixture local
+descartável autorizada, com TEST_ADMIN_DATABASE_URL; nunca dados reais.
+[Resultados atuais](docs/harness/evidence/ui.md#weather-001--previsão-do-dia-seguinte-30102026).
+CI remoto do diff, HTTPS e revisão humana não foram aprovados. Integração e
+navegador permanecem separados do adaptador parcial do Harness.
 
 ## Contrato de cadastro REG-001
 

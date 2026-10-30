@@ -1,0 +1,211 @@
+Faça um refinamento visual pontual na tela de cadastro concluído antes do commit da implementação de clima.
+
+Objetivos
+
+1. Adicionar ilustrações meteorológicas coerentes com a condição prevista.
+2. Remover o aviso técnico sobre o descarte do resumo temporário.
+3. Preservar integralmente o cadastro, a integração Open-Meteo e as proteções já implementadas.
+
+Remoção do aviso
+
+Remova completamente da tela o bloco com o texto:
+
+“Este resumo fica disponível somente nesta página. Ao recarregar ou sair, ele será descartado. Depois de entrar, você poderá consultar seus dados na sua área.”
+
+Esse texto:
+
+- não é requisito do desafio;
+- descreve um detalhe técnico de implementação;
+- pode fazer o usuário acreditar que o cadastro será apagado;
+- repete informações já comunicadas no topo e nos botões.
+
+Não substitua por outra explicação técnica.
+
+Preserve a mensagem principal:
+
+“Seu cadastro foi criado. Você ainda precisa entrar para acessar a área protegida.”
+
+O cadastro deve continuar persistido normalmente. A remoção é somente visual e textual. Não altere a estratégia atual do resumo temporário.
+
+Ícones meteorológicos
+
+Crie um componente próprio, por exemplo:
+
+`components/ui/WeatherIcon.tsx`
+
+Use SVGs locais e declarativos em React.
+
+Não use:
+
+- imagens externas;
+- emojis como solução principal;
+- biblioteca de ícones;
+- nova dependência;
+- SVG carregado de domínio externo;
+- `dangerouslySetInnerHTML`.
+
+Os ícones devem usar os códigos WMO já recebidos da Open-Meteo.
+
+Mapeamento visual esperado
+
+- código 0: sol;
+- códigos 1 e 2: sol parcialmente encoberto por nuvem;
+- código 3: nuvens;
+- códigos 45 e 48: neblina;
+- códigos 51 a 57: nuvem com garoa;
+- códigos 61 a 67: nuvem com chuva;
+- códigos 71 a 77: nuvem com neve;
+- códigos 80 a 82: nuvem com pancadas de chuva;
+- códigos 85 e 86: pancadas de neve;
+- códigos 95, 96 e 99: nuvem com raio e chuva;
+- código desconhecido: nuvem neutra.
+
+Os SVGs podem reutilizar partes internas como:
+
+- sol;
+- nuvem;
+- gotas;
+- flocos;
+- raio;
+- linhas de neblina.
+
+Evite duplicação excessiva de marcação.
+
+Design
+
+O ícone deve:
+
+- aparecer próximo ao título ou à condição meteorológica;
+- ter presença visual, sem dominar o cartão;
+- utilizar as cores e tokens existentes;
+- combinar amarelo institucional, texto claro e tons secundários discretos;
+- funcionar em desktop e celular;
+- não provocar estouro horizontal;
+- manter aparência profissional;
+- continuar compreensível sem cor.
+
+Sugestão de composição:
+
+- ícone grande à esquerda;
+- à direita: localidade, data e condição;
+- abaixo: mínima, máxima e probabilidade de chuva;
+- atribuição à Open-Meteo no rodapé do cartão.
+
+Não precisa seguir essa composição literalmente se a estrutura atual permitir uma solução mais limpa.
+
+Acessibilidade
+
+- mantenha a condição meteorológica escrita em texto;
+- trate o SVG como decorativo com `aria-hidden="true"` quando o texto já informar a condição;
+- não dependa somente do ícone para comunicar chuva, sol ou tempestade;
+- preserve contraste e foco;
+- respeite `prefers-reduced-motion`;
+- não adicione animação obrigatória.
+
+Não é necessário animar os ícones. Se houver qualquer movimento sutil, ele deve ser desabilitado com `prefers-reduced-motion`.
+
+Preservações obrigatórias
+
+Não alterar:
+
+- chamadas à Open-Meteo;
+- geocodificação;
+- seleção do dia seguinte;
+- códigos e descrições meteorológicas;
+- CSP;
+- timeout;
+- cancelamento;
+- retry;
+- validação das respostas;
+- dados enviados externamente;
+- cadastro;
+- banco;
+- API;
+- autenticação;
+- resumo sem senha;
+- comportamento da tela após recarregar;
+- demais páginas.
+
+Variáveis antigas
+
+Confirme também que não permanecem referências funcionais ou documentais a:
+
+- `WEATHER_API_BASE_URL`;
+- `WEATHER_API_KEY`.
+
+A integração deve continuar usando os dois endpoints oficiais fixos, sem chave e sem variáveis `NEXT_PUBLIC`.
+
+Testes
+
+Atualize ou adicione testes para verificar:
+
+1. sol no código 0;
+2. parcialmente nublado;
+3. nublado;
+4. neblina;
+5. garoa;
+6. chuva;
+7. neve;
+8. pancadas;
+9. tempestade;
+10. fallback para código desconhecido;
+11. presença da descrição textual;
+12. SVG decorativo não duplica informação para leitor de tela;
+13. aviso sobre descarte do resumo não aparece mais;
+14. confirmação do cadastro permanece;
+15. resumo continua sem senha;
+16. integração e retry continuam funcionando;
+17. layout desktop e celular;
+18. ausência de erros no console.
+
+Capturas
+
+Atualize novamente somente:
+
+- `03-cadastro-sucesso-desktop.png`;
+- `03-cadastro-sucesso-mobile.png`.
+
+Use dados sintéticos e uma condição meteorológica que demonstre claramente o novo ícone.
+
+Preserve por SHA-256 todas as outras capturas e referências.
+
+Documentação
+
+Registre este refinamento no prompt integral da etapa ou em um prompt complementar dentro de `docs/prompts/`, seguindo a organização vigente.
+
+Mantenha em `docs/AI_PROMPTS.md` apenas o índice resumido.
+
+Atualize somente a evidência canônica da UI necessária para registrar:
+
+- ícones derivados dos códigos WMO;
+- remoção do aviso ambíguo;
+- preservação da persistência real do cadastro;
+- testes e capturas atualizados.
+
+Validações
+
+Execute:
+
+- testes unitários do clima;
+- UI completa;
+- lint;
+- typecheck;
+- build;
+- validação documental;
+- links e âncoras;
+- UTF-8;
+- `git diff --check`;
+- Harness aplicável.
+
+Não fazer commit, push ou publicação.
+
+Ao concluir, informe:
+
+- componente criado;
+- mapeamento visual implementado;
+- aviso removido;
+- testes executados;
+- capturas atualizadas;
+- hashes preservados;
+- diff atualizado;
+- pendências reais.

@@ -253,3 +253,35 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 - Objetivo: distinguir user/admin em /area e eliminar duplicação visual, preservando segurança.
 - Registro: [prompt integral](prompts/2026-10-30-area-administrativa.md).
 - Resultado: cabeçalho administrativo, marcador próprio, paginação contextual e CEP visual; navegação raiz preservada pela arquitetura estática. Evidências/testes em [UI](harness/evidence/ui.md#refinamento-administrativo--30102026); revisão humana pendente.
+
+## Previsão de amanhã WEATHER-001 — 30/10/2026
+
+- Pedido aceito: implementar README13 com Open-Meteo client, privacidade, estados,
+  CSP mínima, testes/capturas e documentação. [Prompt integral](prompts/2026-10-30-weather.txt).
+- Esclarecimento aceito: suíte completa somente em fixture local descartável,
+  TEST_ADMIN_DATABASE_URL/127.0.0.1:5432, metadados principais preservados e cleanup.
+- Ferramenta: Codex; execução/autorrevisão sequenciais com skills locais de plano,
+  entrega, verificação e registro. Sem agentes adicionais, commit/push/publicação.
+- Resultado e ajustes: validação externa, seleção, cancelamento/retry e UI pontual;
+  base não tinha CSP, por isso acrescentado somente connect-src. Lint apontou um
+  aviso de cleanup/ref, corrigido sem desativar regra. [Evidência](harness/evidence/ui.md#weather-001--previsão-do-dia-seguinte-30102026).
+- Limites: teste externo real e CI remoto não executados; revisão humana pendente.
+
+### Revisão da configuração de clima — 30/10/2026
+
+- Pedido aceito: conferir consumidores, remover configuração legada do exemplo e
+  documentos, preservar sessão e restringir endpoints/CSP; sem commit/push.
+- Resultado: apenas o exemplo ainda continha placeholders; nenhum consumidor ou
+  validador dependia deles. Endpoints mantidos como constantes internas, sem chave
+  ou variáveis públicas. [Registro e verificações](harness/evidence/ui.md#revisão-da-configuração-de-clima--30102026).
+- A nomenclatura legada não é repetida na documentação para manter a busca
+  solicitada sem ocorrências; este resumo registra a correção complementar.
+
+### Refinamento visual do clima — 30/10/2026
+
+- Pedido: SVGs locais derivados dos códigos WMO e remoção do aviso ambíguo do
+  resumo, preservando persistência e integração. [Prompt integral](prompts/2026-10-30-weather-visual.txt).
+- Resultado: WeatherIcon decorativo/estático, condição textual preservada,
+  composição responsiva com tokens existentes e remoção somente do aviso.
+- Testes, capturas, hashes e limites na [evidência UI](harness/evidence/ui.md#refinamento-visual-do-clima--30102026).
+  Autorrevisão sequencial; revisão humana pendente, sem commit/push/publicação.
