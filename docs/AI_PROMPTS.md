@@ -461,3 +461,7 @@ e acumulado. Sem commit/push/deploy; revisão humana/CI remoto pendentes.
 Perfil próprio independente, usuários comuns e outros administradores separados; edição no mesmo espaço e abertura da confirmação no primeiro clique. [Pedido integral](prompts/2026-10-30-admin-profile-separation.txt) e [evidência](harness/evidence/admin-profile-separation.md).
 
 Complementos integrais: [modal no primeiro clique](prompts/2026-10-30-admin-profile-complement-1.txt) e [edição no mesmo cartão e largura](prompts/2026-10-30-admin-profile-complement-2.txt).
+
+## PROFILE-UI-003 — edição compartilhada, 30/10/2026
+
+Pedido complementar para compartilhar substituição e largura do cartão de perfil entre user/admin. [Pedido integral](prompts/2026-10-30-shared-profile-edit.txt) e [evidência](harness/evidence/shared-profile-edit.md).

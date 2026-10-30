@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-30",
+  "base": "e2c80e454633749d2875f4950f9ce575401a1fab",
+  "results": [
+    {
+      "name": "profile",
+      "tests": 35,
+      "pass": 35,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "cleanupConfirmed": true,
+      "protectedMetadataUnchanged": true
+    },
+    {
+      "name": "ui",
+      "tests": 51,
+      "pass": 51,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "cleanupConfirmed": true,
+      "protectedMetadataUnchanged": true
+    },
+    {
+      "name": "admin",
+      "tests": 41,
+      "pass": 41,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "cleanupConfirmed": true,
+      "protectedMetadataUnchanged": true
+    },
+    {
+      "name": "races",
+      "tests": 58,
+      "pass": 58,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "cleanupConfirmed": true,
+      "protectedMetadataUnchanged": true
+    }
+  ],
+  "harness": {
+    "ok": true,
+    "partial": true,
+    "readiness": "not-assessed",
+    "tests": 62
+  },
+  "build": "passed",
+  "review": "self-review; human and remote CI pending"
+}

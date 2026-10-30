@@ -1,3 +1,16 @@
+## PROFILE-UI-003 — edição compartilhada user/admin, 30/10/2026
+
+Pedido complementar supera a preservação do editor user anterior. Base main/e2c80e4
+inicialmente limpa; apenas Area/CSS no produto. Uma seção/slot alterna card/editor
+para ambos papéis, sem duplicação ou encolhimento horizontal. Títulos/selo mantidos;
+callbacks/versão/draft/foco, polling, API, auth, modal e rodapé preservados.
+Perfil35/35, UI51/51, admin41/41 e corridas58/58, zero falhas/skips finais.
+Lint/tipos/build/doctor/validate/verify aprovados; Harness62/62, parcial e
+readiness:not-assessed. Cleanup0/metadados protegidos iguais. Apenas par04
+atualizado;18 PNGs+3 referências iguais por SHA256. Sem uso de contas persistentes,
+commit/push/deploy. Autorrevisão; humana e CI remoto pendentes.
+[Contrato, pedido, resultados e diff](../evidence/shared-profile-edit.md).
+
 ## ADMIN-UI-002 — perfil administrativo e complementos, 30/10/2026
 
 Base main/d32c6d0 inicialmente limpa. Próprio perfil de loadArea.own no topo,

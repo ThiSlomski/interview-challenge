@@ -31,6 +31,9 @@ export function uiBrowserTests(t, config, admin) {
     async function shot(name) {
       if (process.env.FOOTER_BROWSER_TEST === 'true') await inspectFooterMatrix(page, name);
       if (process.env.UI_UPDATE_CAPTURES === 'false') return;
+      if (process.env.UI_UPDATE_CAPTURES === 'profile') {
+        if (name !== '04-area-user') return;
+      } else
       // This requirement only changes the signup success pair. Other evidence
       // stays byte-identical while the full functional suite still executes.
       if (process.env.UI_UPDATE_CAPTURES !== 'all' && name !== '03-cadastro-sucesso') return;

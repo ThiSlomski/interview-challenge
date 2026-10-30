@@ -479,14 +479,14 @@ input[aria-invalid='true'], textarea[aria-invalid='true'] {
   margin-bottom: var(--space-5);
 }
 .own-admin-card { border-top: 2px solid var(--accent); }
-.admin-profile-slot { margin-bottom: var(--space-5); }
-.admin-profile-slot > .card {
+.profile-slot { margin-bottom: var(--space-5); }
+.profile-slot > .card {
   width: 100%;
   max-width: none;
   margin: 0;
-  border-top: 2px solid var(--accent);
 }
-.admin-profile-slot .form-grid > .field:first-child { grid-column: 1 / -1; }
+.admin-profile-slot > .card { border-top: 2px solid var(--accent); }
+.profile-slot .form-grid > .field:first-child { grid-column: 1 / -1; }
 .section-description { color: var(--muted); margin-bottom: var(--space-5); }
 .pagination-context { flex-basis: 100%; color: var(--muted); margin: 0; }
 .area-toolbar {

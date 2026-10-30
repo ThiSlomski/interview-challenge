@@ -445,21 +445,17 @@ export default function Area({ data, hasAfter = false }: { data: AreaData; hasAf
       {deleteTarget && <DeleteUserDialog user={deleteTarget} busy={deleting} dialogRef={deleteDialog} onCancel={() => actions.current?.cancelDelete()} onConfirm={() => void actions.current?.remove()} onLogout={() => void actions.current?.logout()} />}
       {deleting && !deleteTarget && <p className="notice" role="status">A exclusão continua em processamento. Aguarde a confirmação e a atualização da listagem.</p>}
       {success && <p className="notice success" role="status">{success}</p>}
-      {editor && !data.admin && <ProfileForm key={editor.etag} profile={editor} busy={busy} feedback={profileFeedback} onSave={input => void actions.current?.save(input)} onCancel={() => actions.current?.cancelEdit()} onReload={() => void actions.current?.edit()} />}
-      {!data.admin && <section className="card"><h2>Meu cadastro</h2><UserDetails user={snapshot.own} />
-        {!editor && <button ref={editButton} className="secondary profile-edit-action" disabled={busy} onClick={() => void actions.current?.edit()}>Editar meu cadastro</button>}
-      </section>}
-      {data.admin && <>
-        <section className="area-section" aria-labelledby="own-admin-title">
-          <h2 id="own-admin-title">Meu cadastro administrativo</h2>
-          <div className="admin-profile-slot">
-          {editor ? <ProfileForm key={editor.etag} embedded profile={editor} busy={busy} feedback={profileFeedback} onSave={input => void actions.current?.save(input)} onCancel={() => actions.current?.cancelEdit()} onReload={() => void actions.current?.edit()} /> : <article className="card record-card own-admin-card" aria-label={'Cadastro de ' + snapshot.own.name}>
-            <p className="record-badge">Você · Administrador</p>
-            <UserDetails user={snapshot.own} omitEmptyMessage />
-            {!editor && <button ref={editButton} className="secondary profile-edit-action" disabled={busy} onClick={() => void actions.current?.edit()}>Editar meu cadastro</button>}
+        <section className="area-section" aria-labelledby="own-profile-title">
+          <h2 id="own-profile-title">{data.admin ? 'Meu cadastro administrativo' : 'Meu cadastro'}</h2>
+          <div className={'profile-slot' + (data.admin ? ' admin-profile-slot' : '')}>
+          {editor ? <ProfileForm key={editor.etag} embedded profile={editor} busy={busy} feedback={profileFeedback} onSave={input => void actions.current?.save(input)} onCancel={() => actions.current?.cancelEdit()} onReload={() => void actions.current?.edit()} /> : <article className={'card' + (data.admin ? ' record-card own-admin-card' : '')} aria-label={'Cadastro de ' + snapshot.own.name}>
+            {data.admin && <p className="record-badge">Você · Administrador</p>}
+            <UserDetails user={snapshot.own} omitEmptyMessage={data.admin} />
+            <button ref={editButton} className="secondary profile-edit-action" disabled={busy} onClick={() => void actions.current?.edit()}>Editar meu cadastro</button>
           </article>}
           </div>
         </section>
+      {data.admin && <>
         <section className="area-section" aria-labelledby="managed-users-title">
         <h2 id="managed-users-title" ref={listTitle} tabIndex={-1}>Usuários cadastrados</h2>
         <p className="section-description">Contas comuns cadastradas na plataforma.</p>

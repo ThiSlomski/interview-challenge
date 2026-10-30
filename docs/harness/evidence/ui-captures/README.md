@@ -2,6 +2,13 @@
 
 Dados sintéticos. Desktop: 1280 × 900; celular: 390 × 844
 
+## PROFILE-UI-003 — edição compartilhada, 30/10/2026
+
+Somente par04 (Minha área, desktop/mobile) atualizado pela estrutura compartilhada
+do perfil. Cartão e editor passam a ocupar alternadamente o mesmo slot em ambos
+os papéis. Demais18 PNGs e três referências preservados por SHA256.
+[Evidência](../shared-profile-edit.md) e [hashes](../shared-profile-edit-hashes.json).
+
 ## ADMIN-UI-002 — perfil administrativo separado, 30/10/2026
 
 Somente pares06 (painel administrativo) e10 (confirmação sobre o painel)

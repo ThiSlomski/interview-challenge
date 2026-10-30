@@ -1,0 +1,86 @@
+COMPLEMENTO — APLICAR O MESMO COMPORTAMENTO CORRETO AO USUÁRIO COMUM
+
+O problema de edição identificado na área administrativa também existe em “Minha área” para usuários comuns:
+
+- o formulário aparece acima do cartão “Meu cadastro”;
+- o cartão original continua visível;
+- as informações ficam duplicadas;
+- o formulário abre mais estreito que o cartão;
+- ocorre deslocamento e quebra da continuidade visual.
+
+Corrija o fluxo de edição de perfil de maneira compartilhada para os dois papéis: `user` e `admin`.
+
+COMPORTAMENTO DO USUÁRIO COMUM
+
+1. Estado de visualização:
+   - Exibir o título “Meu cadastro”.
+   - Exibir somente o cartão com os dados confirmados.
+   - Manter o botão “Editar meu cadastro” dentro desse cartão.
+
+2. Estado de edição:
+   - Substituir integralmente o cartão “Meu cadastro” pelo formulário.
+   - Não adicionar o formulário acima ou abaixo do cartão.
+   - Não manter o cartão somente leitura visível simultaneamente.
+   - Exibir apenas uma representação do cadastro por vez.
+
+3. Largura e alinhamento:
+   - O formulário deve ocupar exatamente a mesma largura externa do cartão substituído.
+   - Usar 100% da largura disponível no contêiner da área.
+   - Preservar o mesmo `max-width`, margens e alinhamento horizontal.
+   - Não limitar o cartão externo à largura atual do formulário.
+   - Evitar qualquer encolhimento ou salto horizontal ao iniciar a edição.
+
+4. Organização interna:
+   - E-mail, nome, endereço e mensagem podem ocupar a largura completa.
+   - Cidade e estado podem ficar lado a lado no desktop.
+   - País e CEP podem ficar lado a lado no desktop.
+   - No celular, todos os campos devem ficar em uma única coluna.
+   - Os botões devem permanecer responsivos e acessíveis.
+
+5. Ao salvar:
+   - Atualizar os dados confirmados.
+   - Encerrar o modo de edição.
+   - Restaurar o cartão no mesmo local e com a mesma largura.
+   - Exibir imediatamente os dados atualizados.
+
+6. Ao cancelar:
+   - Descartar somente o rascunho.
+   - Não enviar atualização.
+   - Restaurar o cartão no mesmo local e com os dados confirmados.
+   - Não provocar salto de layout ou rolagem indevida.
+
+IMPLEMENTAÇÃO COMPARTILHADA
+
+7. Evitar duas correções independentes e duplicadas:
+   - Reutilizar o mesmo componente, estrutura ou regra de layout para a edição de perfil de `user` e `admin`.
+   - As diferenças devem ficar apenas nos títulos, selo administrativo e conteúdo adicional da página.
+   - O comportamento de substituir cartão por formulário deve ser idêntico nos dois papéis.
+
+8. Preservar:
+   - e-mail somente leitura;
+   - validações;
+   - controle de versão e concorrência;
+   - polling sem sobrescrever o rascunho;
+   - autenticação e autorização;
+   - estados de carregamento e erro;
+   - foco no primeiro campo editável;
+   - navegação por teclado;
+   - responsividade;
+   - comportamento administrativo já corrigido;
+   - modal de exclusão abrindo no primeiro clique.
+
+TESTES OBRIGATÓRIOS
+
+Comprovar para `user` e `admin`:
+
+- um clique em “Editar meu cadastro” substitui o cartão pelo formulário;
+- nunca existem cartão e formulário simultaneamente;
+- formulário e cartão possuem a mesma largura externa;
+- não ocorre deslocamento horizontal;
+- cancelar restaura os dados sem enviar atualização;
+- salvar restaura o cartão com os dados atualizados;
+- a revalidação não sobrescreve o rascunho;
+- desktop, tablet e celular continuam responsivos;
+- a correção de um papel não causa regressão no outro.
+
+Não alterar contratos da API, banco de dados, migrations, grants, autenticação ou autorização. Este ajuste pertence ao mesmo refinamento visual e comportamental das áreas protegidas.

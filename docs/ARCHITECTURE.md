@@ -961,3 +961,7 @@ nunca ARG/ENV de build. Nenhum secret real consultado, nenhuma imagem publicada.
 Perfil próprio independente, usuários comuns e outros administradores separados; edição no mesmo espaço e abertura da confirmação no primeiro clique. [Pedido integral](prompts/2026-10-30-admin-profile-separation.txt) e [evidência](harness/evidence/admin-profile-separation.md).
 
 Complementos integrais: [modal no primeiro clique](prompts/2026-10-30-admin-profile-complement-1.txt) e [edição no mesmo cartão e largura](prompts/2026-10-30-admin-profile-complement-2.txt).
+
+## PROFILE-UI-003 — edição compartilhada, 30/10/2026
+
+Uma seção e um profile-slot alternam cartão/editor para ambos os papéis; diferenças limitadas a títulos, selo e apresentação administrativa. Operações e contratos preservados. [Pedido integral](prompts/2026-10-30-shared-profile-edit.txt) e [evidência](harness/evidence/shared-profile-edit.md).
