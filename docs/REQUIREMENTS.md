@@ -224,3 +224,10 @@ DB-001 escolhe PostgreSQL, pg, node-pg-migrate e Node test runner para esta etap
 Sessão opaca foi acordada com Backend; login/cookies e validação/autorização
 continuam pendentes. Concluir verificação real da persistência antes da próxima
 etapa funcional, respeitando credenciais e destino exclusivo registrados no handoff.
+
+## Refinamento UI-001-A — 30/10/2026
+
+README 8,12.b,14–18: apresentação distinta user/admin, identidade própria uma vez
+na listagem, paginação contextual e CEP visual. Contratos e proteção preservados.
+[Resultados e limites](harness/evidence/ui.md#refinamento-administrativo--30102026),
+[prompt integral](prompts/2026-10-30-area-administrativa.md). Revisão humana pendente.

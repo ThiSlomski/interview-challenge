@@ -4,7 +4,7 @@ import type { AreaData } from '@/server/ui/area';
 import UserDetails from './Record';
 import { requestMessage } from './messages';
 
-export default function Area({ data }: { data: AreaData }) {
+export default function Area({ data, hasAfter = false }: { data: AreaData; hasAfter?: boolean }) {
   const [visible, setVisible] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
@@ -200,21 +200,27 @@ export default function Area({ data }: { data: AreaData }) {
 
   return <>
     <div className="area-toolbar">
-      <div><p className="eyebrow">ACESSO PROTEGIDO</p><h1>Minha área</h1></div>
+      <div><p className="eyebrow">{data.admin ? 'ACESSO ADMINISTRATIVO' : 'ACESSO PROTEGIDO'}</p>
+        <h1>{data.admin ? 'Painel administrativo' : 'Minha área'}</h1>
+        {data.admin && <p className="area-description">Consulte os usuários cadastrados na plataforma.</p>}
+      </div>
       <button className="secondary" onClick={() => void actions.current?.logout()} disabled={busy}>{busy ? 'Saindo…' : 'Sair'}</button>
     </div>
     {message && <div className="notice error" role="alert" ref={feedback} tabIndex={-1}>{message}</div>}
     {!visible && <section className="card"><p role="status">Seus dados estão ocultos enquanto verificamos o acesso.</p><button className="secondary" disabled={busy} onClick={() => actions.current?.check()}>Verificar acesso novamente</button></section>}
     {/* Constant SSR default: stale React renders must never reopen this gate. */}
     <div ref={privateContent} hidden>
-      <section className="card"><h2>Meu cadastro</h2><UserDetails user={data.own} /></section>
+      {!data.admin && <section className="card"><h2>Meu cadastro</h2><UserDetails user={data.own} /></section>}
       {data.admin && <section className="area-section">
-        <h2>Usuários cadastrados</h2><p>Consulta administrativa. Até 100 cadastros por página.</p>
+        <h2>Usuários cadastrados</h2>
         {data.users.length === 0 ? <p className="notice">Nenhum cadastro nesta página.</p> : data.users.map(user =>
-          <article className="card record-card" key={user.id} aria-label={'Cadastro de ' + user.name}><UserDetails user={user} /></article>)}
-        <nav className="pager" aria-label="Paginação de usuários"><a href="/area">Primeira página</a>
+          <article className="card record-card" key={user.id} aria-label={'Cadastro de ' + user.name}>
+            {user.id === data.own.id && <p className="record-badge">Você · Administrador</p>}
+            <UserDetails user={user} /></article>)}
+        {(hasAfter || data.nextCursor) && <nav className="pager" aria-label="Paginação de usuários">
+          {hasAfter && <a href="/area">Primeira página</a>}
           {data.nextCursor && <a href={'/area?after=' + encodeURIComponent(data.nextCursor)}>Próxima página</a>}
-        </nav>
+        </nav>}
       </section>}
     </div>
   </>;

@@ -30,7 +30,7 @@ export default async function AreaPage({
   }
   return (
     <main id="conteudo" tabIndex={-1} className="shell page">
-      <Area data={result.data} />
+      <Area data={result.data} hasAfter={params.after !== undefined} />
     </main>
   );
 }

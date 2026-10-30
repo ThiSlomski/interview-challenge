@@ -395,7 +395,24 @@ input[aria-invalid='true'], textarea[aria-invalid='true'] {
   margin-bottom: var(--space-6);
 }
 .area-section {
-  margin-top: var(--space-7);
+  margin-top: 0;
+}
+.area-description {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+.record-badge {
+  display: inline-block;
+  max-width: 100%;
+  margin-bottom: var(--space-5);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: var(--font-mono), monospace;
+  font-size: .75rem;
+  overflow-wrap: anywhere;
 }
 .pager {
   display: flex;

@@ -247,3 +247,9 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
 - Resultado: Modos restritivo e de fundo, conferência de respostas/identidade e regressões Chromium.
 - Limitações/revisão: Autorrevisão sequencial; revisão humana pendente. Sem continuação visual, commit, push ou publicação.
 - Evidências: [diagnóstico, garantias, testes e diffs](harness/evidence/ui.md#revalidação-periódica-estável--30102026).
+
+## Refinamento administrativo — 30/10/2026
+
+- Objetivo: distinguir user/admin em /area e eliminar duplicação visual, preservando segurança.
+- Registro: [prompt integral](prompts/2026-10-30-area-administrativa.md).
+- Resultado: cabeçalho administrativo, marcador próprio, paginação contextual e CEP visual; navegação raiz preservada pela arquitetura estática. Evidências/testes em [UI](harness/evidence/ui.md#refinamento-administrativo--30102026); revisão humana pendente.

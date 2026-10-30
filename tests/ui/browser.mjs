@@ -23,6 +23,9 @@ export function uiBrowserTests(t, config, admin) {
     let id;
     // Only hide Next's development chrome, never application content.
     async function shot(name) {
+      // This refinement only changes the administrative pair. Other evidence
+      // stays byte-identical while the full functional suite still executes.
+      if (name !== '06-area-admin') return;
       const original = page.viewportSize();
       for (const [device, viewport] of [['desktop', { width: 1280, height: 900 }], ['mobile', { width: 390, height: 844 }]]) {
         await page.setViewportSize(viewport);
@@ -36,11 +39,13 @@ export function uiBrowserTests(t, config, admin) {
           await expect(page.locator(focusTarget)).toBeFocused();
         }
         if (name === '06-area-admin') {
-          await page.getByRole('heading', { name: 'Usuários cadastrados' }).evaluate(heading => heading.scrollIntoView({ block: 'start' }));
+          await page.evaluate(() => window.scrollTo(0, 0));
+          await expect(page.getByRole('heading', { name: 'Painel administrativo' })).toBeInViewport();
+          await expect(page.getByText('Você · Administrador', { exact: true })).toBeInViewport();
           await expect(page.locator('.record-card').first()).toBeInViewport();
         }
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
-        await page.screenshot({ path: resolve(screenshots, name + '-' + device + '.png'), fullPage: name !== '06-area-admin', style: 'nextjs-portal { visibility: hidden !important; }' });
+        await page.screenshot({ path: resolve(screenshots, name + '-' + device + '.png'), fullPage: true, style: 'nextjs-portal { visibility: hidden !important; }' });
       }
       await page.setViewportSize(original);
     }
@@ -71,7 +76,7 @@ export function uiBrowserTests(t, config, admin) {
       await page.getByLabel(/^Senha(?: \*)?$/).fill(password);
       await page.getByRole('button', { name: 'Entrar', exact: true }).click();
       await expect(page).toHaveURL(origin + '/area');
-      await expect(page.getByRole('heading', { name: 'Minha área', exact: true })).toBeVisible();
+      await expect(page.getByRole('heading', { name: /^(Minha área|Painel administrativo)$/ })).toBeVisible();
     }
     async function cleanBrowserState() {
       assert.equal(await page.evaluate(() => localStorage.length + sessionStorage.length), 0);
@@ -181,6 +186,10 @@ export function uiBrowserTests(t, config, admin) {
         await page.getByRole('button', { name: 'Entrar', exact: true }).click();
         await expect(page).toHaveURL(origin + '/area');
         await expect(page.getByText(email, { exact: true })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Meu cadastro', exact: true })).toBeVisible();
+        await expect(page.getByText('ACESSO PROTEGIDO', { exact: true })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Painel administrativo' })).toHaveCount(0);
+        await expect(page.getByText('Você · Administrador', { exact: true })).toHaveCount(0);
         await expect(page.getByRole('heading', { name: 'Usuários cadastrados' })).toHaveCount(0);
         assert.equal((await context.request.get(origin + '/api/users')).status(), 403);
         assert.equal((await page.content()).includes('password_hash'), false);
@@ -244,18 +253,127 @@ export function uiBrowserTests(t, config, admin) {
         assert.equal(await page.getByText(address, { exact: true }).isVisible(), false);
         await expect(page).toHaveURL(origin + '/login');
       });
+      await scenario('distinct admin presentation, self identity, postal display and responsive evidence', async () => {
+        await admin.query("UPDATE imobilead.users SET role='admin',postal_code='12345678' WHERE id=$1", [id]);
+        await login();
+        await expect(page.getByText('ACESSO ADMINISTRATIVO', { exact: true })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Painel administrativo', exact: true })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Meu cadastro', exact: true })).toHaveCount(0);
+        await expect(page.getByText('Consulte os usuários cadastrados na plataforma.', { exact: true })).toHaveCount(1);
+        await expect(page.getByText(email, { exact: true })).toHaveCount(1);
+        await expect(page.getByText('Você · Administrador', { exact: true })).toHaveCount(1);
+        const own = page.getByRole('article', { name: 'Cadastro de Pessoa Sintética UI', exact: true });
+        await expect(own.getByText('Você · Administrador', { exact: true })).toBeVisible();
+        await expect(own.getByText('12345-678', { exact: true })).toBeVisible();
+        await expect(own.getByText('Não informado', { exact: true }).first()).toBeVisible();
+        const listing = await (await context.request.get(origin + '/api/users')).json();
+        assert.equal(await page.locator('.record-card').count(), listing.users.length);
+        for (const user of listing.users) {
+          await expect(page.getByText(user.email, { exact: true })).toHaveCount(1);
+          if (user.id !== id) await expect(page.locator('.record-card').filter({ hasText: user.email }).locator('.record-badge')).toHaveCount(0);
+        }
+        assert.equal(listing.users.find(user => user.id === id).postalCode, '12345678');
+        assert.equal((await admin.query('SELECT postal_code FROM imobilead.users WHERE id=$1', [id])).rows[0].postal_code, '12345678');
+        await expect(page.getByRole('navigation', { name: 'Paginação de usuários' })).toHaveCount(0);
+        // A syntactically valid cursor before this identity places it first,
+        // retaining the real list/record without filtering or response stubs.
+        const previous = (BigInt('0x' + id.replaceAll('-', '')) - 1n).toString(16).padStart(32, '0').replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, '$1-$2-$3-$4-$5');
+        await page.goto(origin + '/area?after=' + previous);
+        await expect(page.getByText('Você · Administrador', { exact: true })).toBeVisible();
+        await shot('06-area-admin');
+        const first = page.getByRole('link', { name: 'Primeira página', exact: true });
+        await first.focus();
+        await expect(first).toBeFocused();
+        assert.equal(await first.evaluate(link => getComputedStyle(link).outlineStyle !== 'none'), true);
+        await page.keyboard.press('Enter');
+        await expect(page).toHaveURL(origin + '/area');
+        for (const postal of ['A1 Test', '12345-678', '123456789', '<b>safe</b>', '12345678\n']) {
+          await admin.query('UPDATE imobilead.users SET postal_code=$1 WHERE id=$2', [postal,id]);
+          await page.reload();
+          const postalField = page.locator('.record-card').filter({ hasText: email }).locator('dd').nth(6);
+          await expect(postalField).toBeVisible();
+          assert.equal(await postalField.textContent(), postal);
+        }
+      });
+      await scenario('admin periodic validation preserves gate, focus, scroll, layout and request count', async () => {
+        await admin.query('UPDATE imobilead.users SET message=$1 WHERE id=$2', ['Texto sintético extenso '.repeat(120), id]);
+        await page.reload();
+        await expect(page.getByText('Você · Administrador', { exact: true })).toBeVisible();
+        for (const viewport of [{ width: 390, height: 844 }, { width: 1280, height: 900 }]) {
+          await page.setViewportSize(viewport);
+          assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+        }
+        await page.getByRole('button', { name: 'Sair', exact: true }).focus();
+        await page.evaluate(() => {
+          const gate = document.querySelector('.area-section').parentElement;
+          window.scrollTo(0, 100);
+          const geometry = () => JSON.stringify([...gate.querySelectorAll('section, article, h2, dl')].map(node => {
+            const rect = node.getBoundingClientRect(); return [rect.x, rect.y, rect.width, rect.height];
+          }));
+          const initial = { geometry: geometry(), focus: document.activeElement, scroll: scrollY };
+          window.__adminStability = { mutations: 0, changed: false, stop: false, samples: 0 };
+          const observer = new MutationObserver(records => { window.__adminStability.mutations += records.length; });
+          observer.observe(gate, { attributes: true, attributeFilter: ['hidden'] });
+          const sample = () => {
+            const state = window.__adminStability; state.samples++;
+            if (gate.hidden || geometry() !== initial.geometry || document.activeElement !== initial.focus || scrollY !== initial.scroll) state.changed = true;
+            if (state.stop) observer.disconnect(); else requestAnimationFrame(sample);
+          };
+          requestAnimationFrame(sample);
+        });
+        const requests = [], documents = [];
+        const completed = request => {
+          const path = new URL(request.url()).pathname;
+          if (path === '/api/auth/session' || path === '/api/users') requests.push(path);
+          if (request.resourceType() === 'document') documents.push(path);
+        };
+        page.on('requestfinished', completed);
+        try {
+          await expect.poll(() => requests.length, { timeout: 35000 }).toBe(3);
+          await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+          const state = await page.evaluate(() => { window.__adminStability.stop = true; return window.__adminStability; });
+          assert.equal(state.mutations, 0); assert.equal(state.changed, false); assert(state.samples > 0);
+          assert.deepEqual(requests, ['/api/auth/session', '/api/users', '/api/auth/session']);
+          assert.deepEqual(documents, []);
+          console.log(JSON.stringify({ adminPeriodicStability: true, hiddenMutations: 0, documents: 0, sessionCalls: 2, focusScrollLayoutChanged: false }));
+        } finally {
+          page.off('requestfinished', completed);
+          await page.evaluate(() => { window.__adminStability.stop = true; });
+        }
+      });
       await scenario('admin fresh role and real cursor pagination; user cannot get listing', async () => {
         await admin.query("UPDATE imobilead.users SET role='admin' WHERE id=$1", [id]);
         await admin.query("INSERT INTO imobilead.users(name,email,password_hash) SELECT 'Pessoa Sintética '||n,'ui-page-'||n||'@example.test',password_hash FROM imobilead.users CROSS JOIN generate_series(1,101) n WHERE id=$1", [id]);
         await login();
         await expect(page.getByRole('heading', { name: 'Usuários cadastrados' })).toBeVisible();
-        await page.getByRole('heading', { name: 'Usuários cadastrados' }).scrollIntoViewIfNeeded();
-        await shot('06-area-admin');
+        await expect(page.getByRole('link', { name: 'Primeira página', exact: true })).toHaveCount(0);
+        const seen = new Set();
+        async function collect() {
+          const records = await page.locator('.record-card .record dd:nth-child(2)').allTextContents();
+          assert(records.length > 0);
+          for (const record of await page.locator('.record-card').all()) {
+            const address = await record.locator('dd').nth(1).innerText();
+            assert.equal(seen.has(address), false); seen.add(address);
+          }
+        }
+        await collect();
         await page.getByRole('link', { name: 'Próxima página', exact: true }).click();
         await expect(page).toHaveURL(/after=/);
         await expect(page.getByRole('heading', { name: 'Usuários cadastrados' })).toBeVisible();
+        await expect(page.getByRole('link', { name: 'Primeira página', exact: true })).toBeVisible();
+        await expect(page.getByRole('link', { name: 'Próxima página', exact: true })).toHaveCount(0);
+        await collect();
+        const all = (await admin.query('SELECT email FROM imobilead.users')).rows.map(row => row.email);
+        assert.deepEqual([...seen].sort(), all.sort());
+        assert.equal([...seen].filter(address => address === email).length, 1);
         await page.goto(origin + '/area?after=ffffffff-ffff-ffff-ffff-ffffffffffff');
         await expect(page.getByText('Nenhum cadastro nesta página.', { exact: true })).toBeVisible();
+        await expect(page.getByRole('link', { name: 'Primeira página', exact: true })).toBeVisible();
+        await expect(page.getByRole('link', { name: 'Próxima página', exact: true })).toHaveCount(0);
+        await page.goto(origin + '/area?after=invalid');
+        await expect(page.getByRole('alert')).toContainText('Esta página de resultados não está disponível.');
+        await expect(page.locator('.record-card')).toHaveCount(0);
+        await page.goto(origin + '/area');
         await admin.query("UPDATE imobilead.users SET role='user' WHERE id=$1", [id]);
         await page.reload();
         await expect(page.getByRole('heading', { name: 'Usuários cadastrados' })).toHaveCount(0);

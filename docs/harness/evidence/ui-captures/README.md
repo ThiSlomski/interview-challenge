@@ -7,7 +7,7 @@ moveu a galeria para `ui-captures/` e as referências para `ui-reference/`, sem
 modificar os PNGs ou o JSON oficial. Este README recebeu atualização documental.
 
 As dimensões acima são as janelas do navegador. Capturas de página integral
-podem ter altura maior; a listagem administrativa usa somente a janela visível.
+podem ter altura maior; o par administrativo atual também usa página integral.
 São 18 imagens da aplicação com identidade Slomski Solutions, em nove pares.
 As [referências do site oficial](../ui-reference/reference.json) ficam separadas
 deste conjunto. [Entrega principal](../ui.md) e [inventário](../ui-organization.md).
@@ -33,3 +33,15 @@ A falha de login desta captura é uma resposta503 interceptada, conforme o teste
 Nenhuma imagem foi editada para simular estados. O chrome de desenvolvimento do
 Next é ocultado somente durante a captura; elementos da aplicação permanecem
 visíveis. Senhas aparecem somente como máscara do input.
+
+## Par administrativo atualizado — 30/10/2026
+
+Somente o par06 foi regenerado nesta rodada. Mostra o cabeçalho administrativo,
+a descrição única, o registro sintético autenticado com Você · Administrador e
+controles conforme o cursor. A captura usa uma lista pequena real e after válido
+imediatamente anterior ao UUID próprio, sem filtrar a resposta nem ocultar itens.
+Agora esse par usa página integral para incluir todos os campos e a paginação
+em desktop/celular. O gerador restringe escrita ao par06; os demais testes executam
+normalmente. Os outros16 PNGs e as três referências permanecem idênticos por
+SHA-256. [Hashes e resultados](../ui.md#refinamento-administrativo--30102026).
+Inspeção visual pelo agente; revisão humana pendente.

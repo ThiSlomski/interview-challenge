@@ -650,3 +650,18 @@ Diagnósticos passam a ser conferidos nas suítes Chromium, com contadores
 sanitizados e teste diferencial de mutação externa antes da hidratação.
 Sem supressão de hidratação ou mudança de SSR. Detalhes em
 [UI-001](harness/evidence/ui.md#correção-funcional-react-e-hidratação--29102026).
+
+## Apresentação administrativa — 30/10/2026
+
+A área usa o papel já autorizado pelo servidor para distinguir Meu cadastro de
+Painel administrativo. A lista mantém a semântica de todos os usuários e identifica
+somente id === own.id; não consulta nem expõe papéis alheios. Duplicação removida
+no JSX, sem filtrar registros. hasAfter deriva do cursor já validado e controla
+somente o retorno à primeira página; nextCursor controla avanço. CEP ganha hífen
+apenas no componente de apresentação compartilhado.
+
+O layout raiz permanece estático e sem consulta redundante de sessão. Não recebe
+o snapshot de /area; ocultar links de cadastro/login exigiria ampliar coordenação
+de estado/rotas. A alternativa autorizada foi preservar a navegação atual.
+Decisões e verificações em [UI](harness/evidence/ui.md#refinamento-administrativo--30102026).
+Sem alteração de contratos API, banco, autorização ou efeitos de segurança.

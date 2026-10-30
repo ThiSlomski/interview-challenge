@@ -20,7 +20,9 @@ export default function UserDetails({ user }: { user: UserRecord }) {
       {Object.entries(recordLabels).map(([key, label]) => (
         <div key={key} className={key === 'message' ? 'wide' : undefined}>
           <dt>{label}</dt>
-          <dd>{user[key as keyof typeof recordLabels] || 'Não informado'}</dd>
+          <dd>{key === 'postalCode' && user.postalCode?.length === 8 && /^[0-9]{8}$/.test(user.postalCode)
+            ? user.postalCode!.slice(0, 5) + '-' + user.postalCode!.slice(5)
+            : user[key as keyof typeof recordLabels] || 'Não informado'}</dd>
         </div>
       ))}
     </dl>

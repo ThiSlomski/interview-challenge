@@ -1,5 +1,149 @@
 # Entrega frontend — UI-001
 
+## Refinamento administrativo — 30/10/2026
+
+Contrato UI-001-A (README 8,12.b,14–18): base main/4725e00 limpa;
+pedido integral em [registro](../../prompts/2026-10-30-area-administrativa.md).
+Execução sequencial pelo orquestrador, único escritor; autorrevisão e revisão
+humana pendente. Escopo: apresentação de /area, Record, CSS, testes/capturas e
+documentação canônica. APIs, banco principal, migrations, promoção administrativa,
+sessão, autorização e mecanismo de revalidação excluídos. Uma execução e até
+duas correções com hipótese nova; parada em risco de ampliar esses contratos.
+
+User mantém ACESSO PROTEGIDO, Minha área e somente Meu cadastro. Admin recebe
+ACESSO ADMINISTRATIVO, Painel administrativo e uma descrição única; não possui
+seção própria duplicada. A listagem mantém todos os registros retornados,
+inclusive o admin, com Você · Administrador somente quando id === own.id.
+Outros papéis não são consultados nem expostos. O marcador usa tokens amarelos
+existentes e texto com quebra segura; campos autorizados e Não informado preservados.
+
+CEP com exatamente oito dígitos ASCII ganha hífen somente na apresentação
+compartilhada; demais valores continuam texto escapado por React. Nenhuma escrita
+ou normalização na API/persistência foi introduzida.
+
+Primeira página só aparece após after validado pelo loadArea existente; Próxima
+página depende exclusivamente de nextCursor. Sem controles quando ambos ausentes,
+sem paginação numérica/Anterior. Não há item de página atual nessa navegação de
+ações, portanto aria-current não se aplica. Validação e estados de falha mantidos.
+
+Cabeçalho preservado: está no layout raiz estático, acima da página dinâmica e
+sem acesso ao snapshot de sessão desta. Não há estado compartilhado disponível;
+adaptá-lo exigiria consulta adicional no layout ou nova coordenação global/entre
+rotas. O build confirma /, /cadastro e /login estáticas. Não foram adicionados
+fetch, provider, efeito, DOM/CSS para ocultar links nem duplicação de Sair.
+
+Os efeitos de segurança de Area foram preservados integralmente; única nova
+prop é hasAfter, derivada depois do sucesso da validação existente na página.
+Gerador limitado ao par06 afetado, com cabeçalho e marcador no enquadramento;
+demais capturas e referências protegidas por inventário SHA-256 anterior.
+Verificações e hashes desta rodada estão abaixo.
+
+### Verificações do refinamento
+
+| Execução local pelo agente | Resultado |
+| --- | --- |
+| Concorrência/revalidação: node --test tests/ui/race.test.mjs |50/50, zero falhas/skips |
+| UI completa: npm run test:ui |31/31, zero falhas/skips;15 cenários UI,15 SQL e principal |
+| Autenticação: npm run test:auth:server |11/11, zero falhas/skips |
+| Autorização: npm run test:authorization:server |6/6, zero falhas/skips |
+| HTTP/PG: npm run test:db:integration |40/40, zero falhas/skips |
+| npm run build | Aprovado; páginas públicas estáticas preservadas |
+| npm run lint; npx tsc --noEmit --incremental false | Aprovados após atualização dos testes |
+| Harness doctor, validate, verify --product | Aprovados; partial:true, readiness:not-assessed,29 Node comprovados |
+
+Runners concluídos confirmaram cleanup, zero recursos próprios e metadados/ACLs
+protegidos iguais. Fixtures executam SQL mutável exclusivamente em bancos
+descartáveis locais, sem leitura de cadastros pessoais ou escrita no imobilead.
+Testes existentes de sessão/logout, falhas/expiração, troca de identidade,
+abortos/gerações e respostas antigas permaneceram canônicos e sem alteração.
+O teste periódico de concorrência confirma zero mudanças de hidden, foco,
+scroll/layout, navegação e Document, com exatamente session → usuário → session.
+A suíte inclui uma injeção externa controlada já existente que espera um aviso
+de hidratação em contexto separado; isso não é diagnóstico inesperado do produto.
+
+Build e primeira UI passaram antes de ampliar a evidência: UI30/30. Após inspeção
+visual, o par administrativo passou de janela para página integral para incluir
+campos e paginação; acrescentada ainda a estabilidade periódica específica de
+admin. A reexecução da UI foi motivada por essas alterações dos testes/capturas.
+Autorrevisão identificou que o terminador $ de JavaScript também pode aceitar
+uma quebra de linha final. A apresentação agora exige comprimento exatamente8;
+o teste inclui oito dígitos seguidos de newline, que devem permanecer inalterados.
+Essa correção delimitada motivou a execução final de UI/build/lint/typecheck.
+Python indisponível no ambiente; tentativa inicial não alterou arquivos.
+Texto acrescentado por pipe PowerShell sofreu conversão ASCII; corrigido no diff
+antes da verificação final UTF-8. Nenhuma falha de produto foi encontrada nessas etapas.
+
+Limites: autorrevisão sequencial, revisão humana e CI remoto pendentes; sem
+publicação/commit/push. Audit e múltiplos navegadores não executados nesta rodada.
+Não se declara prontidão integral do produto. Clima permanece fora deste pedido.
+
+Admin também foi exercitado pelo intervalo real30s: zero mutações de hidden e
+mudanças de foco/scroll/layout; zero Document; exatamente duas chamadas de sessão
+e uma consulta de usuários por ciclo. Console final sem erros/avisos inesperados,
+flushSync/hidratação/pageerror zero. Hints de preload locais são contabilizados
+separadamente. Capturas sintéticas desktop/celular inspecionadas visualmente:
+cabeçalho, marcador, registro completo, retorno à primeira página e ausência de
+estouro horizontal. Nenhum indicador Next/DevTools/extensão aparece nas imagens.
+
+### Hashes do refinamento
+
+UTF-8 estrito/fences Markdown e235 links/âncoras locais dos13 arquivos textuais
+alterados passaram, incluindo anchors HTML históricos explícitos. O primeiro
+checker local só considerava headings; foi corrigido para reconhecer esses ids
+sem modificar os registros históricos. Prompt integral idêntico por bytes ao
+anexo fornecido. Validate final e git diff --check aprovados.
+
+Arquivos do refinamento: app/area/page.tsx, app/globals.css,
+components/ui/Area.tsx, components/ui/Record.tsx, tests/ui/browser.mjs;
+docs/AI_PROMPTS.md, docs/ARCHITECTURE.md, docs/REQUIREMENTS.md,
+docs/prompts/2026-10-30-area-administrativa.md, esta evidência,
+ui-captures/README.md e os dois PNGs06; memória handoff.md/project-state.md.
+
+Diff exclusivo contra HEAD4725e00, incluindo o prompt novo e PNGs:
+C:\Users\thiag\AppData\Local\Temp\area-admin-refinement\exclusive.diff.
+Diff acumulado em accumulated.diff no mesmo diretório; idêntico ao exclusivo,
+pois a árvore inicial estava limpa. Patches conferidos com git apply --check
+--reverse. Sem staging ou alterações anteriores para separar.
+
+Sugestão de commit isolado (não executado):
+`refactor(ui): refina apresentação da área administrativa`.
+Descrição: distingue user/admin, remove cadastro duplicado, identifica o admin
+autenticado na lista completa, ajusta paginação e formata CEP na apresentação;
+preserva contratos/proteções e navegação raiz, atualiza regressões, evidências
+sintéticas e documentação canônica. QA conforme tabela desta seção.
+
+Somente dois PNGs alterados;16 capturas e3 referências preservadas por SHA-256.
+
+| Arquivo afetado | Antes | Depois |
+| --- | --- | --- |
+| 06-area-admin-desktop.png | d3d685f916fab02a44e097c3ab75a63c9e5bd29df269e128acee8e12d6e89033 | b4cff5219392abb4d417f13f804e885f219a3fc348d902dd2173564e7896c364 |
+| 06-area-admin-mobile.png | e6f7510fae2b0e5866fee4e4e315ff3b06610029b62529f80b38ba636bdc520e | 04f45b8272f13ce4f510707eac51375af2c27eded19b9ca03af093ac5f04c7cf |
+
+| Arquivo preservado | SHA-256 antes = depois |
+| --- | --- |
+| ui-captures/01-home-focus-desktop.png | b751c1b3e83eea14ebea2a4e040e86445bad2512173a987ad4c3df6e1a4592cd |
+| ui-captures/01-home-focus-mobile.png | 5a8ee79a6e829e75d839703743ba4d6240dc5167547a05548ba6a07c4835c76e |
+| ui-captures/01-home-normal-desktop.png | 5babb1b75c611f93ad1468e4750441523b14fdb53957e23c9f7fef3230afd34a |
+| ui-captures/01-home-normal-mobile.png | f18e4d21e080a00c8c2e95e925967e0b63f3467f8bf2fab0f7c17a99a18e8896 |
+| ui-captures/02-cadastro-erros-desktop.png | 7f913ff7ed8b4c8c69804f3921e7218166f0665d69cd88e0262187b809e2d549 |
+| ui-captures/02-cadastro-erros-mobile.png | c082fb7ac4e92a5bde14223dacf20bb148e713e20f3c19003dcb00f73207ebcf |
+| ui-captures/03-cadastro-sucesso-desktop.png | d888865d1df7850e0df7bf59795f2610a1489582d065c310fab2795af4857b04 |
+| ui-captures/03-cadastro-sucesso-mobile.png | 16f741454433c382b1a5e5f78935e62d0e2126ac29e6718c6758234c7428a87e |
+| ui-captures/04-area-user-desktop.png | 2850af8293c2f8c3d2bee7ce3d047d2a575c6b29a16b6bd1ad1f3a0ca8b3019d |
+| ui-captures/04-area-user-mobile.png | d0beae1136e805258296665ab17df48f80a550e04d69b8fe9791e2a55b33fd06 |
+| ui-captures/07-area-indisponivel-desktop.png | 3fa2cf65d828e965736676fdf99fd625b7e63c1447cad615c07dffd3bbfbfc58 |
+| ui-captures/07-area-indisponivel-mobile.png | 5a23e2c8f6f1058a9cf476b0c58a24b59014cc0e292073840009bec1c98b7b1e |
+| ui-captures/08-login-desktop.png | c63895ea085af6f04c4e2b602d89692023b12fd57b335664adf7f6a3cbfbdf97 |
+| ui-captures/08-login-mobile.png | d5202d9b3857a87f7eed06edd0dc8d0c97806cb05a153a328a0d0bd2c3abbb54 |
+| ui-captures/09-cadastro-desktop.png | f3615838bfa1aa3278b3ca7f2660eeeed4da363d4a3ae04fc4bdf961fa298382 |
+| ui-captures/09-cadastro-mobile.png | c65f53505c92804aff240d9769ebcbb764c8c922c2556c91a9338220bd019f4d |
+| ui-reference/official-desktop.png | 1219952e0fc3eb55acaf13789fb6d274ba05e8741e06de63a728572d77facf22 |
+| ui-reference/official-mobile.png | f21a3f0b7c8ccf3e0fd95d4a73a294aba6f2796bb90da811348a0483aa006a60 |
+| ui-reference/reference.json | f5869beb74414e7f549e41de86ccc398775e8fee10e2d7d536dc46313c0c57db |
+
+
+## Histórico consolidado da entrega
+
 Inclui a correção histórica UI-001-P1. Caminhos operacionais de evidência visual:
 `ui-captures/` (aplicação) e `ui-reference/` (site oficial).
 A padronização anterior das pastas preservou os hashes sem repetir navegador/banco/build.

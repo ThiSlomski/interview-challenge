@@ -1,3 +1,17 @@
+## Refinamento administrativo — 30/10/2026
+
+UI-001-A autorizado sobre main/4725e00 inicialmente limpo. User mantém cadastro
+próprio; admin recebe cabeçalho distinto e cadastro único na listagem, marcador
+somente próprio, paginação contextual e CEP visual. Cabeçalho raiz preservado
+pela ausência de estado compartilhado e para manter páginas públicas estáticas.
+APIs/banco/sessão/autorização e efeitos de revalidação intactos. Evidência,
+verificações, hashes e diffs na [UI canônica](../evidence/ui.md#refinamento-administrativo--30102026).
+Sem commit/push/publicação; autorrevisão sequencial, revisão humana pendente.
+Esta etapa substitui a pausa visual da rodada anterior; clima não foi iniciado.
+QA local: UI31/31, concorrência50/50, HTTP/PG40/40, auth11/11, autorização6/6;
+zero skips. Build/lint/typecheck/documentos/Harness parcial aprovados. Par06
+atualizado;16 PNGs+3 referências preservados por hash; cleanup0 confirmado.
+
 ## Revalidação periódica estável — 30/10/2026
 
 Correção funcional autorizada: intervalo30s usa fundo apenas para snapshot já
