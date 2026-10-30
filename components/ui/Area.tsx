@@ -203,12 +203,29 @@ export default function Area({ data, hasAfter = false }: { data: AreaData; hasAf
           ? isListing(payload)
           : isUser(payload?.user) && payload.user.id === data.own.id;
         if (!userMatches) { unavailable(operation); return; }
+        // Own data must stay fresh even outside the current listing page.
+        let own = payload.user;
+        if (data.admin) {
+          const response = await fetch('/api/users/' + encodeURIComponent(data.own.id!), options);
+          if (!valid(operation)) return;
+          if (response.status === 401) { expired(); return; }
+          if (response.status === 403) { hide(); window.location.replace('/area'); return; }
+          if (!response.ok) { unavailable(operation); return; }
+          const profile = await response.json();
+          if (!valid(operation)) return;
+          if (!isUser(profile?.user) || profile.user.id !== data.own.id) { unavailable(operation); return; }
+          own = profile.user;
+        }
         const finalSession = await matchesSession(operation, options);
         if (!valid(operation) || !finalSession) return;
+        if (data.admin && selected && !payload.users.some((user: UserRecord) => user.id === selected?.id && user.role === 'user')) {
+          cancelDelete();
+          setMessage('O cadastro selecionado não está mais disponível nesta página. Selecione novamente.');
+        }
         // Refresh displayed values even when the identity and page membership
         // remain unchanged. An open editor owns its draft independently.
-        setSnapshot(previous => data.admin
-          ? { ...data, own: payload.users.find((user: UserRecord) => user.id === data.own.id) ?? previous.own, users: payload.users, nextCursor: payload.nextCursor }
+        setSnapshot(() => data.admin
+          ? { ...data, own, users: payload.users, nextCursor: payload.nextCursor }
           : { ...data, own: payload.user });
         verified = true;
         if (!background) {
@@ -322,7 +339,7 @@ export default function Area({ data, hasAfter = false }: { data: AreaData; hasAf
       if (payload.users.length === 0 && hasAfter) { hide(); window.location.replace('/area'); return; }
       deleteDialog.current?.close(); selected = null; restoreDeleteFocus.current = true;
       setDeleteTarget(null); setDeleting(false);
-      setSnapshot(previous => ({ ...previous, users: payload.users, nextCursor: payload.nextCursor, own: payload.users.find(user => user.id === data.own.id) ?? previous.own }));
+      setSnapshot(previous => ({ ...previous, users: payload.users, nextCursor: payload.nextCursor }));
       if (successful) { setSuccess(text); setMessage(''); }
       else setMessage(text);
       finish(operation);
@@ -386,7 +403,14 @@ export default function Area({ data, hasAfter = false }: { data: AreaData; hasAf
     }
     function restored() { if (!active) return; suspended = document.visibilityState !== 'visible'; hide(); if (!suspended) void check(); }
     function pagehide() { if (!active) return; suspended = true; hide(); }
-    function focus() { if (active && document.visibilityState === 'visible') { suspended = false; void check(); } }
+    function focus() {
+      if (active && document.visibilityState === 'visible') {
+        suspended = false;
+        // Activation may arrive between pointerdown and click. Keep verified
+        // admin controls mounted; hidden/expired contexts still fail closed.
+        void check(data.admin ? 'background' : 'restrictive');
+      }
+    }
     document.addEventListener('visibilitychange', hidden);
     window.addEventListener('pagehide', pagehide);
     window.addEventListener('pageshow', restored);
@@ -403,11 +427,14 @@ export default function Area({ data, hasAfter = false }: { data: AreaData; hasAf
     };
   }, [data, hasAfter]);
 
+  const managedUsers = snapshot.users.filter(user => user.id !== data.own.id && user.role === 'user');
+  const otherAdmins = snapshot.users.filter(user => user.id !== data.own.id && user.role === 'admin');
+
   return <>
     <div className="area-toolbar">
       <div><p className="eyebrow">{data.admin ? 'ACESSO ADMINISTRATIVO' : 'ACESSO PROTEGIDO'}</p>
         <h1>{data.admin ? 'Painel administrativo' : 'Minha área'}</h1>
-        {data.admin && <p className="area-description">Consulte os usuários cadastrados na plataforma.</p>}
+        {data.admin && <p className="area-description">Gerencie os usuários cadastrados e mantenha seus dados administrativos atualizados.</p>}
       </div>
       <button className="secondary" onClick={() => void actions.current?.logout()} disabled={busy && !deleting}>{busy && !deleting ? 'Saindo…' : 'Sair'}</button>
     </div>
@@ -418,23 +445,42 @@ export default function Area({ data, hasAfter = false }: { data: AreaData; hasAf
       {deleteTarget && <DeleteUserDialog user={deleteTarget} busy={deleting} dialogRef={deleteDialog} onCancel={() => actions.current?.cancelDelete()} onConfirm={() => void actions.current?.remove()} onLogout={() => void actions.current?.logout()} />}
       {deleting && !deleteTarget && <p className="notice" role="status">A exclusão continua em processamento. Aguarde a confirmação e a atualização da listagem.</p>}
       {success && <p className="notice success" role="status">{success}</p>}
-      {editor && <ProfileForm key={editor.etag} profile={editor} busy={busy} feedback={profileFeedback} onSave={input => void actions.current?.save(input)} onCancel={() => actions.current?.cancelEdit()} onReload={() => void actions.current?.edit()} />}
+      {editor && !data.admin && <ProfileForm key={editor.etag} profile={editor} busy={busy} feedback={profileFeedback} onSave={input => void actions.current?.save(input)} onCancel={() => actions.current?.cancelEdit()} onReload={() => void actions.current?.edit()} />}
       {!data.admin && <section className="card"><h2>Meu cadastro</h2><UserDetails user={snapshot.own} />
         {!editor && <button ref={editButton} className="secondary profile-edit-action" disabled={busy} onClick={() => void actions.current?.edit()}>Editar meu cadastro</button>}
       </section>}
-      {data.admin && <section className="area-section">
-        {!editor && <div className="profile-actions"><button ref={editButton} className="secondary" disabled={busy} onClick={() => void actions.current?.edit()}>Editar meu cadastro</button></div>}
-        <h2 ref={listTitle} tabIndex={-1}>Usuários cadastrados</h2>
-        {snapshot.users.length === 0 ? <p className="notice">Nenhum cadastro nesta página.</p> : snapshot.users.map(user =>
+      {data.admin && <>
+        <section className="area-section" aria-labelledby="own-admin-title">
+          <h2 id="own-admin-title">Meu cadastro administrativo</h2>
+          <div className="admin-profile-slot">
+          {editor ? <ProfileForm key={editor.etag} embedded profile={editor} busy={busy} feedback={profileFeedback} onSave={input => void actions.current?.save(input)} onCancel={() => actions.current?.cancelEdit()} onReload={() => void actions.current?.edit()} /> : <article className="card record-card own-admin-card" aria-label={'Cadastro de ' + snapshot.own.name}>
+            <p className="record-badge">Você · Administrador</p>
+            <UserDetails user={snapshot.own} omitEmptyMessage />
+            {!editor && <button ref={editButton} className="secondary profile-edit-action" disabled={busy} onClick={() => void actions.current?.edit()}>Editar meu cadastro</button>}
+          </article>}
+          </div>
+        </section>
+        <section className="area-section" aria-labelledby="managed-users-title">
+        <h2 id="managed-users-title" ref={listTitle} tabIndex={-1}>Usuários cadastrados</h2>
+        <p className="section-description">Contas comuns cadastradas na plataforma.</p>
+        {managedUsers.length === 0 ? <p className="notice">{snapshot.users.length === 0 ? 'Nenhum cadastro nesta página.' : 'Nenhuma conta comum nesta página. Os administradores estão apresentados separadamente.'}</p> : managedUsers.map(user =>
           <article className="card record-card" key={user.id} aria-label={'Cadastro de ' + user.name}>
-            {user.id === data.own.id && <p className="record-badge">Você · Administrador</p>}
             <UserDetails user={user} />
             {user.role === 'user' && user.id !== data.own.id && <button type="button" className="secondary danger delete-user-action" disabled={busy || Boolean(editor)} onClick={event => actions.current?.askDelete(user, event.currentTarget)}>Excluir usuário</button>}</article>)}
+        </section>
+        {otherAdmins.length > 0 && <section className="area-section" aria-labelledby="other-admins-title">
+          <h2 id="other-admins-title">Outros administradores</h2>
+          {otherAdmins.map(user => <article className="card record-card" key={user.id} aria-label={'Cadastro de ' + user.name}>
+            <p className="record-badge">Administrador</p>
+            <UserDetails user={user} />
+          </article>)}
+        </section>}
         {(hasAfter || snapshot.nextCursor) && <nav className="pager" aria-label="Paginação de usuários">
+          <p className="pagination-context">A paginação percorre os cadastros de usuários e outros administradores. Seu cadastro permanece no topo.</p>
           {hasAfter && <a href="/area">Primeira página</a>}
           {snapshot.nextCursor && <a href={'/area?after=' + encodeURIComponent(snapshot.nextCursor)}>Próxima página</a>}
         </nav>}
-      </section>}
+      </>}
     </div>
   </>;
 }

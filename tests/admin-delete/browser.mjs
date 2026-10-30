@@ -3,6 +3,9 @@ import { chromium, expect as baseExpect } from '@playwright/test';
 import { registrationHttpTests } from '../registration/http-postgres.mjs';
 import { watchBrowserErrors } from '../ui/console.mjs';
 import { inspectDeleteAppearance } from './appearance.mjs';
+import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 
 const expect = baseExpect.configure({ timeout: 15000 });
 const deferred = () => { let resolve; const promise = new Promise(done => { resolve = done; }); return { promise, resolve }; };
@@ -60,6 +63,7 @@ export function adminDeleteBrowserTests(t, config, admin) {
       });
     }
     async function scenario(name, run) {
+      if (process.env.ADMIN_MODAL_INTERACTIONS_ONLY === 'true' && !name.startsWith('single mouse,')) return;
       let failed = false;
       const releaseStart = releases.length, errorStart = routeErrors.length;
       await t.test('admin delete UI Chromium/Next/PG: ' + name, async () => {
@@ -82,6 +86,53 @@ export function adminDeleteBrowserTests(t, config, admin) {
       assert.equal(signup.status(), 201); actor = (await signup.json()).user.id; ids.push(actor);
       await admin.query("UPDATE imobilead.users SET role='admin' WHERE id=$1", [actor]);
       const login = await context.request.post(origin + '/api/auth/login', { headers: { origin }, data: { email, password } }); assert.equal(login.status(), 200);
+      async function firstClickRegression() {
+        await scenario('first pointer click during window-focus revalidation opens correct dialog without DELETE', async () => {
+          const target = await account(); await load();
+          const source = article(target).getByRole('button', {name:'Excluir usuário',exact:true});
+          let deletes = 0;
+          page.on('request', request => { if(request.method()==='DELETE') deletes++; });
+          // Deliver the browser-window focus transition between pointerdown
+          // and click. A held session reply makes the event ordering explicit.
+          const held = deferred(); releases.push(held.resolve);
+          await intercept('**/api/auth/session', async route => {
+            await held.promise; await route.continue().catch(() => {});
+          });
+          await source.evaluate(button => button.addEventListener('pointerdown', () => window.dispatchEvent(new Event('focus')), {once:true}));
+          await source.scrollIntoViewIfNeeded();
+          const box = await source.boundingBox();
+          await page.mouse.click(box.x + box.width/2, box.y + box.height/2);
+          await expect(dialog()).toBeVisible();
+          await expect(dialog()).toContainText(target.email);
+          await expect(dialog()).toContainText(target.name);
+          await expect(dialog().getByRole('button', {name:'Cancelar',exact:true})).toBeFocused();
+          assert.equal(deletes,0);
+          held.resolve();
+        });
+      }
+      if (process.env.ADMIN_MODAL_REPRO === 'true') { await firstClickRegression(); return; }
+      await scenario('own admin is independent, alone and responsive with no management actions', async () => {
+        await load();
+        const own = page.getByRole('region', { name: 'Meu cadastro administrativo', exact: true });
+        await expect(own.getByText(email, { exact: true })).toBeVisible();
+        await expect(own.getByRole('button', { name: 'Editar meu cadastro', exact: true })).toBeVisible();
+        await expect(own.getByRole('button', { name: 'Excluir usuário', exact: true })).toHaveCount(0);
+        await expect(page.getByRole('region', { name: 'Outros administradores', exact: true })).toHaveCount(0);
+        for (const [width, height] of [[1280,900],[922,2048],[1180,820],[390,844],[320,740],[640,450]]) {
+          await page.setViewportSize({ width, height });
+          assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+          assert.equal(await own.locator('dl').evaluate(dl => getComputedStyle(dl).gridTemplateColumns.split(' ').length), width <= 640 ? 1 : 2);
+        }
+        await page.setViewportSize({ width:1280, height:900 });
+        await page.goto(origin + '/area?after=ffffffff-ffff-ffff-ffff-ffffffffffff');
+        await expect(own.getByText(email, { exact:true })).toBeVisible();
+        await admin.query('UPDATE imobilead.users SET city=$1 WHERE id=$2', ['Cidade revalidada', actor]);
+        await page.evaluate(() => window.__deletePolls.at(-1)());
+        await expect(own.getByText('Cidade revalidada', { exact:true })).toBeVisible();
+        await expect(page.getByText(email, { exact:true })).toHaveCount(1);
+        await admin.query('UPDATE imobilead.users SET city=NULL WHERE id=$1', [actor]);
+        await load();
+      });
       await scenario('danger buttons maintain contrast, pointer and keyboard states on desktop and mobile', async () => {
         // Keep the original screenshot order: own record, then this target.
         const target = await account('user', 'ffffffff-ffff-ffff-ffff-ffffffffffff'); await load();
@@ -92,7 +143,45 @@ export function adminDeleteBrowserTests(t, config, admin) {
         await load();
         await expect(article(target).getByRole('button', { name: 'Excluir usuário', exact: true })).toBeVisible();
         await expect(article(otherAdmin).getByRole('button', { name: 'Excluir usuário', exact: true })).toHaveCount(0);
+        await expect(page.getByRole('region', { name: 'Outros administradores', exact: true }).getByText(otherAdmin.email, { exact: true })).toBeVisible();
+        await expect(article(otherAdmin).getByText('Administrador', { exact:true })).toBeVisible();
+        await expect(article(otherAdmin).getByRole('button')).toHaveCount(0);
         await expect(page.getByRole('article', { name: 'Cadastro de Administrador Sintético', exact: true }).getByRole('button', { name: 'Excluir usuário', exact: true })).toHaveCount(0);
+      });
+      await scenario('actual Chromium zoom 200% preserves sections, keyboard and dialog viewport', async () => {
+        const directory = await mkdtemp(join(tmpdir(), 'admin-profile-zoom-'));
+        let zoomContext;
+        try {
+          const extension = join(directory, 'extension'); await mkdir(extension);
+          await writeFile(join(extension, 'manifest.json'), JSON.stringify({ manifest_version:3, name:'Local admin zoom check', version:'1.0', permissions:['tabs'], background:{service_worker:'worker.js'} }));
+          await writeFile(join(extension, 'worker.js'), 'chrome.runtime.onInstalled.addListener(() => {});');
+          zoomContext = await chromium.launchPersistentContext(join(directory, 'profile'), { channel:'chromium', headless:true, viewport:{width:1440,height:1000}, args:[`--disable-extensions-except=${extension}`, `--load-extension=${extension}`] });
+          await zoomContext.addCookies(await context.cookies());
+          const worker = zoomContext.serviceWorkers()[0] ?? await zoomContext.waitForEvent('serviceworker');
+          const zoomPage = await zoomContext.newPage(), errors = watchBrowserErrors(zoomPage, origin);
+          await zoomPage.goto(origin + '/area');
+          const factor = await worker.evaluate(async origin => {
+            const tab = (await chrome.tabs.query({})).find(tab => tab.url?.startsWith(origin));
+            await chrome.tabs.setZoom(tab.id, 2); return chrome.tabs.getZoom(tab.id);
+          }, origin);
+          assert.equal(factor, 2);
+          await expect.poll(() => zoomPage.evaluate(() => innerWidth)).toBe(720);
+          await expect(zoomPage.getByRole('region', {name:'Meu cadastro administrativo',exact:true})).toBeVisible();
+          await expect(zoomPage.getByRole('region', {name:'Outros administradores',exact:true})).toBeVisible();
+          const source = zoomPage.getByRole('button', {name:'Excluir usuário',exact:true}).first();
+          await source.focus(); await zoomPage.keyboard.press('Enter');
+          const modal = zoomPage.getByRole('dialog');
+          await expect(modal.getByRole('button', {name:'Cancelar',exact:true})).toBeFocused();
+          assert(await modal.evaluate(el => { const r=el.getBoundingClientRect(); return r.left>=0 && r.right<=innerWidth && r.top>=0 && r.bottom<=innerHeight; }));
+          assert(await zoomPage.evaluate(() => document.documentElement.scrollWidth<=innerWidth));
+          await zoomPage.keyboard.press('Escape'); await expect(source).toBeFocused();
+          errors.assertClean(); errors.dispose();
+        } finally {
+          await zoomContext?.close();
+          // Only the directory returned by mkdtemp above is removed.
+          assert(directory.startsWith(join(tmpdir(), 'admin-profile-zoom-')));
+          await rm(directory, {recursive:true,force:true,maxRetries:3,retryDelay:500});
+        }
       });
       await scenario('confirmation, Cancel focus, Escape, keyboard trap and mobile layout', async () => {
         const target = await account();
@@ -209,7 +298,7 @@ export function adminDeleteBrowserTests(t, config, admin) {
         for (let n = 2; n <= 100; n++) fillers.push(await account('user', `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`));
         const last = await account('user', 'ffffffff-ffff-4fff-8fff-fffffffffff1');
         await load();
-        await expect(page.getByRole('article')).toHaveCount(100); await expect(page.getByRole('link', { name: 'Próxima página', exact: true })).toBeVisible();
+        await expect(page.getByRole('article')).toHaveCount(101); await expect(page.getByRole('link', { name: 'Próxima página', exact: true })).toBeVisible();
         await open(first); await confirm();
         await expect(page.getByRole('article')).toHaveCount(100); await expect(article(first)).toHaveCount(0);
         await page.getByRole('link', { name: 'Próxima página', exact: true }).click(); await expect(article(last)).toBeVisible();
@@ -217,6 +306,67 @@ export function adminDeleteBrowserTests(t, config, admin) {
         await expect(page).toHaveURL(origin + '/area'); await expect(page.getByRole('article')).toHaveCount(100);
         await expect(page.getByRole('link', { name: 'Próxima página', exact: true })).toHaveCount(0);
         await admin.query('DELETE FROM imobilead.users WHERE id=ANY($1::uuid[]) AND id<>$2', [ids, actor]);
+      });
+      await firstClickRegression();
+      await scenario('single mouse, double click, Enter, Space and touch select exact UUID with no DELETE', async () => {
+        const targets = [await account(), await account()];
+        let deletes = 0;
+        const watch = request => { if(request.method()==='DELETE') deletes++; };
+        page.on('request', watch);
+        try {
+          for (const viewport of [{width:1280,height:900},{width:922,height:1200},{width:390,height:844}]) {
+            await page.setViewportSize(viewport); await load();
+            for (const target of targets) {
+              const source = article(target).getByRole('button', {name:'Excluir usuário',exact:true});
+              for (const action of ['click','double','Enter','Space']) {
+                console.log(JSON.stringify({adminInteraction:action,width:viewport.width,targetIndex:targets.indexOf(target)}));
+                if (action === 'click') await source.click();
+                else if (action === 'double') await source.dblclick();
+                else { await source.focus(); await page.keyboard.press(action); }
+                await expect(dialog()).toHaveCount(1); await expect(dialog()).toBeVisible();
+                await expect(dialog()).toContainText(target.email); await expect(dialog()).toContainText(target.name);
+                const cancel = dialog().getByRole('button', {name:'Cancelar',exact:true});
+                if(action !== 'double') await expect(cancel).toBeFocused();
+                else assert(await dialog().evaluate(el => el.contains(document.activeElement)));
+                await expect(dialog().getByRole('button', {name:'Excluir definitivamente',exact:true})).toBeEnabled();
+                if(action==='click') await cancel.click(); else await page.keyboard.press('Escape');
+                await expect(dialog()).toHaveCount(0); await expect(source).toBeFocused();
+                assert.equal(deletes,0);
+              }
+            }
+          }
+          const touch = await browser.newContext({hasTouch:true,viewport:{width:390,height:844}});
+          try {
+            await touch.addCookies(await context.cookies());
+            const touchPage = await touch.newPage(), errors = watchBrowserErrors(touchPage,origin);
+            touchPage.on('request', watch); await touchPage.goto(origin+'/area');
+            const target = targets[1];
+            await touchPage.getByRole('article',{name:'Cadastro de '+target.name,exact:true}).getByRole('button',{name:'Excluir usuário',exact:true}).tap();
+            const modal = touchPage.getByRole('dialog',{name:'Excluir usuário?',exact:true});
+            await expect(modal).toBeVisible(); await expect(modal).toContainText(target.email);
+            await expect(modal.getByRole('button',{name:'Cancelar',exact:true})).toBeFocused();
+            await modal.getByRole('button',{name:'Cancelar',exact:true}).tap();
+            assert.equal(deletes,0); errors.assertClean(); errors.dispose();
+          } finally { await touch.close(); }
+        } finally { page.off('request',watch); await page.setViewportSize({width:1280,height:900}); }
+      });
+      await scenario('poll preserves selected identity, invalidates unavailable account and page navigation clears selection', async () => {
+        const target = await account(); await load(); await open(target);
+        await admin.query('UPDATE imobilead.users SET name=$1 WHERE id=$2',['Nome revalidado',target.id]);
+        await page.evaluate(() => window.__deletePolls.at(-1)());
+        await expect(page.getByRole('article',{name:'Cadastro de Nome revalidado',exact:true})).toHaveCount(1);
+        await expect(dialog()).toContainText(target.name); await expect(dialog()).toContainText(target.email);
+        await expect(dialog().getByRole('button',{name:'Excluir definitivamente',exact:true})).toBeEnabled();
+        await admin.query('DELETE FROM imobilead.users WHERE id=$1',[target.id]);
+        await page.evaluate(() => window.__deletePolls.at(-1)());
+        await expect(dialog()).toHaveCount(0);
+        await expect(page.locator('main [role="alert"]')).toContainText('não está mais disponível nesta página');
+        const another = await account(); await load(); await open(another);
+        await page.goto(origin+'/area?after=ffffffff-ffff-ffff-ffff-ffffffffffff');
+        await expect(page.getByRole('region',{name:'Meu cadastro administrativo',exact:true})).toBeVisible();
+        await expect(dialog()).toHaveCount(0);
+        await load(); await open(another); await expect(dialog()).toContainText(another.email);
+        await page.keyboard.press('Escape');
       });
       await scenario('logout during a pending DELETE conceals private content and ignores the response', async () => {
         const target = await account(); await load(); await open(target);

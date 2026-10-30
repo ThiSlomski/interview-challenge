@@ -2,6 +2,14 @@
 
 Dados sintéticos. Desktop: 1280 × 900; celular: 390 × 844
 
+## ADMIN-UI-002 — perfil administrativo separado, 30/10/2026
+
+Somente pares06 (painel administrativo) e10 (confirmação sobre o painel)
+atualizados. Perfil próprio no topo, edição junto dos dados e usuários comuns
+abaixo; rodapé compartilhado preservado. Demais16 PNGs e três referências
+iguais por SHA256. [Evidência](../admin-profile-separation.md) e
+[hashes antes/depois](../admin-profile-separation-hashes.json).
+
 ## Home e rodapé compartilhado — 30/10/2026
 
 O complemento HOME-UI-001-F1 mantém o refinamento da home e reformula o único

@@ -1,0 +1,254 @@
+Refine a página administrativa para separar claramente o administrador autenticado dos usuários gerenciados.
+
+OBJETIVO
+
+O painel deve apresentar primeiro os dados do administrador autenticado, de forma semelhante à “Minha área” do usuário comum. Abaixo devem aparecer os usuários comuns que podem ser administrados.
+
+PROBLEMA ATUAL
+
+- O botão “Editar meu cadastro” aparece isolado no topo.
+- O administrador autenticado aparece misturado na listagem.
+- A posição do administrador depende da ordenação/paginação.
+- O marcador “Você · Administrador” aparece somente no card da lista.
+- A hierarquia visual não diferencia “meu cadastro” de “cadastros que administro”.
+- Usuários comuns e administradores parecem pertencer ao mesmo conjunto de ações.
+
+ESTRUTURA DESEJADA
+
+1. Preserve o cabeçalho:
+
+   - “ACESSO ADMINISTRATIVO”
+   - “Painel administrativo”
+   - botão “Sair”
+
+2. Ajuste a descrição para algo semelhante a:
+
+   “Gerencie os usuários cadastrados e mantenha seus dados administrativos atualizados.”
+
+3. Logo após o cabeçalho, crie a seção:
+
+   “Meu cadastro administrativo”
+
+4. Essa seção deve mostrar os dados do administrador autenticado:
+
+   - nome;
+   - e-mail;
+   - endereço;
+   - cidade;
+   - estado;
+   - país;
+   - CEP;
+   - mensagem, quando preenchida.
+
+5. Dentro desse card:
+
+   - exiba o marcador “Você · Administrador”;
+   - posicione o botão “Editar meu cadastro” junto dos dados;
+   - não exiba botão de exclusão;
+   - use um detalhe visual amarelo discreto para diferenciar o card;
+   - preserve o mesmo padrão visual da área do usuário comum;
+   - não apresente senha, sessão, UUID ou campos internos.
+
+6. O cadastro do administrador deve aparecer nessa seção independentemente:
+
+   - da ordenação da lista;
+   - da página atual;
+   - do cursor;
+   - da quantidade de usuários;
+   - de o próprio administrador aparecer ou não na resposta paginada.
+
+7. Não dependa da listagem administrativa para montar “Meu cadastro administrativo”.
+
+Use o perfil autenticado ou a fonte segura já existente para carregar o próprio cadastro. Não faça consultas desnecessárias se os dados já estiverem disponíveis de forma confiável.
+
+8. Remova o administrador autenticado da lista administrativa inferior para evitar duplicação.
+
+LISTA DE USUÁRIOS
+
+9. Depois do card administrativo, crie a seção:
+
+   “Usuários cadastrados”
+
+10. Use uma descrição semelhante a:
+
+   “Contas comuns cadastradas na plataforma.”
+
+11. A lista principal deve destacar os usuários com papel `user`.
+
+12. Preserve para cada usuário comum:
+
+   - dados atuais;
+   - formatação visual do CEP;
+   - botão “Excluir usuário”;
+   - confirmação antes da exclusão;
+   - estados de carregamento, erro e sucesso;
+   - paginação;
+   - descarte de respostas antigas;
+   - proteções contra concorrência.
+
+13. Não permita que a mudança visual enfraqueça as verificações da API. A API continua sendo responsável por impedir:
+
+   - autoexclusão;
+   - exclusão de administrador;
+   - exclusão por usuário comum;
+   - exclusão sem sessão;
+   - uso de UUID inválido.
+
+OUTROS ADMINISTRADORES
+
+14. Se a listagem puder conter outros administradores, não os misture silenciosamente com os usuários comuns.
+
+Apresente-os, quando existirem, em uma seção separada:
+
+“Outros administradores”
+
+15. Para outros administradores:
+
+   - exiba marcador “Administrador”;
+   - não exiba botão de exclusão;
+   - mantenha visual somente de consulta;
+   - não permita edição;
+   - preserve a exigência de que o administrador tenha acesso à listagem autorizada.
+
+16. Se não houver outros administradores, não exiba uma seção vazia.
+
+PAGINAÇÃO
+
+17. Preserve o contrato atual de paginação por cursor.
+
+18. O card “Meu cadastro administrativo”:
+
+   - não conta como item da paginação;
+   - não muda ao avançar ou voltar páginas;
+   - permanece no topo;
+   - não desaparece durante revalidação;
+   - não deve ser duplicado.
+
+19. Garanta que o filtro visual por papel não provoque:
+
+   - páginas aparentemente vazias com usuários disponíveis;
+   - repetição de registros;
+   - perda de `nextCursor`;
+   - retorno incorreto à primeira página;
+   - alteração indevida do contrato da API.
+
+Se separar papéis exigir mudança no contrato ou na consulta, pare e apresente a alternativa mínima antes de implementá-la. Não faça uma alteração silenciosa na API.
+
+EDIÇÃO DO PERFIL
+
+20. O botão “Editar meu cadastro” deve continuar utilizando o fluxo já existente.
+
+21. Preserve:
+
+   - e-mail imutável;
+   - validação compartilhada;
+   - controle por `profile_version`;
+   - proteção contra concorrência;
+   - rascunho durante revalidação;
+   - mensagens de conflito;
+   - cancelamento;
+   - acessibilidade.
+
+RESPONSIVIDADE
+
+Desktop:
+
+- card administrativo no topo;
+- dados organizados em duas colunas;
+- botão de edição alinhado ao conteúdo;
+- lista de usuários abaixo.
+
+Tablet:
+
+- preserve duas colunas quando houver espaço;
+- empilhe sem perda de hierarquia quando necessário.
+
+Celular:
+
+- dados em uma coluna;
+- botão de edição com tamanho confortável;
+- nenhum overflow horizontal;
+- marcadores legíveis;
+- diálogo de exclusão dentro da viewport.
+
+ACESSIBILIDADE
+
+- Use headings em ordem correta.
+- Identifique as seções por títulos visíveis.
+- Preserve foco visível.
+- Preserve foco inicial e retorno de foco dos diálogos.
+- Não use apenas cor para diferenciar admin e user.
+- Garanta contraste adequado.
+- Valide zoom de 200%.
+- Preserve navegação por teclado e Escape.
+
+RODAPÉ
+
+Mantenha o novo rodapé compartilhado:
+
+- marca à esquerda;
+- “Engenharia digital para um futuro real.” ao centro;
+- “© 2026 SLOMSKI SOLUTIONS” à direita;
+- empilhado e centralizado no celular;
+- posicionado após o conteúdo completo.
+
+VALIDAÇÕES
+
+Teste:
+
+1. administrador como único cadastro;
+2. administrador com vários usuários comuns;
+3. administrador com outro administrador;
+4. administrador fora da primeira página da ordenação;
+5. paginação para frente e para trás;
+6. edição do próprio perfil;
+7. exclusão de usuário comum;
+8. tentativa de excluir administrador;
+9. logout;
+10. revalidação periódica;
+11. resposta antiga após troca de página;
+12. desktop;
+13. tablet retrato;
+14. tablet paisagem;
+15. celular;
+16. zoom de 200%;
+17. teclado;
+18. zero erros de console;
+19. zero pageerror;
+20. zero erro de hidratação.
+
+Execute também:
+
+- testes administrativos;
+- testes de perfil;
+- testes de autorização;
+- testes PostgreSQL/HTTP;
+- testes de concorrência;
+- lint;
+- typecheck;
+- build;
+- Harness;
+- git diff --check.
+
+Atualize somente as capturas realmente alteradas. Preserve as demais por hash.
+
+Não altere cadastro, login, clima, sessão, banco ou permissões sem necessidade comprovada.
+
+Não faça commit, push ou deploy.
+
+Ao final, informe:
+
+1. fonte utilizada para carregar o próprio administrador;
+2. como a duplicação foi eliminada;
+3. tratamento de outros administradores;
+4. comportamento da paginação;
+5. arquivos alterados;
+6. testes executados;
+7. capturas atualizadas;
+8. confirmação de que as proteções da API foram preservadas;
+9. diff exclusivo;
+10. sugestão de commit.
+
+Commit sugerido:
+
+refactor(admin): separa perfil administrativo da gestão de usuários

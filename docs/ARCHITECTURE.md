@@ -955,3 +955,9 @@ nunca ARG/ENV de build. Nenhum secret real consultado, nenhuma imagem publicada.
 
 [Operação](../SOLUTION.md#compose-local-de-produção--container-001),
 [digests, correções e resultados](harness/evidence/containerization.md).
+
+## ADMIN-UI-002 — refinamento administrativo, 30/10/2026
+
+Perfil próprio independente, usuários comuns e outros administradores separados; edição no mesmo espaço e abertura da confirmação no primeiro clique. [Pedido integral](prompts/2026-10-30-admin-profile-separation.txt) e [evidência](harness/evidence/admin-profile-separation.md).
+
+Complementos integrais: [modal no primeiro clique](prompts/2026-10-30-admin-profile-complement-1.txt) e [edição no mesmo cartão e largura](prompts/2026-10-30-admin-profile-complement-2.txt).

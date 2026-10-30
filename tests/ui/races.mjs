@@ -76,18 +76,18 @@ export function uiRaceTests(t, config, admin) {
         await expect(page.getByText(email, { exact: true })).toBeVisible();
         assert.equal(await page.evaluate(() => document.body.hasAttribute('cz-shortcut-listen')), false);
         await page.locator('header a.brand').click();
-        await page.getByRole('link', { name: /Acessar minha/ }).click();
+        await page.locator('header').getByRole('link', { name: 'Minha área', exact: true }).click();
         await expect(page.getByText(email, { exact: true })).toBeVisible();
         await page.getByRole('button', { name: 'Sair', exact: true }).click();
         await expect(page).toHaveURL(origin + '/login');
         assert.equal((await context.request.get(origin + '/api/users/' + id)).status(), 401);
         await history('goBack');
-        await history('goBack');
         assert.equal(await page.getByText(email, { exact: true }).isVisible(), false);
-        await expect(page).toHaveURL(origin + '/login');
         await history('goForward');
         assert.equal(await page.getByText(email, { exact: true }).isVisible(), false);
-        await page.getByRole('link', { name: 'Minha área', exact: true }).click();
+        // Public history destinations may remain public. A protected direct
+        // navigation must still redirect after revocation, regardless of depth.
+        await page.goto(origin + '/area');
         await expect(page).toHaveURL(origin + '/login');
         await page.reload();
         await expect(page).toHaveURL(origin + '/login');

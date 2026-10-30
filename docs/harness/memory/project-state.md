@@ -1,3 +1,20 @@
+## ADMIN-UI-002 — perfil administrativo e complementos, 30/10/2026
+
+Base main/d32c6d0 inicialmente limpa. Próprio perfil de loadArea.own no topo,
+sem dependência do cursor; GET próprio na revalidação. Contas user e outros admins
+separados visualmente, sem alteração de API/consulta/cursor. Editor substitui
+card no mesmo slot/largura, sem duplicação; foco/draft/versão preservados.
+Clique perdido reproduzido na corrida window.focus/pointerdown/click; admin
+visível usa revalidação de fundo, demais gates/identidade/TTL mantidos. Diálogo
+ignora continuação de duplo clique nativa; nenhuma exclusão ao abrir.
+UI admin41/41, perfil34/34, UI51/51, corridas58/58, HTTP/PG65/65; zero skips/falhas
+finais, cleanup0/metadados protegidos iguais. Lint/tipos/build/doctor/validate/
+verify --product aprovados; Harness62/62, parcial/readiness:not-assessed.
+Somente pares06/10 atualizados;16 PNGs+3 referências iguais por SHA256.
+Autorrevisão sequencial; humana e CI remoto pendentes. Sem commit/push/deploy,
+sem uso de contas persistentes ou alterações em banco/grants/auth/API/rodapé.
+[Evidência, falhas, resultados e diff](../evidence/admin-profile-separation.md).
+
 ## HOME-UI-001-F1 — home e rodapé compartilhado, 30/10/2026
 
 Rodapé único do RootLayout reformulado e shell vertical compartilhado, com marca

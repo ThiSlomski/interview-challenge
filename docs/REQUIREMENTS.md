@@ -312,3 +312,9 @@ PLUS-4 autorizado pelo pedido atual, supera restrições históricas de não ini
 containerização. Sem alteração funcional de cadastro/auth/roles/perfil/exclusão/clima.
 Job container-smoke independente; resultados locais e limitações na
 [evidência](harness/evidence/containerization.md). CI remoto do diff pendente.
+
+## ADMIN-UI-002 — refinamento administrativo, 30/10/2026
+
+Perfil próprio independente, usuários comuns e outros administradores separados; edição no mesmo espaço e abertura da confirmação no primeiro clique. [Pedido integral](prompts/2026-10-30-admin-profile-separation.txt) e [evidência](harness/evidence/admin-profile-separation.md).
+
+Complementos integrais: [modal no primeiro clique](prompts/2026-10-30-admin-profile-complement-1.txt) e [edição no mesmo cartão e largura](prompts/2026-10-30-admin-profile-complement-2.txt).

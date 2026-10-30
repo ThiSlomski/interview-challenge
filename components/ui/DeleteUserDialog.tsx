@@ -14,6 +14,11 @@ export default function DeleteUserDialog({ user, busy, dialogRef, onCancel, onCo
     return () => dialog?.close();
   }, [dialogRef]);
   return <dialog ref={dialogRef} className="delete-dialog card" aria-labelledby="delete-user-title" aria-describedby="delete-user-description" aria-busy={busy}
+    onClickCapture={event => {
+      // The second click used to open this dialog can land on a newly visible
+      // action at the same screen position. Require a fresh single activation.
+      if (event.detail > 1) { event.preventDefault(); event.stopPropagation(); }
+    }}
     onCancel={event => { event.preventDefault(); onCancel(); }}
     onKeyDown={event => {
       if (event.key !== 'Tab') return;

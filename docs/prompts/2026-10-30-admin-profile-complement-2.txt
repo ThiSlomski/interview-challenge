@@ -1,0 +1,114 @@
+COMPLEMENTO — CORRIGIR DUPLICAÇÃO DO CADASTRO ADMINISTRATIVO DURANTE A EDIÇÃO
+
+Ao clicar em “Editar meu cadastro”, o formulário está sendo inserido acima de “Meu cadastro administrativo”, enquanto o cartão original continua visível. Isso duplica as mesmas informações e deixa a hierarquia da página confusa.
+
+Corrija o comportamento nesta mesma implementação:
+
+1. O formulário deve substituir o cartão “Meu cadastro administrativo” no mesmo local, nunca ser acrescentado acima dele.
+
+2. Estado normal:
+   - Exibir o título “Meu cadastro administrativo”.
+   - Exibir o cartão com os dados do administrador.
+   - Manter o selo “Você · Administrador”.
+   - Manter o botão “Editar meu cadastro” dentro desse cartão.
+
+3. Estado de edição:
+   - Manter a seção na mesma posição da página.
+   - Substituir integralmente o cartão de visualização pelo formulário.
+   - Alterar o título da seção para “Editar meu cadastro administrativo” ou usar “Editar meu cadastro” dentro do próprio cartão.
+   - Não exibir simultaneamente o formulário e a versão somente leitura.
+   - Não duplicar nome, e-mail, endereço ou qualquer outra informação.
+
+4. Ao salvar:
+   - Atualizar os dados confirmados.
+   - Encerrar o modo de edição.
+   - Voltar a exibir o cartão administrativo já atualizado.
+   - Preservar a posição visual da página sempre que possível.
+
+5. Ao cancelar:
+   - Descartar somente o rascunho não salvo.
+   - Encerrar o modo de edição.
+   - Restaurar o cartão administrativo com os últimos dados confirmados.
+   - Não enviar requisição de atualização.
+
+6. A seção “Usuários cadastrados” deve continuar abaixo do cadastro administrativo, sem ser remontada, duplicada ou deslocada para cima.
+
+7. Preserve:
+   - e-mail somente leitura;
+   - validações atuais;
+   - proteção contra concorrência;
+   - polling/revalidação sem sobrescrever o rascunho;
+   - autorização;
+   - paginação;
+   - exclusão administrativa;
+   - correção para o modal de exclusão abrir no primeiro clique;
+   - responsividade e acessibilidade existentes.
+
+8. Durante a troca entre visualização e edição:
+   - Evitar salto brusco de layout;
+   - Direcionar o foco para o primeiro campo editável;
+   - Manter navegação por teclado;
+   - Não usar timeout ou clique programático para controlar a interface.
+
+Adicionar ou ajustar testes para comprovar:
+
+- Um clique em “Editar meu cadastro” substitui o cartão pelo formulário.
+- Nunca existem formulário e cartão administrativo ao mesmo tempo.
+- Cancelar restaura o cartão sem alterar os dados.
+- Salvar restaura o cartão com os dados atualizados.
+- O rascunho não é sobrescrito por revalidação.
+- A listagem de usuários permanece abaixo e sem duplicações.
+- O modal de exclusão continua abrindo no primeiro clique.
+- Nenhuma regressão ocorre para usuário comum, desktop ou celular.
+
+Não alterar contratos da API, banco, migrations, grants, autenticação ou autorização. Trate como parte do mesmo refinamento visual e comportamental da área administrativa.
+
+COMPLEMENTO — PRESERVAR A LARGURA DO CARTÃO NO MODO DE EDIÇÃO
+
+Além de substituir o cartão administrativo pelo formulário, o modo de edição deve manter exatamente a mesma largura, alinhamento e posição do cartão “Meu cadastro administrativo”.
+
+Atualmente, o formulário abre em um bloco mais estreito, provocando redução da largura e deslocamento visual da página. Corrija da seguinte forma:
+
+1. O cartão de visualização e o formulário de edição devem compartilhar o mesmo contêiner estrutural.
+
+2. Ao entrar no modo de edição:
+   - manter 100% da largura disponível na área de conteúdo;
+   - preservar o mesmo `max-width` do cartão administrativo;
+   - preservar as mesmas margens e o mesmo alinhamento horizontal;
+   - não reduzir a seção para a largura dos campos;
+   - não provocar salto ou encolhimento do layout.
+
+3. O formulário deve ocupar toda a largura do cartão substituído.
+
+4. Organizar os campos responsivamente:
+   - e-mail, nome, endereço e mensagem podem ocupar a largura completa;
+   - cidade e estado podem permanecer lado a lado;
+   - país e CEP podem permanecer lado a lado;
+   - no celular, todos os campos devem ficar em uma única coluna;
+   - os botões devem permanecer alinhados e quebrar de forma adequada em telas menores.
+
+5. O formulário pode limitar internamente campos específicos quando isso melhorar a leitura, mas o cartão externo deve continuar com a mesma largura da visualização administrativa e dos cartões da listagem.
+
+6. A transição correta deve ser:
+
+   Visualização:
+   “Meu cadastro administrativo”
+   → cartão administrativo em largura total.
+
+   Edição:
+   “Editar meu cadastro administrativo”
+   → formulário no mesmo espaço e com a mesma largura.
+
+7. Não renderizar um novo painel estreito acima do cartão e não manter a visualização original abaixo do formulário.
+
+8. Após salvar ou cancelar, restaurar o cartão no mesmo local, sem mudança perceptível de largura ou alinhamento.
+
+Adicionar teste visual ou de layout comprovando que:
+
+- o cartão e o formulário possuem a mesma largura externa;
+- não há duplicação durante a edição;
+- não ocorre deslocamento horizontal;
+- desktop, tablet e celular permanecem responsivos;
+- salvar e cancelar não provocam salto de layout.
+
+Preserve todas as regras funcionais, validações, acessibilidade, revalidação e proteções já implementadas.

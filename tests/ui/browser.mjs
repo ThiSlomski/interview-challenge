@@ -289,7 +289,7 @@ export function uiBrowserTests(t, config, admin) {
         await expect(page.getByText('ACESSO ADMINISTRATIVO', { exact: true })).toBeVisible();
         await expect(page.getByRole('heading', { name: 'Painel administrativo', exact: true })).toBeVisible();
         await expect(page.getByRole('heading', { name: 'Meu cadastro', exact: true })).toHaveCount(0);
-        await expect(page.getByText('Consulte os usuários cadastrados na plataforma.', { exact: true })).toHaveCount(1);
+        await expect(page.getByText('Gerencie os usuários cadastrados e mantenha seus dados administrativos atualizados.', { exact: true })).toHaveCount(1);
         await expect(page.getByText(email, { exact: true })).toHaveCount(1);
         await expect(page.getByText('Você · Administrador', { exact: true })).toHaveCount(1);
         const own = page.getByRole('article', { name: 'Cadastro de Pessoa Sintética UI', exact: true });
@@ -300,7 +300,7 @@ export function uiBrowserTests(t, config, admin) {
         assert.equal(await page.locator('.record-card').count(), listing.users.length);
         for (const user of listing.users) {
           await expect(page.getByText(user.email, { exact: true })).toHaveCount(1);
-          if (user.id !== id) await expect(page.locator('.record-card').filter({ hasText: user.email }).locator('.record-badge')).toHaveCount(0);
+          if (user.id !== id && user.role === 'user') await expect(page.locator('.record-card').filter({ hasText: user.email }).locator('.record-badge')).toHaveCount(0);
         }
         assert.equal(listing.users.find(user => user.id === id).postalCode, '12345678');
         assert.equal((await admin.query('SELECT postal_code FROM imobilead.users WHERE id=$1', [id])).rows[0].postal_code, '12345678');
@@ -354,16 +354,16 @@ export function uiBrowserTests(t, config, admin) {
         const requests = [], documents = [];
         const completed = request => {
           const path = new URL(request.url()).pathname;
-          if (path === '/api/auth/session' || path === '/api/users') requests.push(path);
+          if (path === '/api/auth/session' || path === '/api/users' || path === '/api/users/' + id) requests.push(path);
           if (request.resourceType() === 'document') documents.push(path);
         };
         page.on('requestfinished', completed);
         try {
-          await expect.poll(() => requests.length, { timeout: 35000 }).toBe(3);
+          await expect.poll(() => requests.length, { timeout: 35000 }).toBe(4);
           await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
           const state = await page.evaluate(() => { window.__adminStability.stop = true; return window.__adminStability; });
           assert.equal(state.mutations, 0); assert.equal(state.changed, false); assert(state.samples > 0);
-          assert.deepEqual(requests, ['/api/auth/session', '/api/users', '/api/auth/session']);
+          assert.deepEqual(requests, ['/api/auth/session', '/api/users', '/api/users/' + id, '/api/auth/session']);
           assert.deepEqual(documents, []);
           console.log(JSON.stringify({ adminPeriodicStability: true, hiddenMutations: 0, documents: 0, sessionCalls: 2, focusScrollLayoutChanged: false }));
         } finally {
@@ -379,9 +379,9 @@ export function uiBrowserTests(t, config, admin) {
         await expect(page.getByRole('link', { name: 'Primeira página', exact: true })).toHaveCount(0);
         const seen = new Set();
         async function collect() {
-          const records = await page.locator('.record-card .record dd:nth-child(2)').allTextContents();
+          const records = await page.locator('.record-card:not(.own-admin-card) .record dd:nth-child(2)').allTextContents();
           assert(records.length > 0);
-          for (const record of await page.locator('.record-card').all()) {
+          for (const record of await page.locator('.record-card:not(.own-admin-card)').all()) {
             const address = await record.locator('dd').nth(1).innerText();
             assert.equal(seen.has(address), false); seen.add(address);
           }
@@ -394,8 +394,8 @@ export function uiBrowserTests(t, config, admin) {
         await expect(page.getByRole('link', { name: 'Próxima página', exact: true })).toHaveCount(0);
         await collect();
         const all = (await admin.query('SELECT email FROM imobilead.users')).rows.map(row => row.email);
-        assert.deepEqual([...seen].sort(), all.sort());
-        assert.equal([...seen].filter(address => address === email).length, 1);
+        assert.deepEqual([...seen].sort(), all.filter(address => address !== email).sort());
+        assert.equal([...seen].filter(address => address === email).length, 0);
         await page.goto(origin + '/area?after=ffffffff-ffff-ffff-ffff-ffffffffffff');
         await expect(page.getByText('Nenhum cadastro nesta página.', { exact: true })).toBeVisible();
         await expect(page.getByRole('link', { name: 'Primeira página', exact: true })).toBeVisible();

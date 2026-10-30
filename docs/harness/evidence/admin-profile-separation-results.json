@@ -1,0 +1,69 @@
+{
+  "date": "2026-10-30",
+  "base": "d32c6d04a7db6a72083ecdf13b5de06826cbc287",
+  "results": [
+    {
+      "name": "Administrativo/exclusão UI",
+      "command": "npm run test:admin-delete:ui",
+      "tests": 41,
+      "pass": 41,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "cleanupConfirmed": true,
+      "protectedMetadataUnchanged": true
+    },
+    {
+      "name": "Perfil UI",
+      "command": "npm run test:profile:ui",
+      "tests": 34,
+      "pass": 34,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "cleanupConfirmed": true,
+      "protectedMetadataUnchanged": true
+    },
+    {
+      "name": "UI completa",
+      "command": "npm run test:ui",
+      "tests": 51,
+      "pass": 51,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "cleanupConfirmed": true,
+      "protectedMetadataUnchanged": true
+    },
+    {
+      "name": "Concorrência UI",
+      "command": "node --test tests/ui/race.test.mjs",
+      "tests": 58,
+      "pass": 58,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "cleanupConfirmed": true,
+      "protectedMetadataUnchanged": true
+    },
+    {
+      "name": "HTTP/PostgreSQL",
+      "command": "npm run test:db:integration",
+      "tests": 65,
+      "pass": 65,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "cleanupConfirmed": true,
+      "protectedMetadataUnchanged": true
+    }
+  ],
+  "harness": {
+    "ok": true,
+    "partial": true,
+    "readiness": "not-assessed",
+    "tests": 62
+  },
+  "build": "passed",
+  "review": "self-review; human and remote CI pending"
+}

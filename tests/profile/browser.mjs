@@ -171,6 +171,47 @@ export function profileBrowserTests(t, config, admin) {
         await expect(page.getByRole('status')).toHaveText('Cadastro atualizado com sucesso.');
         assert.equal((await admin.query('SELECT name,role FROM imobilead.users WHERE id=$1', [id])).rows[0].name, 'Administrador atualizado');
       });
+      await scenario('admin editor replaces own card at equal width and position; list stays mounted and draft survives polling', async () => {
+        await page.goto(origin + '/area');
+        const section = page.getByRole('region', {name:'Meu cadastro administrativo',exact:true});
+        const form = section.getByRole('form',{name:'Editar meu cadastro',exact:true});
+        let patches = 0;
+        const watch = request => { if(request.method()==='PATCH') patches++; };
+        page.on('request',watch);
+        try {
+          for(const viewport of [{width:1280,height:900},{width:922,height:1200},{width:1180,height:820},{width:390,height:844}]) {
+            await page.setViewportSize(viewport);
+            const card = section.locator('article'); await expect(card).toHaveCount(1);
+            const before = await card.boundingBox();
+            await page.getByRole('region',{name:'Usuários cadastrados',exact:true}).evaluate(el => { window.__profileListNode = el; });
+            await edit(); await expect(card).toHaveCount(0); await expect(form).toHaveCount(1);
+            const during = await form.boundingBox();
+            assert(Math.abs(before.width-during.width)<1); assert(Math.abs(before.x-during.x)<1);
+            const offset = await section.evaluate(el => el.querySelector('.admin-profile-slot').offsetTop);
+            await page.getByLabel('Nome',{exact:true}).fill('Rascunho administrativo');
+            await page.getByLabel('Cidade',{exact:true}).fill('Cidade do rascunho');
+            // This page already shortens the real polling interval to100ms.
+            await admin.query('UPDATE imobilead.users SET city=$1,profile_version=profile_version+1 WHERE id=$2',['Cidade confirmada fora da página',id]);
+            await page.waitForResponse(response => response.url()===origin+'/api/users/'+id && response.status()===200);
+            await expect(page.getByLabel('Cidade',{exact:true})).toHaveValue('Cidade do rascunho');
+            assert(await page.getByRole('region',{name:'Usuários cadastrados',exact:true}).evaluate(el => el===window.__profileListNode && el.getBoundingClientRect().top>=document.querySelector('.admin-profile-slot').getBoundingClientRect().bottom));
+            assert(await page.evaluate(() => document.documentElement.scrollWidth<=innerWidth));
+            await page.getByRole('button',{name:'Cancelar edição',exact:true}).click();
+            await expect(form).toHaveCount(0); await expect(card).toHaveCount(1);
+            await expect(card).toContainText('Cidade confirmada fora da página');
+            const after = await card.boundingBox();
+            assert(Math.abs(before.width-after.width)<1); assert(Math.abs(before.x-after.x)<1);
+            assert.equal(await section.evaluate(el => el.querySelector('.admin-profile-slot').offsetTop),offset);
+            assert.equal(patches,0);
+          }
+          await edit(); await page.getByLabel('Nome',{exact:true}).fill('Admin salvo no mesmo cartão');
+          await page.getByRole('button',{name:'Salvar alterações',exact:true}).click();
+          await expect(form).toHaveCount(0);
+          await expect(section.locator('article')).toContainText('Admin salvo no mesmo cartão');
+          await expect(page.getByRole('button',{name:'Editar meu cadastro',exact:true})).toBeFocused();
+          assert.equal(patches,1);
+        } finally { page.off('request',watch); await page.setViewportSize({width:1280,height:900}); }
+      });
       await scenario('logout discards editor and revokes session', async () => {
         await edit();
         await page.getByLabel('Nome', { exact: true }).fill('Rascunho descartado');

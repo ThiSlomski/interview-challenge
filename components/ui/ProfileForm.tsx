@@ -13,9 +13,10 @@ const fields = [
   ['message', 'Mensagem', 'off'],
 ];
 
-export default function ProfileForm({ profile, busy, feedback, onSave, onCancel, onReload }: {
+export default function ProfileForm({ profile, busy, feedback, onSave, onCancel, onReload, embedded = false }: {
   profile: ProfileSnapshot; busy: boolean; feedback: ProfileFeedback | null;
   onSave: (input: Record<string, unknown>) => void; onCancel: () => void; onReload: () => void;
+  embedded?: boolean;
 }) {
   const form = useRef<HTMLFormElement>(null);
   const alert = useRef<HTMLDivElement>(null);
@@ -40,7 +41,7 @@ export default function ProfileForm({ profile, busy, feedback, onSave, onCancel,
   }
 
   return <form ref={form} className="card form-card profile-form" aria-label="Editar meu cadastro" aria-busy={busy} onSubmit={submit} noValidate>
-    <h2>Editar meu cadastro</h2>
+    {embedded ? <h3>Editar meu cadastro</h3> : <h2>Editar meu cadastro</h2>}
     <p className="required-note">O e-mail identifica sua conta e não pode ser alterado nesta tela. Os demais campos podem ficar em branco.</p>
     <div className="field profile-email"><label htmlFor="profile-email">E-mail</label><input id="profile-email" type="email" readOnly value={profile.user.email} autoComplete="email" aria-describedby="profile-email-hint" /><span id="profile-email-hint" className="hint">Identificador da conta, somente leitura.</span></div>
     {currentFeedback && <div ref={alert} tabIndex={-1} role="alert" className="notice error">

@@ -1,0 +1,153 @@
+COMPLEMENTO DO REFINAMENTO ADMINISTRATIVO — CORRIGIR ABERTURA DO MODAL
+
+Foi identificado um erro funcional na lista administrativa:
+
+Ao clicar em “Excluir usuário”, o modal de confirmação não abre no primeiro clique. Atualmente é necessário clicar duas vezes.
+
+Corrija esse comportamento dentro do mesmo refinamento da página administrativa.
+
+COMPORTAMENTO ESPERADO
+
+1. Um único clique em “Excluir usuário” deve:
+
+   - selecionar o usuário correto;
+   - abrir imediatamente o modal de confirmação;
+   - mostrar nome e e-mail do usuário selecionado;
+   - mover o foco para o controle inicial definido no diálogo.
+
+2. O primeiro clique não deve:
+
+   - excluir o usuário;
+   - chamar a API DELETE;
+   - exigir um segundo clique;
+   - somente focar o botão;
+   - perder o evento durante uma renderização;
+   - abrir o modal de outro usuário.
+
+3. A API DELETE deve ser chamada somente depois que o administrador clicar em “Excluir definitivamente” dentro do modal.
+
+INVESTIGAÇÃO
+
+Antes de corrigir, reproduza e determine a causa real.
+
+Verifique especialmente:
+
+- se o primeiro clique apenas atualiza o usuário selecionado;
+- se a abertura do modal depende de um estado anterior;
+- se existe `useEffect` tentando abrir o diálogo depois da seleção;
+- se o estado do alvo e o estado de abertura estão dessincronizados;
+- se alguma revalidação da lista limpa o alvo selecionado;
+- se o card é recriado entre `pointerdown`, foco e `click`;
+- se existe propagação ou cancelamento indevido do evento;
+- se alguma camada invisível intercepta o primeiro clique;
+- se índices da lista estão sendo usados no lugar do UUID;
+- se o botão está temporariamente desabilitado durante revalidação;
+- se a alteração recente na separação do perfil administrativo provocou uma nova renderização que descarta o primeiro evento.
+
+Não aplique atraso artificial, `setTimeout` ou clique programático como solução.
+
+CORREÇÃO
+
+A ação do botão deve definir de forma atômica e previsível:
+
+- o usuário selecionado;
+- o estado aberto do modal.
+
+Se o componente do diálogo permitir controlar abertura e alvo pelo mesmo estado, prefira um único estado representando:
+
+- nenhum usuário selecionado = modal fechado;
+- usuário selecionado = modal aberto para aquele usuário.
+
+Evite estados paralelos que possam ficar inconsistentes.
+
+Preserve UUID, nome e e-mail do usuário correto. Não use posição da lista como identidade.
+
+CONCORRÊNCIA E REVALIDAÇÃO
+
+Enquanto o modal estiver aberto:
+
+- preserve o alvo selecionado;
+- não troque silenciosamente o usuário por causa do polling;
+- não feche o diálogo por uma revalidação válida;
+- invalide corretamente o alvo se a conta deixar de existir;
+- preserve as proteções contra respostas antigas;
+- não permita envio duplicado;
+- mantenha o botão de confirmação desabilitado somente durante a requisição DELETE.
+
+Se o usuário desaparecer antes da confirmação, apresente o tratamento já previsto sem excluir outro registro.
+
+ACESSIBILIDADE
+
+Valide:
+
+- clique único com mouse;
+- toque único;
+- Enter sobre o botão;
+- Espaço sobre o botão;
+- foco inicial dentro do modal;
+- contenção de foco;
+- Escape para cancelar;
+- botão “Cancelar”;
+- retorno do foco ao botão que abriu o modal;
+- nome acessível do diálogo;
+- ausência de abertura duplicada.
+
+TESTES OBRIGATÓRIOS
+
+Adicione ou ajuste testes para provar:
+
+1. primeiro clique abre o modal;
+2. apenas uma interação é necessária;
+3. nenhum DELETE ocorre ao abrir;
+4. modal contém nome e e-mail corretos;
+5. confirmação realiza exatamente um DELETE;
+6. duplo clique rápido não cria dois diálogos nem duas requisições;
+7. cancelar não exclui;
+8. Escape não exclui;
+9. teclado abre no primeiro acionamento;
+10. toque abre no primeiro acionamento;
+11. cada botão abre o usuário correspondente;
+12. revalidação não troca o alvo;
+13. paginação não reutiliza alvo antigo;
+14. logout pendente fecha/invalida o fluxo corretamente;
+15. erro, timeout e resposta antiga continuam tratados.
+
+Teste em desktop, tablet e celular.
+
+Execute também:
+
+- testes administrativos;
+- testes de exclusão;
+- testes de concorrência;
+- testes de autorização;
+- lint;
+- typecheck;
+- build;
+- git diff --check.
+
+Preserve:
+
+- contrato da API;
+- autorização;
+- confirmação destrutiva;
+- cores e contraste do botão;
+- paginação;
+- perfil administrativo no topo;
+- rodapé compartilhado;
+- demais fluxos.
+
+Não faça commit, push ou deploy.
+
+Ao final, informe:
+
+1. causa raiz;
+2. correção aplicada;
+3. prova de que um único clique abre o modal;
+4. prova de que abrir o modal não chama DELETE;
+5. testes executados;
+6. arquivos alterados;
+7. confirmação de que não houve alteração no contrato da API.
+
+Este complemento pertence ao mesmo commit:
+
+refactor(admin): separa perfil administrativo da gestão de usuários

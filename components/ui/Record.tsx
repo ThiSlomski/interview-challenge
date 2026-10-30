@@ -15,10 +15,10 @@ export const recordLabels = {
   state: 'Estado', country: 'País', postalCode: 'CEP', message: 'Mensagem',
 };
 
-export default function UserDetails({ user }: { user: UserRecord }) {
+export default function UserDetails({ user, omitEmptyMessage = false }: { user: UserRecord; omitEmptyMessage?: boolean }) {
   return (
     <dl className="record">
-      {Object.entries(recordLabels).map(([key, label]) => (
+      {Object.entries(recordLabels).filter(([key]) => key !== 'message' || !omitEmptyMessage || Boolean(user.message)).map(([key, label]) => (
         <div key={key} className={key === 'message' ? 'wide' : undefined}>
           <dt>{label}</dt>
           <dd>{key === 'postalCode' && user.postalCode?.length === 8 && /^[0-9]{8}$/.test(user.postalCode)
