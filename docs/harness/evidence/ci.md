@@ -1,5 +1,48 @@
 # CI-001 — evidência, 30/10/2026
 
+## CI-001-R1 — runtime interno das actions, 30/10/2026
+
+Pedido delimitado: corrigir somente os avisos Node20 das actions; responsável
+único/autorrevisão sequencial, sem delegação. Base main/2d45597ac143ca5e0e53961a4bd0fed70bf1352a,
+árvore inicialmente limpa. Escrita: workflow, versão vigente em SOLUTION e este
+registro de CI. Os três jobs verdes foram informados pelo usuário; esta rodada
+não atribui esse resultado ao novo diff nem altera configuração remota.
+
+Releases oficiais estáveis (draft:false/prerelease:false), tags resolvidas para
+commits oficiais completos e action.yml consultado diretamente por SHA:
+
+| Action | Release | SHA | runs.using |
+| --- | --- | --- | --- |
+| checkout | [v5.1.0](https://github.com/actions/checkout/releases/tag/v5.1.0) | fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 | node24 |
+| setup-node | [v5.0.0](https://github.com/actions/setup-node/releases/tag/v5.0.0) | a0853c24544627f65ddf259abe73b1d18a591444 | node24 |
+
+Escolhida a linha v5 para a migração mínima ao runtime interno Node24. Exige
+runner >=2.327.1, compatível com o runner hospedado ubuntu-24.04 existente.
+O checkout5.1.0 traz proteção adicional de pull_request_target; este workflow
+usa pull_request comum e não habilita checkout inseguro. Cache npm explícito
+preservado, sem ativar opção adicional de cache automático do setup-node.
+
+As seis ocorrências foram atualizadas por SHA; aplicação e imagem de integração
+permanecem Node22.13.1. Comparação estrutural do YAML antes/depois, normalizando
+somente os campos uses, exige igualdade completa: comandos, jobs, permissões,
+timeouts, credenciais não persistidas, cache, serviço PG e proteções intactos.
+Sem variável de supressão/compatibilidade com Node20 e sem tags móveis.
+
+Validações desta correção: YAML e igualdade estrutural aprovados; action.yml
+oficial de ambos os SHAs confirma node24. Doctor/validate/verify aprovados;
+verify parcial/readiness not-assessed, com testes Harness, probe, lint e typecheck
+aprovados. UTF-8/fences dos3 arquivos,27 links locais/10 âncoras e diff --check
+aprovados. Patch exclusivo contra a base limpa, conferido com
+git apply --check --reverse:
+C:\Users\thiag\AppData\Local\Temp\devsecops-ci-actions-node24.diff.
+Resultados funcionais abaixo são históricos; testes de produto, build, banco/UI
+e audit não foram reexecutados nesta correção de referências.
+Novo CI remoto e desaparecimento dos avisos na interface ainda não observados;
+dependem do commit/push pelo usuário. Sem commit/push nesta rodada.
+
+Os registros abaixo preservam a implementação inicial, inclusive versões v4 e
+suas verificações, e são superados por R1 apenas quanto às versões das actions.
+
 Fase1 local, revisão humana pendente. [Contrato](ci-plan.md),
 [prompt integral](../../prompts/2026-10-30-devsecops-ci.txt),
 [workflow](../../../.github/workflows/ci.yml),

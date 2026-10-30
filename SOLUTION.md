@@ -318,7 +318,7 @@ Não marque migrations ou permissões aprovadas com base somente em testes offli
 
 Estado vigente CI-001, 30/10/2026: [workflow](.github/workflows/ci.yml) com
 Node **22.13.1**, cache npm oficial e `npm ci` em três jobs independentes no
-Ubuntu24.04. Actions oficiais fixadas por SHA (checkout4.3.1/setup-node4.4.0),
+Ubuntu24.04. Actions oficiais fixadas por SHA (checkout5.1.0/setup-node5.0.0),
 credencial Git não persistida, `contents: read`, concorrência por workflow/ref
 com cancelamento da execução antiga, eventos push/pull_request/workflow_dispatch.
 
