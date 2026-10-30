@@ -1,0 +1,129 @@
+REFINAMENTO VISUAL — CENTRALIZAR E EQUILIBRAR A TELA DE LOGIN
+
+A tela de login está concentrada no canto superior esquerdo e deixa uma área vazia excessiva, principalmente em telas altas. Como essa página possui uma única ação principal, centralize o conteúdo de autenticação e melhore sua hierarquia visual.
+
+OBJETIVO
+
+Criar uma tela de login mais equilibrada, profissional e focada, preservando integralmente autenticação, segurança e contratos existentes.
+
+LAYOUT PRINCIPAL
+
+1. Centralizar horizontalmente todo o bloco de login na área disponível entre o cabeçalho e o rodapé.
+
+2. Equilibrar verticalmente o bloco dentro do conteúdo principal:
+   - não posicionar o login logo abaixo do cabeçalho;
+   - não usar posicionamento absoluto ou altura fixa;
+   - considerar a altura real do cabeçalho e do rodapé;
+   - manter o formulário aproximadamente no centro visual da área disponível;
+   - em telas muito altas, permitir uma leve tendência para cima, evitando que fique excessivamente baixo.
+
+3. O rodapé compartilhado deve continuar no final da tela em páginas curtas, sem ser fixo e sem sobrepor o conteúdo.
+
+4. A estrutura da página deve seguir:
+   - cabeçalho;
+   - conteúdo principal flexível e centralizado;
+   - rodapé compartilhado.
+
+BLOCO DE AUTENTICAÇÃO
+
+5. Organizar em um único conjunto visual:
+   - marcador “BEM-VINDO DE VOLTA”;
+   - título “Entre na sua conta”;
+   - descrição;
+   - cartão com o formulário.
+
+6. O conjunto deve ter largura confortável:
+   - largura máxima aproximada entre 480 e 560 px;
+   - `width: 100%`;
+   - campos ocupando toda a largura interna;
+   - margens laterais seguras em telas menores.
+
+7. Manter título, marcador e descrição alinhados com o início do cartão. Não centralizar os textos individualmente se isso enfraquecer a identidade visual atual.
+
+8. Dentro do cartão:
+   - manter e-mail e senha em coluna;
+   - manter espaçamento consistente entre rótulos, campos e ações;
+   - destacar “Entrar” como ação principal;
+   - apresentar “Criar cadastro” como ação secundária clara;
+   - evitar que os botões pareçam soltos ou comprimidos no canto.
+
+9. Preferencialmente:
+   - botão “Entrar” com largura suficiente e destaque amarelo;
+   - link “Criar cadastro” ao lado no desktop;
+   - no celular, permitir empilhamento ou quebra organizada sem reduzir a área de toque.
+
+RESPONSIVIDADE
+
+10. Desktop:
+    - formulário centralizado horizontalmente;
+    - largura limitada para facilitar a leitura;
+    - espaço equilibrado acima e abaixo.
+
+11. Tablet:
+    - manter o bloco centralizado;
+    - reduzir apenas as margens externas;
+    - não deixar o formulário preso à lateral.
+
+12. Celular:
+    - ocupar praticamente toda a largura disponível;
+    - preservar margens laterais;
+    - evitar campos ou botões cortados;
+    - permitir que as ações sejam empilhadas quando necessário;
+    - manter o conteúdo acessível mesmo com o teclado virtual aberto.
+
+ESTADOS E ACESSIBILIDADE
+
+13. Preservar e acomodar dentro do mesmo cartão:
+    - mensagem de credenciais inválidas;
+    - indisponibilidade do serviço;
+    - rate limiting;
+    - carregamento;
+    - botão desabilitado durante o envio.
+
+14. As mensagens não devem fazer o cartão mudar de largura nem deslocar toda a página horizontalmente.
+
+15. Preservar:
+    - foco visível;
+    - navegação por teclado;
+    - envio pelo Enter;
+    - rótulos associados aos campos;
+    - mensagens acessíveis;
+    - contraste;
+    - preenchimento automático do navegador;
+    - comportamento atual de sessão e redirecionamento.
+
+RESTRIÇÕES
+
+16. Não alterar:
+    - API de login;
+    - autenticação;
+    - cookies;
+    - sessão;
+    - rate limiting;
+    - proteção contra enumeração;
+    - mensagens de segurança;
+    - validação;
+    - cabeçalho;
+    - rodapé compartilhado;
+    - contratos existentes.
+
+17. Não adicionar bibliotecas, imagens externas, animações desnecessárias ou consultas adicionais de sessão.
+
+TESTES
+
+Validar:
+
+- centralização em desktop, tablet e celular;
+- rodapé no final da tela;
+- ausência de rolagem desnecessária;
+- login válido e inválido;
+- envio pelo Enter;
+- carregamento e bloqueio de envio duplicado;
+- mensagens de erro sem alteração da largura;
+- foco e navegação por teclado;
+- comportamento com teclado virtual;
+- nenhuma regressão de autenticação ou segurança.
+
+Atualizar somente os testes, capturas e documentação diretamente relacionados a este refinamento.
+
+[A mensagem incluiu captura do login anterior; imagem não copiada por conter endereço de e-mail. Reprodução usa somente fixtures sintéticas.]

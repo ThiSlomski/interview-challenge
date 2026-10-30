@@ -1,0 +1,316 @@
+{
+  "first": {
+    "tests": 61,
+    "pass": 53,
+    "fail": 8,
+    "skipped": 0,
+    "cleanup": {
+      "cleanup": "confirmed",
+      "protectedMetadata": "unchanged",
+      "remainingResources": 0
+    },
+    "geometry": [],
+    "diagnostics": {
+      "uiBrowserDiagnostics": {
+        "flushSync": 0,
+        "hydration": 0,
+        "consoleError": 0,
+        "consoleWarning": 0,
+        "pageerror": 0,
+        "preloadHint": 3,
+        "navigations": 102,
+        "documents": 51
+      }
+    }
+  },
+  "correction1": {
+    "tests": 61,
+    "pass": 58,
+    "fail": 3,
+    "skipped": 0,
+    "cleanup": {
+      "cleanup": "confirmed",
+      "protectedMetadata": "unchanged",
+      "remainingResources": 0
+    },
+    "geometry": [
+      {
+        "loginGeometry": {
+          "name": "desktop",
+          "card": {
+            "x": 460,
+            "y": 367.1875,
+            "width": 520,
+            "height": 337.390625,
+            "top": 367.1875,
+            "right": 980,
+            "bottom": 704.578125,
+            "left": 460
+          },
+          "block": {
+            "x": 460,
+            "y": 191.40625,
+            "width": 520,
+            "height": 513.171875,
+            "top": 191.40625,
+            "right": 980,
+            "bottom": 704.578125,
+            "left": 460
+          },
+          "footer": {
+            "x": 0,
+            "y": 895,
+            "width": 1440,
+            "height": 105,
+            "top": 895,
+            "right": 1440,
+            "bottom": 1000,
+            "left": 0
+          },
+          "viewport": [
+            1440,
+            1000
+          ],
+          "scrollHeight": 1000
+        }
+      },
+      {
+        "loginGeometry": {
+          "name": "tablet-portrait",
+          "card": {
+            "x": 201,
+            "y": 882.15625,
+            "width": 520,
+            "height": 337.390625,
+            "top": 882.15625,
+            "right": 721,
+            "bottom": 1219.546875,
+            "left": 201
+          },
+          "block": {
+            "x": 201,
+            "y": 716.453125,
+            "width": 520,
+            "height": 503.09375,
+            "top": 716.453125,
+            "right": 721,
+            "bottom": 1219.546875,
+            "left": 201
+          },
+          "footer": {
+            "x": 0,
+            "y": 1943,
+            "width": 922,
+            "height": 105,
+            "top": 1943,
+            "right": 922,
+            "bottom": 2048,
+            "left": 0
+          },
+          "viewport": [
+            922,
+            2048
+          ],
+          "scrollHeight": 2048
+        }
+      },
+      {
+        "loginGeometry": {
+          "name": "mobile",
+          "card": {
+            "x": 16,
+            "y": 332.5,
+            "width": 358,
+            "height": 385.390625,
+            "top": 332.5,
+            "right": 374,
+            "bottom": 717.890625,
+            "left": 16
+          },
+          "block": {
+            "x": 16,
+            "y": 166.796875,
+            "width": 358,
+            "height": 551.09375,
+            "top": 166.796875,
+            "right": 374,
+            "bottom": 717.890625,
+            "left": 16
+          },
+          "footer": {
+            "x": 0,
+            "y": 833.40625,
+            "width": 390,
+            "height": 197.875,
+            "top": 833.40625,
+            "right": 390,
+            "bottom": 1031.28125,
+            "left": 0
+          },
+          "viewport": [
+            390,
+            844
+          ],
+          "scrollHeight": 1031
+        }
+      }
+    ],
+    "diagnostics": {
+      "uiBrowserDiagnostics": {
+        "flushSync": 0,
+        "hydration": 0,
+        "consoleError": 0,
+        "consoleWarning": 0,
+        "pageerror": 0,
+        "preloadHint": 3,
+        "navigations": 103,
+        "documents": 51
+      }
+    }
+  },
+  "correction2": {
+    "tests": 61,
+    "pass": 61,
+    "fail": 0,
+    "skipped": 0,
+    "cleanup": {
+      "cleanup": "confirmed",
+      "protectedMetadata": "unchanged",
+      "remainingResources": 0
+    },
+    "geometry": [
+      {
+        "loginGeometry": {
+          "name": "desktop",
+          "card": {
+            "x": 460,
+            "y": 367.1875,
+            "width": 520,
+            "height": 337.390625,
+            "top": 367.1875,
+            "right": 980,
+            "bottom": 704.578125,
+            "left": 460
+          },
+          "block": {
+            "x": 460,
+            "y": 191.40625,
+            "width": 520,
+            "height": 513.171875,
+            "top": 191.40625,
+            "right": 980,
+            "bottom": 704.578125,
+            "left": 460
+          },
+          "footer": {
+            "x": 0,
+            "y": 895,
+            "width": 1440,
+            "height": 105,
+            "top": 895,
+            "right": 1440,
+            "bottom": 1000,
+            "left": 0
+          },
+          "viewport": [
+            1440,
+            1000
+          ],
+          "scrollHeight": 1000
+        }
+      },
+      {
+        "loginGeometry": {
+          "name": "tablet-portrait",
+          "card": {
+            "x": 201,
+            "y": 882.15625,
+            "width": 520,
+            "height": 337.390625,
+            "top": 882.15625,
+            "right": 721,
+            "bottom": 1219.546875,
+            "left": 201
+          },
+          "block": {
+            "x": 201,
+            "y": 716.453125,
+            "width": 520,
+            "height": 503.09375,
+            "top": 716.453125,
+            "right": 721,
+            "bottom": 1219.546875,
+            "left": 201
+          },
+          "footer": {
+            "x": 0,
+            "y": 1943,
+            "width": 922,
+            "height": 105,
+            "top": 1943,
+            "right": 922,
+            "bottom": 2048,
+            "left": 0
+          },
+          "viewport": [
+            922,
+            2048
+          ],
+          "scrollHeight": 2048
+        }
+      },
+      {
+        "loginGeometry": {
+          "name": "mobile",
+          "card": {
+            "x": 16,
+            "y": 332.5,
+            "width": 358,
+            "height": 385.390625,
+            "top": 332.5,
+            "right": 374,
+            "bottom": 717.890625,
+            "left": 16
+          },
+          "block": {
+            "x": 16,
+            "y": 166.796875,
+            "width": 358,
+            "height": 551.09375,
+            "top": 166.796875,
+            "right": 374,
+            "bottom": 717.890625,
+            "left": 16
+          },
+          "footer": {
+            "x": 0,
+            "y": 833.40625,
+            "width": 390,
+            "height": 197.875,
+            "top": 833.40625,
+            "right": 390,
+            "bottom": 1031.28125,
+            "left": 0
+          },
+          "viewport": [
+            390,
+            844
+          ],
+          "scrollHeight": 1031
+        }
+      }
+    ],
+    "diagnostics": {
+      "uiBrowserDiagnostics": {
+        "flushSync": 0,
+        "hydration": 0,
+        "consoleError": 0,
+        "consoleWarning": 0,
+        "pageerror": 0,
+        "preloadHint": 3,
+        "navigations": 103,
+        "documents": 51
+      }
+    }
+  }
+}

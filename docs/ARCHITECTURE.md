@@ -965,3 +965,13 @@ Complementos integrais: [modal no primeiro clique](prompts/2026-10-30-admin-prof
 ## PROFILE-UI-003 — edição compartilhada, 30/10/2026
 
 Uma seção e um profile-slot alternam cartão/editor para ambos os papéis; diferenças limitadas a títulos, selo e apresentação administrativa. Operações e contratos preservados. [Pedido integral](prompts/2026-10-30-shared-profile-edit.txt) e [evidência](harness/evidence/shared-profile-edit.md).
+
+## LOGIN-UI-001 — layout do login, 30/10/2026
+
+O main do login usa flex e o shell vertical compartilhado existente para considerar
+as alturas naturais do cabeçalho e rodapé. Um único bloco de até520px mantém os
+textos alinhados ao cartão. Padding fluido e limitado cria leve viés superior;
+o conteúdo cresce no fluxo quando a altura disponível é pequena. Ações empilham
+até480px, com alvos de toque de pelo menos48px. LoginForm e contratos de segurança
+permanecem intactos. [Pedido](prompts/2026-10-30-login-refinement.txt) e
+[evidência](harness/evidence/login-refinement.md). Revisão humana pendente.

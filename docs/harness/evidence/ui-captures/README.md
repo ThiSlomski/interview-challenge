@@ -78,6 +78,10 @@ No ajuste dos campos, foram atualizados apenas os pares02,08 e09. Os outros
 seis pares permanecem da execução anterior; referências oficiais não mudaram.
 O estado autofill do login foi forçado via protocolo de inspeção, sem perfil ou
 credenciais persistidas; autofill nativo de endereço foi verificado no cadastro.
+
+LOGIN-UI-001,30/10/2026: somente o par08 foi atualizado para o conjunto centralizado
+de até520px e ações empilhadas em celular. Cenário503/autofill permanece sintético.
+[Capturas normais desktop/tablet/mobile, resultados e limites](../login-refinement.md).
 A falha de login desta captura é uma resposta503 interceptada, conforme o teste.
 Nenhuma imagem foi editada para simular estados. O chrome de desenvolvimento do
 Next é ocultado somente durante a captura; elementos da aplicação permanecem

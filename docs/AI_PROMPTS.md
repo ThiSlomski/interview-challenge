@@ -465,3 +465,7 @@ Complementos integrais: [modal no primeiro clique](prompts/2026-10-30-admin-prof
 ## PROFILE-UI-003 — edição compartilhada, 30/10/2026
 
 Pedido complementar para compartilhar substituição e largura do cartão de perfil entre user/admin. [Pedido integral](prompts/2026-10-30-shared-profile-edit.txt) e [evidência](harness/evidence/shared-profile-edit.md).
+
+## LOGIN-UI-001 — equilíbrio do login, 30/10/2026
+
+Centralizar o conjunto de autenticação e equilibrar ações responsivas preservando contratos de segurança. [Pedido integral](prompts/2026-10-30-login-refinement.txt) e [evidência](harness/evidence/login-refinement.md).

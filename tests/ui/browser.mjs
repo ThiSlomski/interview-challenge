@@ -9,6 +9,7 @@ import { watchBrowserErrors } from './console.mjs';
 import { geocoding, weather } from '../weather/fixtures.mjs';
 import { weatherBrowserTests } from '../weather/browser.mjs';
 import { inspectFooterMatrix } from './footer.mjs';
+import { loginLayoutTests } from './login.mjs';
 
 const expect = baseExpect.configure({ timeout: 15000 });
 
@@ -33,6 +34,8 @@ export function uiBrowserTests(t, config, admin) {
       if (process.env.UI_UPDATE_CAPTURES === 'false') return;
       if (process.env.UI_UPDATE_CAPTURES === 'profile') {
         if (name !== '04-area-user') return;
+      } else if (process.env.UI_UPDATE_CAPTURES === 'login') {
+        if (name !== '08-login') return;
       } else
       // This requirement only changes the signup success pair. Other evidence
       // stays byte-identical while the full functional suite still executes.
@@ -106,6 +109,8 @@ export function uiBrowserTests(t, config, admin) {
         await weatherBrowserTests(t, browser, origin);
         return;
       }
+      await loginLayoutTests(t, browser, origin);
+      if (process.env.UI_LOGIN_BASELINE === 'true') return;
       // Verify the icon resource rather than ignoring unrelated console 404s.
       assert.equal((await context.request.get(origin + '/brand/slomski-solutions-mark.svg')).status(), 200);
       await scenario('public navigation, direct protected redirect and keyboard', async () => {
@@ -216,7 +221,7 @@ export function uiBrowserTests(t, config, admin) {
         await page.getByRole('button', { name: 'Entrar', exact: true }).click();
         await expect(page.locator('main [role="alert"]')).toContainText('E-mail ou senha incorretos.');
         await page.getByLabel(/^Senha(?: \*)?$/).fill(password);
-        await page.getByRole('button', { name: 'Entrar', exact: true }).click();
+        await page.getByLabel(/^Senha(?: \*)?$/).press('Enter');
         await expect(page).toHaveURL(origin + '/area');
         await expect(page.getByText(email, { exact: true })).toBeVisible();
         await expect(page.getByRole('heading', { name: 'Meu cadastro', exact: true })).toBeVisible();

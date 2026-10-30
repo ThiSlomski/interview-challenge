@@ -359,6 +359,41 @@ button.secondary:disabled {
 .login-card {
   max-width: 520px;
 }
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: clamp(2rem, 4dvh, 3rem) clamp(2rem, 8dvh, 6rem);
+}
+.login-content {
+  width: 100%;
+  max-width: 520px;
+  min-width: 0;
+}
+.login-content h1 {
+  font-size: clamp(2.4rem, 4vw, 3rem);
+}
+.login-content .page-heading > p:last-child {
+  margin-bottom: 0;
+}
+.login-content .login-card {
+  width: 100%;
+}
+.login-card .form-actions button {
+  min-width: 160px;
+}
+.login-card .form-actions a {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+}
+@media (max-width: 30rem) {
+  .login-card .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

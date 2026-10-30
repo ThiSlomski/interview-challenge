@@ -322,3 +322,11 @@ Complementos integrais: [modal no primeiro clique](prompts/2026-10-30-admin-prof
 ## PROFILE-UI-003 — edição compartilhada, 30/10/2026
 
 User e admin exibem somente uma representação do perfil por vez, com largura/alinhamento comuns, rascunho preservado e cancelamento sem atualização. [Pedido integral](prompts/2026-10-30-shared-profile-edit.txt) e [evidência](harness/evidence/shared-profile-edit.md).
+
+## LOGIN-UI-001 — refinamento visual, 30/10/2026
+
+Conjunto do login centralizado, largura limitada, ações responsivas, rodapé no
+fluxo e estados acessíveis preservados. Sem alteração funcional de autenticação.
+[Pedido integral](prompts/2026-10-30-login-refinement.txt),
+[matriz e resultados](harness/evidence/login-refinement.md).
+Teclado virtual físico, revisão humana e CI remoto do diff permanecem pendentes.

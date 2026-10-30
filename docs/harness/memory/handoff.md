@@ -1,3 +1,15 @@
+## LOGIN-UI-001 — centralização do login, 30/10/2026
+
+Base main/37a7b8f inicialmente limpa. Apenas página login e CSS específico no
+produto: bloco único520px centralizado no shell flex, viés superior limitado,
+ações amplas/empilhadas no celular. LoginForm/header/footer/API/auth intactos.
+UI61/61 final, dez cenários novos; Harness62/62/lint/tipos/build aprovados.
+Rodadas intermediárias e limites na [evidência](../evidence/login-refinement.md).
+Cleanup0/metadados protegidos iguais; somente par08 atualizado,20 outros PNGs
+iguais por SHA256; três capturas normais novas. Autorrevisão; teclado virtual
+físico, revisão humana e CI remoto pendentes. Harness parcial/readiness:not-assessed.
+Sem commit/push/deploy, contas persistentes ou próxima etapa funcional.
+
 ## PROFILE-UI-003 — edição compartilhada user/admin, 30/10/2026
 
 Pedido complementar supera a preservação do editor user anterior. Base main/e2c80e4
