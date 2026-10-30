@@ -29,3 +29,8 @@ Grants por coluna e revisão dos defaults evitam conceder edição/exclusão/pro
 sem requisito; ausência de revogação global não permite prometer isolamento entre
 bancos. Atualização do usuário sobre destino exclusivo cancelou o plano de cluster
 efêmero antes de sua execução; não retomá-lo automaticamente em outra sessão.
+
+CONTAINER-001,30/10/2026: opções tmpfs com vírgula exigem strings entre aspas
+no YAML flow. Caddy oficial tem file capability que impede exec sob cap_drop ALL;
+remover a capability na imagem para porta alta. HTTPS deve seguir a política já
+existente da sessão, sem exceção de produção. [Evidência](../evidence/containerization.md).

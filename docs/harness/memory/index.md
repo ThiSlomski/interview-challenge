@@ -73,3 +73,8 @@ Resultados desta rodada separados dos históricos; revisão humana pendente.
 Atualização vigente CI-001,30/10/2026: fase1 local do pipeline obrigatório;
 comece pelo handoff/estado e pela [evidência CI](../evidence/ci.md).
 Fase2/revisão humana/novo CI remoto pendentes; histórico acima preservado.
+
+CONTAINER-001,30/10/2026: etapa atual de containerização concluída localmente; começar
+pelo checkpoint no handoff/estado e pela [evidência](../evidence/containerization.md).
+CI remoto e revisão humana pendentes; restrições históricas de não iniciar Docker
+foram superadas pelo pedido integral registrado. Sem commit/push/deploy.

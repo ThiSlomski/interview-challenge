@@ -1,0 +1,226 @@
+Implemente a containerização completa do projeto como diferencial DevSecOps.
+
+Estado inicial:
+- árvore Git limpa;
+- CI remoto verde;
+- aplicação funcional;
+- não alterar funcionalidades do produto;
+- não fazer commit, push ou deploy.
+
+Objetivo:
+Criar um ambiente reproduzível com Dockerfile, Compose, aplicação Next.js, PostgreSQL, migrations, grants, health checks e validação no CI.
+
+## 1. Análise inicial
+
+Antes de alterar arquivos:
+
+- inspecione package.json, next.config, scripts de banco, migrations, grants, db:check e variáveis de ambiente;
+- confirme como a aplicação valida o endereço do PostgreSQL;
+- investigue a restrição atual relacionada a 127.0.0.1;
+- não enfraqueça essa proteção apenas para aceitar o hostname `db`.
+
+Se a restrição impedir um Compose seguro, use uma solução controlada, como compartilhamento do namespace de rede. Se isso não for viável, pare e apresente alternativas antes de modificar a guarda.
+
+## 2. Dockerfile
+
+Crie um Dockerfile multi-stage de produção com:
+
+- Node exatamente 22.13.1;
+- imagem oficial fixada por versão e digest SHA256 real;
+- estágios de dependências, build e runtime;
+- build de produção do Next.js;
+- runtime mínimo;
+- usuário não root;
+- NEXT_TELEMETRY_DISABLED;
+- nenhum segredo via ARG ou ENV;
+- suporte correto a standalone/static/public, se aplicável;
+- filesystem somente leitura e `/tmp` temporário, se compatível;
+- `no-new-privileges` e remoção de capabilities da aplicação, se compatível;
+- encerramento correto por sinais.
+
+Crie também `.dockerignore`, excluindo `.git`, node_modules, `.next`, `.env` reais, logs, coverage, temporários, evidências desnecessárias, arquivos de IDE e fixtures locais.
+
+## 3. Compose
+
+Crie `compose.yaml` com:
+
+### PostgreSQL
+
+- versão compatível com o projeto, fixada por versão e digest;
+- autenticação SCRAM;
+- credenciais exclusivamente sintéticas e locais;
+- volume nomeado;
+- health check com `pg_isready`;
+- sem exposição da porta PostgreSQL ao host, salvo necessidade técnica comprovada;
+- nenhuma conexão com o banco persistente atualmente instalado na máquina.
+
+### Inicialização
+
+Crie preferencialmente um serviço one-shot `db-init` que:
+
+1. aguarde o banco saudável;
+2. execute migrations;
+3. execute `db:grant`;
+4. execute `db:check`;
+5. finalize com código zero somente se tudo estiver correto.
+
+O serviço de inicialização deve:
+
+- ser idempotente;
+- não executar DROP ou TRUNCATE;
+- receber a credencial administrativa somente nele;
+- não disponibilizar essa credencial para a aplicação.
+
+### Aplicação
+
+A aplicação deve:
+
+- iniciar somente após sucesso do `db-init`;
+- utilizar apenas o papel de runtime;
+- publicar somente a porta HTTP configurável, padrão 3000;
+- possuir health check;
+- executar como usuário não root;
+- não montar o código-fonte em produção;
+- não conter segredos na imagem;
+- preservar sessões, CSP, autenticação, clima e demais funcionalidades.
+
+## 4. Variáveis
+
+Se necessário, crie `.env.compose.example` apenas com valores sintéticos.
+
+Não commitar `.env.compose`, senhas reais, tokens, cookies, URLs pessoais ou dados cadastrados.
+
+O ambiente deve subir de forma simples, preferencialmente com:
+
+docker compose up --build
+
+Documente qualquer preparação adicional realmente necessária.
+
+## 5. Isolamento
+
+Não use nem altere:
+
+- banco persistente atual;
+- contêineres ou volumes existentes;
+- redes de outros projetos;
+- cadastros reais;
+- porta PostgreSQL local existente.
+
+Nos testes, use um nome de projeto Compose exclusivo.
+
+Antes da limpeza, confirme nomes e labels. Remova somente os recursos criados pela execução. Não use `docker system prune`, remoções globais ou padrões amplos.
+
+`docker compose down -v` só pode ser usado no projeto descartável criado especificamente para o teste.
+
+## 6. Validação local
+
+Com ambiente novo e dados sintéticos:
+
+- validar `docker compose config`;
+- construir a imagem do zero;
+- subir PostgreSQL, db-init e aplicação;
+- confirmar health checks;
+- confirmar migrations, grants e db:check;
+- confirmar que a aplicação usa somente o papel runtime;
+- confirmar usuário não root;
+- confirmar que o banco não está exposto desnecessariamente;
+- confirmar ausência de segredos na imagem e no histórico;
+- testar cadastro, login, logout, perfil, user/admin e exclusão administrativa;
+- confirmar invalidação das sessões do usuário excluído;
+- testar previsão do tempo;
+- reiniciar os contêineres e confirmar persistência;
+- derrubar e subir novamente sem remover o volume;
+- confirmar idempotência de migrations e grants;
+- limpar somente o projeto descartável e comprovar a limpeza.
+
+## 7. CI
+
+Adicione um job bloqueante independente chamado `container-smoke`.
+
+Ele deve:
+
+- usar timeout explícito;
+- construir a imagem;
+- subir o Compose com credenciais sintéticas;
+- aguardar health checks;
+- confirmar sucesso do db-init;
+- executar teste HTTP mínimo;
+- confirmar migrations e grants;
+- executar cleanup com `if: always()`;
+- remover somente o projeto criado pelo job;
+- não publicar imagens;
+- não usar secrets reais.
+
+Preserve sem alterações funcionais os jobs atuais:
+
+- Quality;
+- PostgreSQL integration;
+- Security (SCA).
+
+Não adicione scan ou action externa sem necessidade comprovada.
+
+## 8. Documentação
+
+Atualize:
+
+- SOLUTION.md;
+- docs/ARCHITECTURE.md;
+- docs/REQUIREMENTS.md;
+- evidência específica da containerização;
+- prompt integral em docs/prompts/;
+- índice em docs/AI_PROMPTS.md;
+- memória canônica.
+
+Preserve o README original.
+
+Documente:
+
+- arquitetura dos serviços;
+- sequência PostgreSQL → db-init → aplicação;
+- separação entre credencial administrativa e runtime;
+- solução adotada para 127.0.0.1;
+- persistência do volume;
+- comandos de start, logs, stop e reset;
+- quais comandos são destrutivos;
+- diferença entre o Compose e o banco persistente da máquina.
+
+## 9. Verificações
+
+Execute:
+
+- lint;
+- typecheck;
+- build;
+- npm test;
+- npm audit bloqueante;
+- testes PostgreSQL descartáveis;
+- smoke completo do Compose;
+- Harness;
+- validação documental;
+- YAML e Compose;
+- UTF-8;
+- links e âncoras;
+- git diff --check.
+
+Não aceite falhas ou skips inesperados.
+
+## 10. Entrega
+
+Informe:
+
+1. Arquitetura final.
+2. Solução para 127.0.0.1.
+3. Imagens, versões e digests.
+4. Separação de usuários e privilégios.
+5. Arquivos alterados.
+6. Comando para subir.
+7. Comandos de logs, parada e reset.
+8. Resultado dos health checks e testes.
+9. Resultado local do job container-smoke.
+10. Prova de isolamento do banco persistente.
+11. Prova de limpeza dos recursos descartáveis.
+12. Diff exclusivo.
+13. Limitações.
+14. Sugestão de commit.
+
+Não faça commit, push, publicação ou deploy.

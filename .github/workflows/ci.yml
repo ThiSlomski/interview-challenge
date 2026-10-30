@@ -122,3 +122,31 @@ jobs:
         run: npm ci
       - name: Dependency audit (blocking high and critical)
         run: npm audit --audit-level=high
+
+  container-smoke:
+    name: container-smoke
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      COMPOSE_PROJECT_NAME: ic-smoke-${{ github.run_id }}-${{ github.run_attempt }}
+      COMPOSE_HTTP_PORT: "3300"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+      - name: Setup Node
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: "22.13.1"
+      - name: Validate Compose
+        run: docker compose config --quiet
+      - name: Build
+        run: docker compose build
+      - name: Start and await health checks
+        run: docker compose up -d --wait --wait-timeout 120
+      - name: HTTP, database, persistence and security smoke
+        run: node scripts/container/smoke.mjs
+      - name: Cleanup exact disposable project
+        if: always()
+        run: node scripts/container/cleanup.mjs

@@ -585,3 +585,74 @@ inclui sete cenários AUTHZ reais, além das regressões anteriores, com as mesm
 guardas descartáveis acima. Ver [evidência](docs/harness/evidence/authorization.md).
 Cadastro/login/página protegida estão integrados conforme o roteiro frontend.
 Clima permanece pendente; a evidência atual distingue SSR protegido de API protegida.
+
+## Compose local de produção — CONTAINER-001
+
+Requer Docker Engine Linux e Compose v2.20+ (Docker Desktop Linux no Windows).
+A configuração usa somente credenciais sintéticas e um volume próprio, sem .env
+adicional ou acesso ao PostgreSQL instalado na máquina. Sem conta admin padrão.
+
+```powershell
+docker compose up --build
+# Abrir https://localhost:3000 (HTTPS obrigatório para sessão de produção)
+docker compose logs --tail 50 app db-init db gateway
+docker compose ps -a
+docker compose stop
+# Recriar serviços preservando os dados:
+docker compose down
+docker compose up -d --wait --wait-timeout 120
+```
+
+Para outra porta, defina COMPOSE_HTTP_PORT antes de executar Compose (PowerShell:
+$env:COMPOSE_HTTP_PORT='3300'; Bash: export COMPOSE_HTTP_PORT=3300). A origem passa
+a https://localhost:3300. O acesso deve usar localhost, não IP/outro hostname.
+Use sempre o mesmo nome de projeto (-p ou COMPOSE_PROJECT_NAME) para o mesmo volume.
+
+O gateway gera um certificado local, sem alterar o trust store do computador.
+No navegador, aceite explicitamente a exceção para localhost ou exporte a CA
+local e instale-a manualmente se desejado; não há instalação automática:
+
+```powershell
+docker compose cp gateway:/data/caddy/pki/authorities/local/root.crt compose-local-ca.crt
+```
+
+A CA é temporária e muda após restart/recriação do gateway. Exclua o certificado
+exportado quando terminar; não o versione. Não use esse ambiente/credenciais/CA
+como implantação pública. Para produção pública são necessários domínio, TLS e
+gestão de segredos próprios, fora deste pedido.
+
+Reset é DESTRUTIVO: perde todos os dados exclusivamente do projeto selecionado.
+Antes confirme nomes e labels com docker compose ps -a e docker volume inspect
+NOME_EXATO_DO_VOLUME. Nunca aplique ao PostgreSQL persistente ou a outro projeto:
+
+```powershell
+# Somente após conferir o projeto e aceitar perder os dados desse Compose:
+docker compose down -v
+```
+
+PostgreSQL → db-init → app → gateway. db-init cria papéis/schemas apenas quando
+os quatro estão ausentes; estado parcial é recusado. Depois executa db:migrate,
+db:grant e db:check; reaplicação não reinicia dados. O volume persiste em down
+sem -v. As guardas127.0.0.1 e identidade SQL não mudaram: serviços compartilham a
+rede de db. Publicação HTTPS está em db por ele possuir esse namespace; não há
+publicação5432. App recebe só runtime, init recebe admin/migration/runtime e
+PostgreSQL recebe somente sua credencial de bootstrap.
+
+Teste equivalente ao job, com projeto novo e descartável:
+
+```powershell
+$env:COMPOSE_PROJECT_NAME='ic-smoke-meu-teste-unico'
+$env:COMPOSE_HTTP_PORT='3300'
+docker compose config --quiet
+docker compose build --no-cache
+docker compose up -d --wait --wait-timeout 120
+node scripts/container/smoke.mjs
+# Opcional local, requer npm ci e Chromium instalado pelo Playwright:
+node --test tests/container/browser.test.mjs
+# DESTRUTIVO, restrito a ic-smoke-*; verifica ownership antes e ausência depois:
+node scripts/container/cleanup.mjs
+```
+
+CI container-smoke é independente/bloqueante, timeout20min, credenciais sintéticas,
+sem publicação de imagens; cleanup if:always. Teste browser é local separado.
+[Arquitetura](docs/ARCHITECTURE.md) e [evidência/limites](docs/harness/evidence/containerization.md).

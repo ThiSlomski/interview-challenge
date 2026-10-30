@@ -1,0 +1,25 @@
+# Allowlist: local env, Git, fixtures, evidence and IDE files cannot enter context.
+**
+!package.json
+!package-lock.json
+!next.config.mjs
+!tsconfig.json
+!next-env.d.ts
+!app/**
+!components/**
+!services/**
+!server/**
+!shared/**
+!public/**
+!database/**
+!scripts/
+!scripts/database/**
+!scripts/container/**
+!docker/
+!docker/Caddyfile
+**/.env*
+**/*.log
+**/*.tsbuildinfo
+**/node_modules/**
+**/.next/**
+**/.git/**

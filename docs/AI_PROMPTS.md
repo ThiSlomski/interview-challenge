@@ -340,3 +340,13 @@ Este registro descreve a avaliação do agente; não registra aprovação humana
   execução e autorrevisão sequenciais. UI mantida local e CodeQL não adicionado,
   pelas decisões na arquitetura. [Resultados e limites](harness/evidence/ci.md).
 - Fase2 e revisão humana pendentes; CI verde anterior não aprova este diff.
+
+## Containerização DevSecOps — 30/10/2026
+
+- [Prompt integral](prompts/2026-10-30-containerization.txt).
+- Codex; skills resume-project, deliver-requirement, verify-delivery e record-decision;
+  execução/autorrevisão sequenciais. Aceito namespace compartilhado para preservar
+  guardas; acrescentado gateway TLS porque autenticação de produção exige HTTPS.
+- Dockerfile/Compose/smoke/CI e documentação; erros de tmpfs, capability Caddy e
+  expectativa de logout corrigidos sem alterar produto. [Evidência](harness/evidence/containerization.md).
+  Sem commit/push/deploy; revisão humana e CI remoto pendentes.

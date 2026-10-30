@@ -1,3 +1,27 @@
+## CONTAINER-001 — 30/10/2026, estado vigente
+
+Pedido atual autoriza containerização, superando restrições históricas desta etapa.
+Base main/0c8e682 limpa. Dockerfile multi-stage Node22.13.1 por digest, standalone,
+PostgreSQL18.6/SCRAM/volume e db-init idempotente migra→grant→check. Namespace
+service:db preserva URL e identidade127.0.0.1; nunca usa banco Windows. App só
+runtime, sem admin/migration, não root/read-only/tmpfs/cap_drop/no-new-privileges.
+Gateway TLS local mantém HTTPS/cookie Secure de produção, com CA efêmera e confiança
+explícita no navegador. Nenhuma funcionalidade/guarda/schema/README alterada.
+
+QA: build sem cache, health3/3, init0, smoke completo com restart/recreate e sessão/
+perfil persistidos; Chromium produção1/1 (REST clima sintético), Node62/62,
+integração PG/HTTP65/65 sem skips. Audit0, lint/tipos, Harness doctor/validate/verify
+aprovados; Harness parcial/readiness not-assessed. YAML/UTF-8/links/âncoras e
+diff --check conferidos. Job container-smoke bloqueante independente; três jobs
+anteriores preservados. Equivalente local passou; CI remoto não executado.
+
+Limpeza dos projetos Compose descartáveis confirmada por nomes/labels/inventário
+vazio; nenhuma leitura de segredos/conexão ao banco persistente. Imagens base/cache
+Docker preservados, sem prune. Autorrevisão sequencial; revisão humana pendente.
+Sem commit/push/publicação/deploy. [Evidência](../evidence/containerization.md),
+[contrato](../evidence/containerization-plan.md), [operação](../../../SOLUTION.md#compose-local-de-produção--container-001).
+Histórico abaixo preservado; não repetir execução por memória.
+
 ## ADMIN-DELETE-UI-001 — apresentação danger, 30/10/2026
 
 Ajuste isolado CSS, sem alteração funcional: texto claro/vermelho escuro, hover/

@@ -282,7 +282,7 @@ isso não dispensa o núcleo obrigatório de autenticação/autorização da Par
 | PLUS-1 | README Parte 2, diferenciais | Verificação de e-mail | Se escolhida, fluxo verificável sem prejudicar núcleo | Não implementada | B | Opcional; não iniciado |
 | PLUS-2 | Parte 2, diferenciais | Reset de senha | Se escolhido, recuperação segura demonstrada | Não implementado | B | Opcional; não iniciado |
 | PLUS-3 | Parte 2, diferenciais | Papéis/permissões adicionais | Se escolhidos, autorização coerente e testada | Nem user/admin implementados | B/D | Opcional; não iniciado |
-| PLUS-4 | README Parte 4, plus | Dockerfile e compose para app+banco | Se escolhidos, ambiente sobe e funciona | Sem containerização específica | D; inventário | Opcional; não iniciado |
+| PLUS-4 | README Parte 4, plus | Dockerfile e compose para app+banco | Ambiente sobe com migrations/grants/health e isolamento | CONTAINER-001: Next standalone, PG18.6, init e TLS local | [Evidência](harness/evidence/containerization.md), smoke e Chromium produção | Implementado localmente; CI remoto/revisão humana pendentes |
 | PLUS-5 | Parte 4, plus | IaC apropriada ao provisionamento | Se escolhida, decisão e configuração verificáveis | Sem IaC | Inventário | Opcional; não iniciado |
 
 ## Escolhas nossas e limites desta etapa
@@ -305,3 +305,10 @@ README 8,12.b,14–18: apresentação distinta user/admin, identidade própria u
 na listagem, paginação contextual e CEP visual. Contratos e proteção preservados.
 [Resultados e limites](harness/evidence/ui.md#refinamento-administrativo--30102026),
 [prompt integral](prompts/2026-10-30-area-administrativa.md). Revisão humana pendente.
+
+## CONTAINER-001 — 30/10/2026
+
+PLUS-4 autorizado pelo pedido atual, supera restrições históricas de não iniciar
+containerização. Sem alteração funcional de cadastro/auth/roles/perfil/exclusão/clima.
+Job container-smoke independente; resultados locais e limitações na
+[evidência](harness/evidence/containerization.md). CI remoto do diff pendente.

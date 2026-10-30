@@ -75,3 +75,9 @@ banco/auth/runner “pendentes” acima são históricos da etapa Harness.
   harness reconhece casos reais. Não confundir com testes PostgreSQL reais.
 
 Fonte canônica: [arquitetura](../../ARCHITECTURE.md), ADRs DB001–004.
+
+CONTAINER-001,30/10/2026: namespace service:db preserva guarda127.0.0.1;
+Next standalone produção exige gateway HTTPS local para manter Secure/origem.
+Imagens por digest, runtime mínimo sem admin/migration, SCRAM/volume próprio,
+init idempotente migra→grant→check. [ADR](../../ARCHITECTURE.md#adr-container-001--produção-local-isolada-30102026)
+e [evidência](../evidence/containerization.md). Sem publicação/revisão humana.

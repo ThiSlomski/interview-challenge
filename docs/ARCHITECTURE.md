@@ -923,3 +923,35 @@ o snapshot de /area; ocultar links de cadastro/login exigiria ampliar coordenaç
 de estado/rotas. A alternativa autorizada foi preservar a navegação atual.
 Decisões e verificações em [UI](harness/evidence/ui.md#refinamento-administrativo--30102026).
 Sem alteração de contratos API, banco, autorização ou efeitos de segurança.
+
+## ADR-CONTAINER-001 — produção local isolada (30/10/2026)
+
+Decisão: Node22.13.1 bookworm-slim oficial por digest, dependencies/build/runtime,
+Next standalone + static/public e imagem distinta de ferramentas db-init. Runtime
+não root, read-only/tmpfs, capacidades removidas, no-new-privileges e init para sinais.
+PostgreSQL18.6 SCRAM e volume próprio; initializer provisiona somente estado vazio,
+migra como imobilead_migrate, aplica grants como compose_admin e confere o contrato
+como imobilead_app. Aplicação não recebe credenciais admin/migration. Privilégios
+por coluna e DELETE users/cascade, sem DELETE sessions direto, permanecem intactos.
+
+Guarda127.0.0.1 preservada tanto na URL quanto em host(inet_server_addr()). Compose
+network_mode service:db coloca app/init/gateway no namespace do PostgreSQL; nunca
+host network. Só HTTPS é publicado no db, dono da rede, em127.0.0.1. PG e Next
+escutam apenas loopback. Nenhuma conexão ao PostgreSQL persistente do Windows.
+
+Produção exige origem HTTPS e cookie Secure: gateway Caddy2.10.2 por digest, CA
+interna efêmera, porta3443, admin API desativada, usuário1000, read-only/tmpfs e
+cap_drop ALL. Remove-se a file capability do binário oficial no build, porque a
+porta alta não a exige. Essa imagem adicional evita alterar a política de sessão.
+A confiança no certificado local é explícita e precisa ser renovada após restart.
+Compartilhar rede acopla ciclo de vida e impede escalar app independentemente;
+ambiente local reproduzível, não arquitetura de cluster/produção pública.
+
+Health app é liveness HTTP401, PG pg_isready, gateway HTTPS; init confere migrations
+e ACLs reais antes de liberar app. Smoke autentica e testa persistência/roles via
+HTTPS real; Chromium usa respostas REST sintéticas para clima. Imagens runtime
+não incluem env/fixtures/Git; credenciais sintéticas são injetadas pelo Compose,
+nunca ARG/ENV de build. Nenhum secret real consultado, nenhuma imagem publicada.
+
+[Operação](../SOLUTION.md#compose-local-de-produção--container-001),
+[digests, correções e resultados](harness/evidence/containerization.md).
