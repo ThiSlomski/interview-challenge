@@ -435,3 +435,23 @@ Envio comprovado: **30/10/2026 04:43:03.051 -03:00**; Codex, sessão `01a18bc3-1
 - Dockerfile/Compose/smoke/CI e documentação; erros de tmpfs, capability Caddy e
   expectativa de logout corrigidos sem alterar produto. [Evidência](harness/evidence/containerization.md).
   Sem commit/push/deploy; revisão humana e CI remoto pendentes.
+
+## HOME-UI-001 — composição da página inicial, 30/10/2026
+
+[Pedido integral](prompts/2026-10-30-home-refinement.txt): remover card redundante,
+acrescentar painel informativo de três benefícios e corrigir responsividade/altura
+mínima somente na home. Skills resume-project, deliver-requirement e
+verify-delivery; um escritor, execução/autorrevisão sequenciais.
+[Evidência e contrato](harness/evidence/home-refinement.md), com testes de
+Chromium dev/produção, sessões descartáveis, capturas seletivas e hashes.
+Nenhum fluxo funcional alterado; sem commit/push/deploy. Revisão humana pendente.
+
+## HOME-UI-001-F1 — rodapé compartilhado, 30/10/2026
+
+[Complemento integral](prompts/2026-10-30-home-footer-refinement.txt): incorporar
+marca/slogan/copyright ao único rodapé do RootLayout e compartilhar o shell
+vertical em todas as páginas. Mantém hero/painel da home e todos os fluxos.
+Codex, um escritor, execução/autorrevisão sequenciais, skills de entrega e
+verificação. [Contrato/evidência](harness/evidence/home-footer-refinement.md)
+registra snapshot anterior, testes, capturas seletivas por hash e diffs incremental
+e acumulado. Sem commit/push/deploy; revisão humana/CI remoto pendentes.

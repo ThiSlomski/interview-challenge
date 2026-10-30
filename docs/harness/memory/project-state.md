@@ -1,3 +1,31 @@
+## HOME-UI-001-F1 — home e rodapé compartilhado, 30/10/2026
+
+Rodapé único do RootLayout reformulado e shell vertical compartilhado, com marca
+local, slogan/copyright exatos e2026 estático. Três áreas >768px; empilha <=768px.
+Hero/painel e autoria prévia da home preservados; sem alterações funcionais.
+Chromium dev/produção, público/auth, zoom200% e páginas curtas/longas:64/64;
+UI51/51/admin36/36. Console/hidratação sem erros inesperados. Lint/tipos/build e
+Harness aprovados (Node62/62,partial:true/readiness:not-assessed).20 PNGs afetados
+atualizados, três referências iguais por hash. Cleanup0/metadados protegidos iguais.
+[Evidência e diffs](../evidence/home-footer-refinement.md); snapshot incremental
+preserva os17 arquivos anteriores e crédito Thiago Slomski já existente.
+Sem commit/push/deploy; autorrevisão, humana/CI remoto pendentes. Restrição anterior
+de shell/rodapé exclusivo da home superada somente por este complemento.
+
+## HOME-UI-001 — composição da home, 30/10/2026
+
+Refinamento visual autorizado concluído, base limpa main/b231c0c. Produto restrito
+a app/page.tsx e regras da home em app/globals.css: card redundante substituído
+por painel estático, duas colunas >=1100px e uma abaixo, rodapé ao final da
+viewport sem altura fixa. Nenhum fluxo funcional ou outra página alterado.
+Chromium dev/produção e sessões descartáveis, zoom real/fonte200%/teclado:
+58/58; regressão UI51/51; lint/tipos/build/doctor/validate/verify aprovados.
+Home console/pageerror0; Harness Node62/62, parcial/readiness:not-assessed.
+Capturas01-home quatro atualizadas;16 PNGs/3 referências iguais por SHA256.
+Cleanup0/metadados protegidos iguais. [Evidência](../evidence/home-refinement.md)
+e [manifesto](../evidence/home-refinement-hashes.json). Sem commit/push/deploy;
+autorrevisão sequencial, humana/CI remoto do diff pendentes.
+
 ## Recuperação documental dos prompts 1 e 4 — 30/10/2026
 
 Mensagens originais de 28/10/2026 recuperadas das transcrições reais do Codex;

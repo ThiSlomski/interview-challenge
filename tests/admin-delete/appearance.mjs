@@ -3,6 +3,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve, relative, isAbsolute, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { expect as baseExpect } from '@playwright/test';
+import { inspectFooterMatrix, inspectFooter } from '../ui/footer.mjs';
 
 const expect = baseExpect.configure({ timeout: 15000 });
 const linear = value => value / 255 <= .04045 ? value / 255 / 12.92 : ((value / 255 + .055) / 1.055) ** 2.4;
@@ -106,12 +107,17 @@ export async function inspectDeleteAppearance({ page, open, dialog, article, tar
         await page.reload();
         const source = article(target).getByRole('button', { name: 'Excluir usuário', exact: true });
         await expect(source).toBeVisible();
+        if (process.env.FOOTER_BROWSER_TEST === 'true') await inspectFooterMatrix(page, 'admin-delete-footer');
         await page.evaluate(async () => { document.activeElement?.blur(); window.scrollTo(0, 0); await document.fonts.ready; });
         await page.screenshot({ path: join(captures, '06-area-admin-' + device + '.png'), fullPage: true, style: 'nextjs-portal { visibility: hidden !important; }' });
+        // Match the original viewport capture at the document end, so the
+        // shared footer remains visible behind the modal at both sizes.
+        await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
         await source.focus(); await page.keyboard.press('Enter');
         const cancel = dialog().getByRole('button', { name: 'Cancelar', exact: true });
         await expect(cancel).toBeFocused(); assert.equal(await cancel.evaluate(element => element.matches(':focus-visible')), true);
         await page.mouse.move(1, 1);
+        if (process.env.FOOTER_BROWSER_TEST === 'true') await inspectFooter(page);
         await page.screenshot({ path: join(captures, '10-exclusao-confirmacao-' + device + '.png'), style: 'nextjs-portal { visibility: hidden !important; }' });
         await page.keyboard.press('Escape'); await expect(dialog()).toHaveCount(0);
       }

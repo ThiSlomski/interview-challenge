@@ -1,0 +1,146 @@
+Incorpore ao refinamento atual a reformulação do rodapé compartilhado.
+
+Não crie uma implementação separada por página. O rodapé deve continuar sendo um componente/layout compartilhado e aparecer de forma consistente em todas as páginas que já utilizam o rodapé atual.
+
+REFERÊNCIA VISUAL
+
+O rodapé deve seguir esta composição:
+
+- lado esquerdo: logotipo horizontal da Slomski Solutions;
+- centro: “Engenharia digital para um futuro real.”;
+- lado direito: “© 2026 SLOMSKI SOLUTIONS”.
+
+ESTRUTURA
+
+1. Use o elemento semântico `footer`.
+2. Reutilize o mesmo logotipo local e a mesma identidade visual do cabeçalho.
+3. Não carregue imagem, fonte ou recurso externo.
+4. Não replique o rodapé diretamente nas páginas.
+5. Centralize o conteúdo dentro do mesmo limite horizontal utilizado pelo restante da aplicação.
+6. Use três áreas equilibradas no desktop:
+   - marca alinhada à esquerda;
+   - slogan centralizado;
+   - copyright alinhado à direita.
+7. Adicione uma borda superior discreta, coerente com o cabeçalho e os cards.
+8. Use fundo escuro uniforme.
+9. Preserve o amarelo da marca no logotipo.
+10. O slogan deve usar texto claro e leitura confortável.
+11. O copyright deve usar a fonte monoespaçada já presente no projeto, letras maiúsculas e tamanho discreto.
+12. Não use altura fixa. Trabalhe com espaçamento vertical responsivo.
+13. O rodapé deve ter presença visual, mas não ocupar espaço exagerado.
+
+TEXTO EXATO
+
+Slogan:
+
+Engenharia digital para um futuro real.
+
+Copyright:
+
+© 2026 SLOMSKI SOLUTIONS
+
+Use 2026 de forma estática para evitar lógica desnecessária no cliente e qualquer risco de divergência entre servidor e navegador.
+
+POSICIONAMENTO VERTICAL
+
+Corrija a estrutura compartilhada para que:
+
+- a aplicação ocupe no mínimo toda a altura da viewport;
+- o conteúdo principal utilize o espaço disponível;
+- o rodapé fique no final da tela quando a página tiver pouco conteúdo;
+- o rodapé seja empurrado naturalmente para baixo em páginas longas;
+- nunca exista uma grande área vazia abaixo do rodapé;
+- não seja usado `position: fixed`;
+- o rodapé não cubra conteúdo.
+
+RESPONSIVIDADE
+
+Desktop:
+
+- três colunas na mesma linha;
+- logo à esquerda;
+- slogan no centro;
+- copyright à direita.
+
+Tablet:
+
+- mantenha as três áreas na mesma linha enquanto houver espaço suficiente;
+- reduza espaçamentos sem comprimir os textos;
+- não permita sobreposição ou overflow.
+
+Celular:
+
+- empilhe os três elementos;
+- centralize logo, slogan e copyright;
+- mantenha uma separação vertical clara;
+- preserve a ordem: marca → slogan → copyright;
+- não gere rolagem horizontal.
+
+ACESSIBILIDADE
+
+- Se a marca for um link para a home, forneça nome acessível adequado.
+- O logotipo decorativo não deve repetir texto desnecessariamente para leitor de tela.
+- Preserve contraste mínimo.
+- O texto deve continuar legível com zoom de 200%.
+- Não use animações.
+- Não altere a ordem de foco das páginas.
+
+VALIDAÇÃO
+
+Valide o rodapé nas seguintes páginas:
+
+- home;
+- cadastro;
+- cadastro concluído;
+- login;
+- área do usuário;
+- painel administrativo;
+- páginas com pouco conteúdo;
+- páginas com conteúdo longo.
+
+Valide também:
+
+- desktop;
+- tablet retrato;
+- tablet paisagem;
+- celular;
+- zoom de 200%;
+- ausência de overflow horizontal;
+- rodapé no final da viewport;
+- rodapé após o conteúdo em páginas longas;
+- navegação por teclado;
+- zero erros de console;
+- zero erros de hidratação;
+- lint;
+- typecheck;
+- build;
+- testes de UI relacionados;
+- git diff --check.
+
+Atualize somente as capturas das páginas que realmente mudarem por causa do novo rodapé. Preserve as demais capturas por hash.
+
+Este complemento faz parte do mesmo refinamento da home:
+
+- remoção do card redundante de sessão;
+- painel visual de benefícios;
+- correção da composição em tablet;
+- rodapé compartilhado reformulado.
+
+Não altere autenticação, APIs, banco, autorização ou demais fluxos funcionais.
+
+Não faça commit, push ou deploy.
+
+Ao final, informe:
+
+1. componente ou layout compartilhado alterado;
+2. páginas verificadas;
+3. comportamento por breakpoint;
+4. capturas atualizadas;
+5. confirmação de que nenhum fluxo funcional mudou;
+6. resultados das validações;
+7. diff exclusivo;
+8. sugestão de commit.
+
+Commit sugerido:
+
+refactor(ui): refina home e identidade visual do rodapé

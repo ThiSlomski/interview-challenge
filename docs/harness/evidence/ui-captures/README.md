@@ -2,11 +2,22 @@
 
 Dados sintéticos. Desktop: 1280 × 900; celular: 390 × 844
 
+## Home e rodapé compartilhado — 30/10/2026
+
+O complemento HOME-UI-001-F1 mantém o refinamento da home e reformula o único
+rodapé do RootLayout. As 20 imagens da aplicação exibem o rodapé, inclusive o
+fundo dos diálogos10, e são atualizadas nos mesmos estados/fixtures de origem.
+As três referências oficiais permanecem idênticas por SHA256. Logo local,
+slogan e copyright estático2026; três áreas em desktop/tablet e empilhamento
+centrado em celular. [Evidência](../home-footer-refinement.md) e
+[manifesto incremental](../home-footer-refinement-hashes.json).
+Históricos abaixo preservados; não representam os hashes atuais da galeria.
+
 ## Contraste da exclusão administrativa — 30/10/2026
 
 ADMIN-DELETE-UI-001 atualiza somente o par06 e acrescenta o par10, com confirmação
 aberta por teclado e foco inicial em Cancelar. Texto claro/vermelho escuro nos
-botões de exclusão, contraste normal15.57:1; estados hover/active/disabled/foco
+botões de exclusão, contraste normal 15.57:1; estados hover/active/disabled/foco
 validados em Chromium. A captura da listagem é estado normal após recarga real,
 sem ocultar avisos da aplicação. A confirmação usa viewport; a lista usa página
 integral. Dados sintéticos de fixture descartável, nunca cadastros persistentes.
@@ -68,3 +79,14 @@ em desktop/celular. O gerador restringe escrita ao par06; os demais testes execu
 normalmente. Os outros16 PNGs e as três referências permanecem idênticos por
 SHA-256. [Hashes e resultados](../ui.md#refinamento-administrativo--30102026).
 Inspeção visual pelo agente; revisão humana pendente.
+
+## Composição da home — 30/10/2026
+
+HOME-UI-001 atualiza somente os quatro PNGs 01-home normal/foco desktop/mobile.
+O painel de benefícios é informativo, com SVGs locais, duas colunas a partir de
+1100px e empilhamento abaixo desse limite. O shell vertical da home preenche a
+viewport e mantém o rodapé no final. As outras 16 capturas e três referências
+permanecem idênticas por SHA256. [Evidência](../home-refinement.md) e
+[manifesto antes/depois](../home-refinement-hashes.json). Capturas em Chromium
+com build de produção e HTTPS local; inspecionadas pelo agente. Revisão humana
+pendente. Nenhum fluxo funcional alterado.

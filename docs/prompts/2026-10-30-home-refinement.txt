@@ -1,0 +1,143 @@
+Refine somente a página inicial para corrigir a composição visual observada em tablet retrato e telas altas.
+
+OBJETIVO
+
+Deixar a home mais equilibrada, elegante e profissional, preservando a identidade atual da Slomski Solutions e todos os comportamentos existentes.
+
+PROBLEMAS OBSERVADOS
+
+Na captura com aproximadamente 922 × 2048:
+
+1. a metade direita do hero fica vazia;
+2. o layout mantém aparência de desktop em uma tela estreita e alta;
+3. o card “Já tem uma sessão aberta?” repete ações já disponíveis em “Entrar” e “Minha área”;
+4. o rodapé termina no meio da página;
+5. sobra uma grande área vazia abaixo do conteúdo.
+
+ESCOPO
+
+Altere somente o necessário na página inicial e em seus estilos.
+
+Não altere:
+
+- cadastro;
+- login;
+- sessão;
+- logout;
+- autorização;
+- APIs;
+- banco;
+- clima;
+- área protegida;
+- painel administrativo;
+- textos e fluxos de outras páginas;
+- cabeçalho e rodapé compartilhados além do ajuste estrutural necessário.
+
+DIREÇÃO VISUAL
+
+1. Preserve:
+   - fundo escuro;
+   - amarelo da marca;
+   - logotipo;
+   - grade decorativa;
+   - tipografia;
+   - título “Seus dados, em um só lugar.”;
+   - botões “Criar cadastro” e “Entrar”;
+   - navegação atual.
+
+2. Remova o card:
+   - “Já tem uma sessão aberta?”
+   - “Acessar minha área”
+
+Esse card é redundante com o botão “Entrar” e o link “Minha área” do cabeçalho.
+
+3. Utilize a área direita do hero com um painel visual discreto, sem criar nova funcionalidade.
+
+O painel deve apresentar três benefícios reais da aplicação:
+
+- Cadastro seguro
+  Senha protegida e validação no cliente e no servidor.
+
+- Área protegida
+  Cada usuário acessa somente os dados permitidos pelo seu papel.
+
+- Previsão de amanhã
+  Consulta meteorológica exibida após a conclusão do cadastro.
+
+Use ícones locais simples, CSS ou SVG existente. Não adicione biblioteca ou imagem externa.
+
+4. O painel deve:
+   - complementar o hero;
+   - ter borda discreta;
+   - respeitar o mesmo design dos cards existentes;
+   - não parecer um formulário;
+   - não competir com o botão principal;
+   - ter boa leitura em tema escuro.
+
+5. Responsividade:
+   - desktop largo: hero em duas colunas equilibradas;
+   - tablet retrato: uma coluna, com painel abaixo do texto e dos botões;
+   - celular: conteúdo empilhado, sem overflow horizontal;
+   - não permita que uma coluna vazia permaneça visível.
+
+6. Estrutura vertical:
+   - faça o shell da página ocupar no mínimo toda a altura da viewport;
+   - o conteúdo principal deve crescer;
+   - o rodapé deve permanecer ao final da tela quando houver pouco conteúdo;
+   - não use altura fixa que corte conteúdo;
+   - preserve crescimento natural em telas menores.
+
+7. Mantenha:
+   - navegação por teclado;
+   - foco visível;
+   - contraste;
+   - semântica correta;
+   - respeito a zoom e tamanho de fonte;
+   - ausência de movimentos desnecessários.
+
+VALIDAÇÕES
+
+Valide a página inicial em:
+
+- desktop;
+- tablet retrato próximo de 922 × 2048;
+- tablet paisagem;
+- celular;
+- zoom de 200%;
+- teclado;
+- usuário autenticado e não autenticado;
+- Chromium em produção e desenvolvimento.
+
+Confirme:
+
+- ausência de overflow horizontal;
+- rodapé no final da viewport;
+- hero equilibrado;
+- painel empilhado no tablet;
+- botões e links funcionando;
+- nenhuma alteração nos fluxos;
+- zero erros de console;
+- zero pageerror;
+- lint;
+- typecheck;
+- build;
+- testes de UI relacionados;
+- git diff --check.
+
+Atualize somente as capturas da home que realmente mudarem. Preserve as demais por hash.
+
+Não faça commit, push ou deploy.
+
+Ao final, informe:
+
+1. arquivos alterados;
+2. comportamento por breakpoint;
+3. resultado das validações;
+4. capturas atualizadas;
+5. confirmação de que nenhum fluxo funcional mudou;
+6. diff exclusivo;
+7. sugestão de commit.
+
+Commit sugerido:
+
+refactor(ui): equilibra composição visual da página inicial

@@ -15,6 +15,7 @@ import { profileHttpTests } from '../profile/http-postgres.mjs';
 import { profileBrowserTests } from '../profile/browser.mjs';
 import { adminDeleteHttpTests } from '../admin-delete/http-postgres.mjs';
 import { adminDeleteBrowserTests } from '../admin-delete/browser.mjs';
+import { homeBrowserTests } from '../ui/home.mjs';
 
 // Explicitly separate from npm test. No mocks and no fallback to imobilead.
 // Requires explicit authorization of its disposable local destination.
@@ -55,7 +56,9 @@ test('PostgreSQL migrations, constraints, sessions and runtime permissions', asy
     await dbAdmin.query(runtimeGrantsSql(appRole));
     app = new pg.Client({ ...base, database, user: appRole, password }); await app.connect();
     const runtime = roleIdentifier(appRole);
-    if (process.env.ADMIN_DELETE_BROWSER_TEST === 'true') {
+    if (process.env.HOME_BROWSER_TEST === 'true') {
+      await homeBrowserTests(t, { ...base, database, user: appRole, password }, dbAdmin);
+    } else if (process.env.ADMIN_DELETE_BROWSER_TEST === 'true') {
       await adminDeleteBrowserTests(t, { ...base, database, user: appRole, password }, dbAdmin);
     } else if (process.env.PROFILE_BROWSER_TEST === 'true') {
       await profileBrowserTests(t, { ...base, database, user: appRole, password }, dbAdmin);

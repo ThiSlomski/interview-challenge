@@ -8,6 +8,7 @@ import { inspectFields } from './fields.mjs';
 import { watchBrowserErrors } from './console.mjs';
 import { geocoding, weather } from '../weather/fixtures.mjs';
 import { weatherBrowserTests } from '../weather/browser.mjs';
+import { inspectFooterMatrix } from './footer.mjs';
 
 const expect = baseExpect.configure({ timeout: 15000 });
 
@@ -28,9 +29,13 @@ export function uiBrowserTests(t, config, admin) {
     let id;
     // Only hide Next's development chrome, never application content.
     async function shot(name) {
+      if (process.env.FOOTER_BROWSER_TEST === 'true') await inspectFooterMatrix(page, name);
+      if (process.env.UI_UPDATE_CAPTURES === 'false') return;
       // This requirement only changes the signup success pair. Other evidence
       // stays byte-identical while the full functional suite still executes.
-      if (name !== '03-cadastro-sucesso') return;
+      if (process.env.UI_UPDATE_CAPTURES !== 'all' && name !== '03-cadastro-sucesso') return;
+      // Keep the administrative pair with its original dedicated fixture.
+      if (process.env.FOOTER_BROWSER_TEST === 'true' && name === '06-area-admin') return;
       const original = page.viewportSize();
       for (const [device, viewport] of [['desktop', { width: 1280, height: 900 }], ['mobile', { width: 390, height: 844 }]]) {
         await page.setViewportSize(viewport);
@@ -109,10 +114,10 @@ export function uiBrowserTests(t, config, admin) {
         await expect(page.locator('header img')).toBeVisible();
         assert.equal(await page.locator('header img').evaluate(image => image.naturalWidth > 0), true);
         const footer = page.locator('footer a');
-        await expect(footer).toHaveAttribute('href', 'https://www.slomskisolutions.com.br');
-        await expect(footer).toHaveAttribute('target', '_blank');
-        await expect(footer).toHaveAttribute('rel', 'noopener noreferrer');
-        await expect(footer).toHaveAccessibleName(/Slomski Solutions.*abre em nova aba/);
+        await expect(footer).toHaveAttribute('href', '/');
+        await expect(footer).toHaveAccessibleName('Slomski Solutions — início');
+        await expect(page.locator('.footer-slogan')).toHaveText('Engenharia digital para um futuro real.');
+        await expect(page.locator('.footer-copyright')).toHaveText('© 2026 SLOMSKI SOLUTIONS');
         await shot('01-home-normal');
         await page.keyboard.press('Tab');
         assert.equal(await page.evaluate(() => document.activeElement?.tagName === 'A'), true);
@@ -228,7 +233,7 @@ export function uiBrowserTests(t, config, admin) {
         // Keep a protected history entry before a client-side round trip.
         await page.locator('header a.brand').click();
         await expect(page).toHaveURL(origin + '/');
-        await page.getByRole('link', { name: /Acessar minha/ }).click();
+        await page.getByRole('link', { name: 'Minha área', exact: true }).click();
         await expect(page).toHaveURL(origin + '/area');
         await expect(page.getByText(email, { exact: true })).toBeVisible();
         await page.route('**/api/auth/logout', route => route.fulfill({ status: 503, contentType: 'application/json', body: '{"error":"AUTH_FAILED"}' }));

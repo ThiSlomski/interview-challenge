@@ -83,7 +83,8 @@ export function adminDeleteBrowserTests(t, config, admin) {
       await admin.query("UPDATE imobilead.users SET role='admin' WHERE id=$1", [actor]);
       const login = await context.request.post(origin + '/api/auth/login', { headers: { origin }, data: { email, password } }); assert.equal(login.status(), 200);
       await scenario('danger buttons maintain contrast, pointer and keyboard states on desktop and mobile', async () => {
-        const target = await account(); await load();
+        // Keep the original screenshot order: own record, then this target.
+        const target = await account('user', 'ffffffff-ffff-ffff-ffff-ffffffffffff'); await load();
         await inspectDeleteAppearance({ page, open, dialog, article, target });
       });
       await scenario('only user accounts expose delete; own and other admins are protected', async () => {

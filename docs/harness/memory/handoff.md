@@ -1,3 +1,37 @@
+## HOME-UI-001-F1 — home e rodapé compartilhado, 30/10/2026
+
+Complemento autorizado concluído sobre os17 arquivos anteriores pendentes.
+Rodapé único no app/layout.tsx: marca local, slogan exato e copyright estático2026;
+três áreas >768px e empilhamento centrado abaixo/igual768px. Shell mínimo100dvh
+com main expansível agora compartilhado; hero/painel da home e crédito prévio de
+autoria preservados. Sem mudança em fluxos funcionais, APIs, banco ou dependências.
+Chromium dev/produção, público/auth, zoom200%/teclado e páginas curtas/longas:
+64/64; UI51/51; admin36/36, zero skips/erros inesperados de console/hidratação.
+Lint/tipos/build/doctor/validate/verify aprovados; Harness Node62/62, parcial.
+20 PNGs afetados atualizados, três referências iguais por SHA256; cleanup0 e
+metadados protegidos iguais. [Evidência, snapshot e dois diffs](../evidence/home-footer-refinement.md),
+[hashes](../evidence/home-footer-refinement-hashes.json) e
+[pedido](../../prompts/2026-10-30-home-footer-refinement.txt).
+Sem commit/push/deploy; autorrevisão sequencial, humana/CI remoto pendentes.
+Supera somente a restrição anterior de rodapé/shell exclusivo da home.
+
+## HOME-UI-001 — composição da home, 30/10/2026
+
+Pedido atual autorizado e concluído sobre main/b231c0c inicialmente limpa.
+Somente página inicial/CSS no produto: painel informativo com três benefícios,
+duas colunas >=1100px, empilhamento abaixo, shell mínimo100dvh e rodapé ao final.
+Header/footer/textos/fluxos das demais rotas preservados. Sem lógica nova.
+Chromium dev/produção HTTPS, público/autenticado, desktop/tablets/celulares,
+zoom real200%, fonte200% e teclado:58/58; regressão UI51/51, zero skips.
+Console/pageerror0 na home. Lint/tipos/build/doctor/validate/verify aprovados;
+Harness parcial, Node62/62/readiness:not-assessed. Quatro capturas01-home
+atualizadas; demais16 PNGs +3 referências iguais por SHA256. Cleanup0 e metadados
+protegidos iguais; nenhum cadastro persistente acessado. Sem commit/push/deploy.
+[Contrato, correções, evidência e diff](../evidence/home-refinement.md),
+[hashes](../evidence/home-refinement-hashes.json) e
+[pedido integral](../../prompts/2026-10-30-home-refinement.txt).
+Autorrevisão sequencial; revisão humana e CI remoto do diff pendentes.
+
 ## Recuperação documental dos prompts 1 e 4 — 30/10/2026
 
 Originais recuperados de mensagens reais das sessões locais do Codex de
