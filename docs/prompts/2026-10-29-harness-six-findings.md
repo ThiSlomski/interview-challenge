@@ -179,3 +179,52 @@ ENTREGA
 
 Não declare validação integral do harness com base apenas
 nestas correções.
+Registro histórico transferido do índice em 29/10/2026. Links navegáveis fora
+dos prompts foram ajustados à localização atual; instruções históricas não foram
+atualizadas. Resultados abaixo pertencem às respectivas rodadas.
+
+<a id="registro-10"></a>
+
+## Prompt 10 — seis achados consolidados dos scripts (29/10/2026)
+
+Origem: revisão estática dos arquivos compartilhados nesta conversa; reprodução
+local ocorre nesta rodada. Ferramenta: Codex, skills plan-requirement,
+deliver-requirement, verify-delivery e record-decision.
+Prompt integral preservado em [arquivo versionável](../prompts/2026-10-29-harness-six-findings.md).
+Contrato prévio: [H-006](../harness/evidence/six-findings-plan.md).
+Resultados e limitações serão acrescentados conforme execução real. Revisão humana
+integral permanece pendente; registros anteriores preservados como histórico.
+
+### Reprodução e correções do Prompt 10
+
+Os seis achados foram reproduzidos antes das alterações de produção: seis testes,
+zero aprovados/seis falhas. [Evidência H-006](../harness/evidence/six-findings.md) contém
+problema, impacto, correção e teste por ID. Contexto antigo do checkpoint foi
+removido; --product agora anuncia verificação parcial; diagnósticos classificam
+falhas sem stderr; RPC limita bytes e pendências; identidade associa nome/descrição
+no esquema observado; casos reais são comprovados por eventos estruturados Node.
+
+Falha intermediária: reporter referenciado por caminho Windows retornou failed;
+URL file de import.meta.url corrigiu a importação e o teste passou. A revisão
+independente achou um caminho adicional de exposição em decision de execpolicy;
+teste vermelho confirmou, enumeração/rejeição de processo falho corrigiram e
+seguimento independente confirmou em memória. Nenhuma saída privada foi registrada.
+Prazo de 35s agora reserva limpeza. Última suíte direcionada: 14 aprovados.
+Resultados finais dos comandos serão acrescentados após sua execução. Nenhum
+turno de modelo para os testes controlados; nenhuma validação integral alegada.
+
+### Fechamento do Prompt 10
+
+Suíte completa final: 27 testes passaram. doctor/validate/verify, lint e typecheck
+passaram, sem build. verify --product retornou 1 esperado pelo placeholder real;
+escopo explicitamente parcial. O primeiro verify falhou somente na confirmação
+de limpeza do probe; fechar stdin antes de confirmar encerramento causava corrida.
+Ordem corrigida, regressão adicionada e execução real seguinte confirmou árvore
+encerrada. Essa falha e os demais resultados permanecem na evidência H-006.
+
+Revisão independente: uma instância com contexto mínimo, dois seguimentos
+delimitados; sem novos achados nos ajustes finais revisados. Testes controlados não
+comprovam seleção nativa, hooks reais ou retomada limpa. Sem aplicação/dependências/
+lockfile/CI/permissões/configuração pessoal, commits ou publicação. Estado final e
+atribuição das alterações em [inventário H-006](../harness/evidence/six-findings-final-state.md).
+Revisão humana integral continua pendente.

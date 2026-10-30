@@ -20,7 +20,8 @@ indefinidamente. Só repita verificações após mudança, falha ou preocupaçã
 Hooks são determinísticos, leves e não chamam IA.
 
 Retornos curtos: conclusão, caminhos, comandos/resultados, falhas, riscos e próximo
-passo. Prompt integral uma vez no log; decisões na arquitetura; memória só resume.
+passo. Decisões na arquitetura; memória só resume.
+Registrar o texto integral em docs/prompts/, seguindo a convenção existente. Em docs/AI_PROMPTS.md, acrescentar somente o resumo e o link. Evidências detalhadas ficam em docs/harness/evidence/.
 Não remova requisitos ou testes necessários para reduzir esforço.
 
 Tokens entrada/saída, cache, duração e custo só quando fornecidos pela ferramenta,

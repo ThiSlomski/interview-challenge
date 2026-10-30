@@ -66,3 +66,113 @@ Conclua com arquivos alterados, comportamento implementado, comandos/resultados,
 
 Sem commit, push, publicação, chamadas de clima ou acesso a bancos remotos.
 ```
+
+Registro histórico transferido do índice em 29/10/2026. Links navegáveis fora
+dos prompts foram ajustados à localização atual; instruções históricas não foram
+atualizadas. Resultados abaixo pertencem às respectivas rodadas.
+
+<a id="registro-16"></a>
+
+# REG-001 — cadastro pela API, 29/10/2026
+
+Prompt integral preservado em [registro REG-001](../prompts/2026-10-29-registration.md).
+Ferramenta: Codex; skills resume-project, plan-requirement, deliver-requirement,
+review-security, verify-delivery e record-decision lidas. Orquestrador único
+escritor; Backend delegado somente para revisão independente de leitura conforme
+[contrato](../harness/evidence/registration-plan.md).
+
+Aceito: contrato DB-001, hash Argon2id, validação browser-safe, SQL parametrizado,
+allowlists, origem configurada e testes reais isolados. Ajustado: argon2@0.45.1
+exigia compilação nativa indisponível; substituído por @node-rs/argon2@2.2.2 pinado,
+sem instalação de toolchain ou ampliação de permissões. Callback de diagnóstico
+ajustado após erro TypeScript de inferência da assinatura JS.
+O provider PostgreSQL só é substituído na cópia temporária do teste HTTP;
+o runtime real continua restrito ao destino/papel originais. Sem banco principal
+mutável, sessões, UI, clima, Harness/CI ou Git mutável.
+Resultados e revisão em [evidência](../harness/evidence/registration.md).
+Revisão humana pendente; CI do commit-base conforme relato do usuário,
+sem atribuir integração local ao CI.
+
+Revisão independente corrigiu dois P2 de e-mail (sintaxe e ASCII antes de lowercase),
+confirmados por regressões e repetição HTTP/PostgreSQL real. O launcher de servidor
+recusou resumo vazio com código zero: NODE_TEST_CONTEXT herdado provocava execução
+recursiva ignorada pelo Node; variável removida apenas do subprocesso, agora exige
+oito casos sem skips. Verificação documental intermediária encontrou links para
+evidência ainda em consolidação; arquivo criado e validate passou em seguida.
+
+
+<a id="registro-17"></a>
+
+## REG-001-E1 — prompt integral da correção, 29/10/2026
+
+Ferramenta: Codex. Skills já carregadas e reaplicadas: resume-project,
+plan-requirement, deliver-requirement, verify-delivery e record-decision.
+Tarefa pequena executada pelo orquestrador, sem nova delegação; autorrevisão.
+
+```text
+Corrija o achado de comprimento de e-mail da etapa REG-001, mantendo aderência ao README.
+
+Preparação
+- Leia AGENTS.md e o estado/handoff atuais.
+- Confira o requisito de e-mail válido no README, a validação compartilhada, seus testes e as evidências REG-001.
+- Registre Git e preserve integralmente as alterações anteriores ainda não commitadas.
+
+Achado
+O validador atual aceita:
+1. 'a@' + 'b'.repeat(64) + '.test'
+2. 'a'.repeat(65) + '@example.test'
+
+Reproduza ambos antes da correção e registre o resultado observado. Não apresente esta descoberta como falha já coberta pela revisão anterior.
+
+Correção
+- Preserve o contrato de e-mail ASCII, normalização e sintaxe já implementado.
+- Exija no máximo 64 bytes na parte anterior ao @.
+- Exija no máximo 63 bytes por segmento do domínio.
+- Adote limite de 254 bytes para o endereço normalizado completo, compatível com o caminho SMTP de 256 bytes incluindo < e >.
+- Confira e registre as referências oficiais pertinentes: RFC 5321, seção 4.5.3.1, e RFC 1035, seção 2.3.4.
+- Como o contrato é ASCII, explique que caracteres e bytes coincidem após a checagem ASCII.
+- Retorne o erro de campo existente, sem expor a entrada.
+- Mantenha o validador compartilhado seguro para uso futuro no navegador.
+- Não acrescente consulta DNS, envio de e-mail ou verificação de posse.
+
+Testes
+- Acrescente regressões para os dois exemplos reproduzidos.
+- Teste aceitação em 64 bytes na parte local e 63 por segmento, e rejeição em 65 e 64 respectivamente.
+- Teste endereço completo com 254 bytes aceito e 255 rejeitado, mantendo válidos os demais componentes para isolar essa regra.
+- Preserve os casos de normalização, Unicode recusado e sintaxe já cobertos.
+- No HTTP Next + PostgreSQL descartável, comprove 400/INVALID_INPUT para os comprimentos inválidos e ausência de linhas inseridas.
+- Comprove também cadastro válido nas fronteiras pertinentes.
+- Ajuste o orçamento ou a organização dos testes para não confundir rejeição de validação com 429 do limitador. Não enfraqueça o controle de abuso para acomodar testes.
+
+Banco e escopo
+- Use somente os recursos descartáveis autorizados e as proteções existentes.
+- Preserve imobilead, seus dados, permissões e metadados.
+- Não altere migrations, grants, dependências, Harness ou CI.
+- Não implemente login, sessão, cookies, telas, autorização ou clima nesta correção.
+
+Verificação
+- Execute npm test, testes de servidor e integração HTTP/PostgreSQL pertinente.
+- Execute lint, typecheck, build, doctor, validate, verify --product e git diff --check.
+- Confirme limpeza dos recursos próprios.
+- Separe testes controlados, execução HTTP/PostgreSQL real e verificações não executadas.
+- Se houver falha, registre causa e correção; não conte testes ignorados como aprovação.
+
+Documentação e entrega
+- Registre este prompt integral em AI_PROMPTS.md.
+- Atualize contrato, SOLUTION.md, arquitetura, evidência REG-001, estado e handoff onde necessário.
+- Preserve o histórico e registre explicitamente: erro encontrado, reprodução, impacto, correção e regressões.
+- Corrija a afirmação anterior de que não havia limite de comprimento, distinguindo o estado histórico do atual.
+- Gere um diff exclusivo desta correção, incluindo arquivos novos se houver, sem segredos ou artefatos gerados.
+- Ao concluir, informe arquivos alterados, resultados e pendências do desafio.
+
+Sem commit, push ou publicação. Após esta correção, a próxima etapa será login e sessão; não a inicie neste pedido.
+```
+
+Aceito integralmente: limites oficiais, ASCII/normalização/sintaxe existentes,
+mesmo erro sem entrada, ausência de DNS e escopo estrito. Reprodução anterior à
+edição confirmou os dois exemplos como ok:true. Esta lacuna é descoberta E1 e não
+foi coberta pela revisão anterior. Ajuste de testes: segunda instância HTTP para
+seis probes de comprimento, sem mexer em quota/relógio/handler. Resultado e fontes
+oficiais em [evidência E1](../harness/evidence/registration.md#reg-001-e1--comprimento-de-e-mail-29102026).
+Nenhuma falha intermediária nova observada nos testes controlados e HTTP/PG desta
+correção. Revisão humana pendente; sem nova revisão independente ou aprovação de CI.

@@ -82,9 +82,11 @@ seleção nativa e disparo real de hook permanecem não demonstrados. Instruçõ
 de ativação/desativação e pré-requisitos em [comandos](harness/commands.md).
 
 Fontes e versão: [compatibilidade oficial](harness/sources.md). Histórico real:
-[BUILD_LOG](harness/BUILD_LOG.md), [prompt](AI_PROMPTS.md) e
+[BUILD_LOG](harness/BUILD_LOG.md), [índice de prompts](AI_PROMPTS.md) e
 [arquitetura](ARCHITECTURE.md). [Memória seletiva](harness/memory/index.md).
 Revisão humana pendente; o produto e o CI remoto não estão validados por esta etapa.
+
+Registrar o texto integral em docs/prompts/, seguindo a convenção existente. Em docs/AI_PROMPTS.md, acrescentar somente o resumo e o link. Evidências detalhadas ficam em docs/harness/evidence/.
 
 A revisão posterior corrigiu cinco falhas nos scripts e nos testes de evidência;
 consulte [H-002](harness/evidence/corrections.md). O checkpoint agora rejeita falhas
